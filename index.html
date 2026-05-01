@@ -1,1141 +1,1125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DesignRoom — Pick Your Style</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
-
-    <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --bg: #080808;
-            --bg-2: #111111;
-            --bg-3: #1a1a1a;
-            --accent: #00e5ff;
-            --accent-dim: rgba(0,229,255,0.1);
-            --accent-border: rgba(0,229,255,0.25);
-            --text: #f0f0f0;
-            --text-dim: #777;
-            --text-dimmer: #333;
-            --border: rgba(255,255,255,0.07);
-        }
-
-        html, body {
-            height: 100%;
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'DM Sans', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* ── HEADER ── */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(8,8,8,0.96);
-            backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border);
-            padding: 0 2rem;
-        }
-
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.1rem 0 0.7rem;
-        }
-
-        .logo {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.9rem;
-            letter-spacing: 0.08em;
-        }
-
-        .logo span { color: var(--accent); }
-
-        .header-sub {
-            font-size: 0.68rem;
-            color: var(--text-dim);
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            font-family: 'Syne', sans-serif;
-            margin-top: 1px;
-        }
-
-        .sel-count {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.72rem;
-            color: var(--text-dim);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        .sel-count strong {
-            color: var(--accent);
-            font-size: 1.15rem;
-            font-weight: 800;
-        }
-
-        /* ── TABS ── */
-        .tabs {
-            display: flex;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .tabs::-webkit-scrollbar { display: none; }
-
-        .tab-btn {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            background: none;
-            border: none;
-            border-bottom: 2px solid transparent;
-            padding: 0.75rem 1.1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .tab-btn:hover { color: var(--text); }
-        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-        /* ── MAIN ── */
-        main {
-            padding: 2.5rem 2rem 9rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .section-header { margin-bottom: 1.8rem; }
-
-        .section-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 0.3rem;
-        }
-
-        .section-desc { font-size: 0.85rem; color: var(--text-dim); }
-
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
-
-        /* ── GRID ── */
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-            gap: 1.1rem;
-        }
-
-        /* ── CARD ── */
-        .preview-card {
-            background: var(--bg-2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: border-color 0.2s, transform 0.2s;
-            position: relative;
-            user-select: none;
-        }
-        .preview-card:hover { border-color: rgba(255,255,255,0.18); transform: translateY(-2px); }
-        .preview-card.selected { border-color: var(--accent); background: rgba(0,229,255,0.04); }
-        .preview-card.selected::after {
-            content: '✓';
-            position: absolute;
-            top: 10px; right: 10px;
-            width: 22px; height: 22px;
-            background: var(--accent);
-            color: #000;
-            border-radius: 50%;
-            font-size: 0.7rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            line-height: 22px;
-            text-align: center;
-        }
-
-        .preview-window { height: 175px; position: relative; overflow: hidden; }
-
-        .card-footer {
-            padding: 0.8rem 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-top: 1px solid var(--border);
-        }
-
-        .card-label { font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700; }
-        .card-tag { font-size: 0.65rem; color: var(--text-dim); background: var(--bg-3); padding: 2px 8px; border-radius: 20px; }
-
-        /* ══════════════════════════
-           BACKGROUND PREVIEWS
-        ══════════════════════════ */
-        .bg-particles { background: #050510; }
-        .bg-particles canvas { position: absolute; inset: 0; }
-
-        .bg-gradient-flow {
-            background: linear-gradient(-45deg, #0a0015, #001a2e, #0d1f00, #1a0010);
-            background-size: 400% 400%;
-            animation: gradFlow 6s ease infinite;
-        }
-        @keyframes gradFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .bg-grid {
-            background-color: #060612;
-            background-image:
-                linear-gradient(rgba(0,229,255,0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,229,255,0.06) 1px, transparent 1px);
-            background-size: 28px 28px;
-        }
-
-        .bg-geometric { background: #0a0a0a; }
-        .geo-shape {
-            position: absolute;
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 3px;
-            animation: geoSpin linear infinite;
-        }
-        @keyframes geoSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .bg-scanlines {
-            background: #050505;
-            position: relative;
-        }
-        .bg-scanlines::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,100,0.012) 2px, rgba(0,255,100,0.012) 4px);
-        }
-        .bg-scanlines::after {
-            content: '';
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 50% 40%, rgba(0,255,100,0.07) 0%, transparent 65%);
-        }
-
-        .bg-stars { background: #020208; }
-        .bg-stars canvas { position: absolute; inset: 0; }
-
-        .bg-mesh {
-            background:
-                radial-gradient(ellipse at 20% 50%, rgba(100,30,200,0.28) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(0,80,200,0.28) 0%, transparent 50%),
-                radial-gradient(ellipse at 60% 80%, rgba(200,0,60,0.18) 0%, transparent 50%),
-                #080808;
-            animation: meshPulse 8s ease-in-out infinite alternate;
-        }
-        @keyframes meshPulse { 0% { filter: hue-rotate(0deg) brightness(1); } 100% { filter: hue-rotate(25deg) brightness(1.05); } }
-
-        .bg-noise {
-            background: #0c0c0c;
-            position: relative;
-        }
-        .bg-noise::before {
-            content: '';
-            position: absolute; inset: 0;
-            opacity: 0.35;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
-        }
-
-        /* ══════════════════════════
-           NAVBAR PREVIEWS
-        ══════════════════════════ */
-        .nav-preview { background: #06060e; align-items: flex-start; }
-
-        .nav-frosted {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 13px 18px;
-            background: rgba(255,255,255,0.055);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255,255,255,0.09);
-            width: 100%;
-        }
-        .nav-frosted .n-logo { font-family: 'Bebas Neue'; font-size: 1rem; letter-spacing: 0.1em; }
-        .nav-frosted .n-links { display: flex; gap: 14px; }
-        .nav-frosted .n-links span { font-size: 0.62rem; color: rgba(255,255,255,0.55); letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Syne'; font-weight: 600; }
-
-        .nav-solid {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 15px 18px;
-            background: #111;
-            border-bottom: 2px solid #00e5ff;
-            width: 100%;
-        }
-        .nav-solid .n-logo { font-family: 'Bebas Neue'; font-size: 1rem; letter-spacing: 0.1em; color: #00e5ff; }
-        .nav-solid .n-links { display: flex; gap: 14px; }
-        .nav-solid .n-links span { font-size: 0.62rem; color: rgba(255,255,255,0.6); letter-spacing: 0.08em; text-transform: uppercase; font-family: 'Syne'; font-weight: 600; }
-
-        .nav-minimal {
-            display: flex; align-items: center; justify-content: center; gap: 24px;
-            padding: 16px 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            width: 100%;
-        }
-        .nav-minimal span { font-size: 0.62rem; color: rgba(255,255,255,0.45); letter-spacing: 0.14em; text-transform: uppercase; font-family: 'Syne'; font-weight: 600; }
-        .nav-minimal .n-active { color: #fff; border-bottom: 1px solid #fff; padding-bottom: 2px; }
-
-        .nav-bold {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 18px;
-            height: 50px;
-            background: #0d0d0d;
-            border-left: 3px solid #ff3366;
-            width: 100%;
-        }
-        .nav-bold .n-logo { font-family: 'Bebas Neue'; font-size: 1rem; letter-spacing: 0.1em; }
-        .nav-bold .n-links { display: flex; gap: 14px; }
-        .nav-bold .n-links span { font-size: 0.6rem; color: rgba(255,255,255,0.55); letter-spacing: 0.08em; text-transform: uppercase; font-family: 'Syne'; font-weight: 600; }
-        .nav-bold .n-cta { font-size: 0.58rem; background: #ff3366; color: #fff; padding: 5px 11px; border-radius: 3px; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Syne'; font-weight: 700; }
-
-        .nav-hamburger {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 13px 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            width: 100%;
-        }
-        .nav-hamburger .n-logo { font-family: 'Bebas Neue'; font-size: 1rem; letter-spacing: 0.1em; }
-        .hbg { display: flex; flex-direction: column; gap: 4px; }
-        .hbg span { display: block; height: 2px; background: #fff; border-radius: 2px; }
-        .hbg span:nth-child(1) { width: 22px; }
-        .hbg span:nth-child(2) { width: 22px; }
-        .hbg span:nth-child(3) { width: 14px; }
-
-        /* ══════════════════════════
-           HERO PREVIEWS
-        ══════════════════════════ */
-        .hero-split {
-            display: grid; grid-template-columns: 1fr 1fr;
-            height: 100%; background: #050508;
-        }
-        .hs-text {
-            padding: 18px; display: flex; flex-direction: column; justify-content: center; gap: 5px;
-        }
-        .hs-text .h-eyebrow { font-size: 0.52rem; color: #00e5ff; letter-spacing: 0.2em; text-transform: uppercase; font-family: 'Syne'; font-weight: 700; }
-        .hs-text .h-title { font-family: 'Bebas Neue'; font-size: 1.7rem; line-height: 0.93; letter-spacing: 0.04em; }
-        .hs-text .h-sub { font-size: 0.6rem; color: rgba(255,255,255,0.45); }
-        .hs-text .h-btn { margin-top: 7px; background: #00e5ff; color: #000; font-size: 0.58rem; padding: 5px 12px; border-radius: 3px; font-family: 'Syne'; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; width: fit-content; }
-        .hs-image {
-            background: linear-gradient(135deg, #0a0a20, #180535);
-            display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
-        }
-        .hs-image::after {
-            content: '';
-            width: 70px; height: 70px;
-            border-radius: 50%;
-            background: rgba(0,229,255,0.12);
-            border: 1px solid rgba(0,229,255,0.25);
-            position: absolute;
-            animation: pulsing 2.5s ease-in-out infinite;
-        }
-        @keyframes pulsing { 0%,100%{transform:scale(1);opacity:0.8} 50%{transform:scale(1.12);opacity:1} }
-
-        .hero-centered {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; gap: 7px; padding: 18px;
-            background: #050505; height: 100%;
-        }
-        .hero-centered .h-eyebrow { font-size: 0.52rem; color: rgba(255,255,255,0.35); letter-spacing: 0.28em; text-transform: uppercase; font-family: 'Syne'; }
-        .hero-centered .h-title { font-family: 'Bebas Neue'; font-size: 1.9rem; letter-spacing: 0.07em; }
-        .hero-centered .h-line { width: 36px; height: 2px; background: #00e5ff; }
-        .hero-centered .h-sub { font-size: 0.62rem; color: rgba(255,255,255,0.4); max-width: 170px; line-height: 1.5; }
-
-        .hero-typo {
-            display: flex; flex-direction: column; justify-content: flex-end;
-            padding: 18px; background: #030303;
-            height: 100%; position: relative; overflow: hidden;
-        }
-        .hero-typo .bg-num {
-            position: absolute; font-family: 'Bebas Neue'; font-size: 8rem;
-            color: rgba(255,255,255,0.025); top: -10px; right: -8px; line-height: 1;
-            user-select: none;
-        }
-        .hero-typo .h-title { font-family: 'Bebas Neue'; font-size: 1.6rem; letter-spacing: 0.04em; line-height: 0.93; }
-        .hero-typo .h-title em { color: #00e5ff; font-style: normal; }
-        .hero-typo .h-sub { font-size: 0.6rem; color: rgba(255,255,255,0.35); margin-top: 5px; }
-
-        .hero-animated {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 8px; background: #050510; height: 100%; text-align: center; padding: 18px;
-        }
-        .hero-animated .h-eyebrow { font-size: 0.52rem; color: #00e5ff; letter-spacing: 0.18em; text-transform: uppercase; font-family: 'Syne'; }
-        .typing-text {
-            font-family: 'Bebas Neue'; font-size: 1.4rem; letter-spacing: 0.05em;
-            border-right: 2px solid #00e5ff; padding-right: 3px;
-            white-space: nowrap; overflow: hidden;
-            animation: typing 3.5s steps(10) infinite, blink 0.6s step-end infinite;
-            width: 0;
-        }
-        @keyframes typing { 0%,8%{width:0} 50%,88%{width:10ch} 96%,100%{width:0} }
-        @keyframes blink { 50%{border-color:transparent} }
-
-        .hero-cinematic {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 8px; height: 100%; text-align: center; padding: 18px; position: relative;
-            background: linear-gradient(-45deg, #0a0020, #000a1e, #000e06, #1a0008);
-            background-size: 400% 400%;
-            animation: gradFlow 5s ease infinite;
-        }
-        .hero-cinematic::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.008) 2px, rgba(255,255,255,0.008) 4px);
-        }
-        .hero-cinematic .h-eyebrow { font-size: 0.52rem; color: rgba(255,255,255,0.45); letter-spacing: 0.28em; text-transform: uppercase; font-family: 'Syne'; position: relative; }
-        .hero-cinematic .h-title { font-family: 'Bebas Neue'; font-size: 1.8rem; letter-spacing: 0.08em; position: relative; }
-        .play-btn {
-            width: 34px; height: 34px; border-radius: 50%;
-            border: 1.5px solid rgba(255,255,255,0.3);
-            display: flex; align-items: center; justify-content: center;
-            position: relative; cursor: pointer;
-        }
-        .play-btn::after { content: '▶'; font-size: 0.55rem; margin-left: 2px; }
-
-        /* ══════════════════════════
-           COLOUR SCHEME PREVIEWS
-        ══════════════════════════ */
-        .color-demo {
-            height: 100%; display: flex; flex-direction: column;
-            padding: 18px; gap: 9px;
-        }
-        .cd-nav { height: 7px; border-radius: 2px; opacity: 0.4; }
-        .cd-title { height: 13px; border-radius: 2px; width: 68%; }
-        .cd-sub { height: 7px; border-radius: 2px; width: 48%; opacity: 0.4; }
-        .cd-btn { height: 9px; border-radius: 3px; width: 32%; margin-top: 5px; }
-
-        .cs1 { background: #0a0a0a; } .cs1 .cd-nav { background: #1a1a1a; } .cs1 .cd-title { background: #ffffff; } .cs1 .cd-sub { background: #555; } .cs1 .cd-btn { background: #00e5ff; }
-        .cs2 { background: #09101e; } .cs2 .cd-nav { background: #131d30; } .cs2 .cd-title { background: #eef0f4; } .cs2 .cd-sub { background: #4a5270; } .cs2 .cd-btn { background: #d4a843; }
-        .cs3 { background: #ffffff; } .cs3 .cd-nav { background: #eeeeee; } .cs3 .cd-title { background: #000000; } .cs3 .cd-sub { background: #aaa; } .cs3 .cd-btn { background: #000000; }
-        .cs4 { background: #0d0505; } .cs4 .cd-nav { background: #1a0808; } .cs4 .cd-title { background: #f5f2f2; } .cs4 .cd-sub { background: #5a3535; } .cs4 .cd-btn { background: #e63333; }
-        .cs5 { background: #0e141a; } .cs5 .cd-nav { background: #192028; } .cs5 .cd-title { background: #e8edf2; } .cs5 .cd-sub { background: #445060; } .cs5 .cd-btn { background: #10b981; }
-        .cs6 { background: #080d08; } .cs6 .cd-nav { background: #101a10; } .cs6 .cd-title { background: #e8f0e8; } .cs6 .cd-sub { background: #3a5a3a; } .cs6 .cd-btn { background: #4ade80; }
-
-        /* ══════════════════════════
-           CARD PREVIEWS
-        ══════════════════════════ */
-        .cards-preview {
-            background: #060608;
-            display: flex; align-items: center; justify-content: center;
-            padding: 16px;
-        }
-        .demo-card { width: 100%; max-width: 195px; border-radius: 7px; overflow: hidden; }
-
-        .card-glass {
-            background: rgba(255,255,255,0.045);
-            border: 1px solid rgba(255,255,255,0.09);
-            backdrop-filter: blur(10px);
-            padding: 14px;
-        }
-        .card-glass .dc-icon { width: 26px; height: 26px; background: rgba(0,229,255,0.18); border: 1px solid rgba(0,229,255,0.35); border-radius: 6px; margin-bottom: 8px; }
-        .card-glass .dc-t { font-family: 'Syne'; font-size: 0.78rem; font-weight: 700; margin-bottom: 3px; }
-        .card-glass .dc-d { font-size: 0.63rem; color: rgba(255,255,255,0.42); line-height: 1.5; }
-
-        .card-bordered {
-            border: 1px solid rgba(255,255,255,0.1);
-            background: #0d0d0d;
-            padding: 14px;
-        }
-        .card-bordered .dc-line { width: 26px; height: 2px; background: #00e5ff; margin-bottom: 9px; }
-        .card-bordered .dc-t { font-family: 'Syne'; font-size: 0.78rem; font-weight: 700; margin-bottom: 3px; }
-        .card-bordered .dc-d { font-size: 0.63rem; color: rgba(255,255,255,0.42); line-height: 1.5; }
-
-        .card-grad-border {
-            background: linear-gradient(#0d0d0d, #0d0d0d) padding-box,
-                        linear-gradient(135deg, #00e5ff, #ff3366) border-box;
-            border: 1px solid transparent;
-            padding: 14px;
-        }
-        .card-grad-border .dc-icon { width: 26px; height: 26px; background: linear-gradient(135deg, rgba(0,229,255,0.18), rgba(255,51,102,0.18)); border-radius: 6px; margin-bottom: 8px; }
-        .card-grad-border .dc-t { font-family: 'Syne'; font-size: 0.78rem; font-weight: 700; margin-bottom: 3px; }
-        .card-grad-border .dc-d { font-size: 0.63rem; color: rgba(255,255,255,0.42); line-height: 1.5; }
-
-        .card-accent-head { background: #0d0d0d; }
-        .card-accent-head .dc-top { background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(0,229,255,0.03)); height: 36px; border-bottom: 1px solid rgba(0,229,255,0.18); }
-        .card-accent-head .dc-body { padding: 10px 14px; }
-        .card-accent-head .dc-t { font-family: 'Syne'; font-size: 0.78rem; font-weight: 700; margin-bottom: 3px; }
-        .card-accent-head .dc-d { font-size: 0.63rem; color: rgba(255,255,255,0.42); line-height: 1.5; }
-
-        .card-numbered { background: #111; padding: 14px; }
-        .card-numbered .dc-num { font-family: 'Bebas Neue'; font-size: 2rem; color: rgba(255,255,255,0.06); line-height: 1; margin-bottom: 3px; }
-        .card-numbered .dc-t { font-family: 'Syne'; font-size: 0.78rem; font-weight: 700; margin-bottom: 3px; }
-        .card-numbered .dc-d { font-size: 0.63rem; color: rgba(255,255,255,0.38); line-height: 1.5; }
-
-        .card-glow-hover {
-            background: #0a0a12;
-            border: 1px solid rgba(80,80,200,0.12);
-            padding: 14px;
-            transition: box-shadow 0.3s, border-color 0.3s;
-        }
-        .preview-card:hover .card-glow-hover {
-            box-shadow: 0 0 24px rgba(0,229,255,0.12), 0 0 50px rgba(0,229,255,0.04);
-            border-color: rgba(0,229,255,0.25);
-        }
-        .card-glow-hover .dc-icon { width: 26px; height: 26px; background: rgba(0,229,255,0.08); border-radius: 50%; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
-        .card-glow-hover .dc-t { font-family: 'Syne'; font-size: 0.78rem; font-weight: 700; margin-bottom: 3px; }
-        .card-glow-hover .dc-d { font-size: 0.63rem; color: rgba(255,255,255,0.38); line-height: 1.5; }
-
-        /* ══════════════════════════
-           FOOTER PREVIEWS
-        ══════════════════════════ */
-        .footer-preview { background: #050505; display: flex; align-items: flex-end; }
-
-        .footer-3col {
-            display: grid; grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px; padding: 14px;
-            background: #0d0d0d;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            width: 100%;
-        }
-        .footer-3col .fc { display: flex; flex-direction: column; gap: 4px; }
-        .footer-3col .fc-h { font-family: 'Syne'; font-size: 0.58rem; font-weight: 700; color: #fff; letter-spacing: 0.1em; margin-bottom: 1px; }
-        .footer-3col .fc-l { font-size: 0.58rem; color: rgba(255,255,255,0.3); }
-
-        .footer-minimal {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 16px;
-            background: #080808;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.58rem; color: rgba(255,255,255,0.3);
-            width: 100%;
-        }
-        .footer-minimal .f-logo { font-family: 'Bebas Neue'; font-size: 0.9rem; color: #fff; letter-spacing: 0.1em; }
-        .footer-minimal .f-links { display: flex; gap: 10px; }
-
-        .footer-biglogo { background: #080808; border-top: 1px solid rgba(255,255,255,0.05); width: 100%; }
-        .footer-biglogo .fbl-top { padding: 14px; }
-        .footer-biglogo .fbl-logo { font-family: 'Bebas Neue'; font-size: 2rem; color: rgba(255,255,255,0.06); letter-spacing: 0.04em; }
-        .footer-biglogo .fbl-bot { padding: 8px 14px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 0.56rem; color: rgba(255,255,255,0.22); display: flex; justify-content: space-between; }
-
-        .footer-accent-strip { background: #080808; width: 100%; }
-        .footer-accent-strip .fas-top { background: rgba(0,229,255,0.035); padding: 12px 14px; border-bottom: 1px solid rgba(0,229,255,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .footer-accent-strip .fas-logo { font-family: 'Bebas Neue'; font-size: 0.95rem; color: #00e5ff; letter-spacing: 0.1em; }
-        .footer-accent-strip .fas-links { display: flex; gap: 10px; }
-        .footer-accent-strip .fas-links span { font-size: 0.56rem; color: rgba(255,255,255,0.38); font-family: 'Syne'; letter-spacing: 0.05em; }
-        .footer-accent-strip .fas-bot { padding: 8px 14px; font-size: 0.56rem; color: rgba(255,255,255,0.2); }
-
-        /* ══════════════════════════
-           CONTACT FORM PREVIEWS
-        ══════════════════════════ */
-        .form-preview { background: #060608; display: flex; align-items: center; justify-content: center; padding: 16px; }
-        .demo-form { width: 100%; max-width: 215px; display: flex; flex-direction: column; gap: 7px; }
-        .demo-form .df-h { font-family: 'Syne'; font-size: 0.78rem; font-weight: 700; margin-bottom: 3px; }
-
-        .form-minimal .df-f { border-bottom: 1px solid rgba(255,255,255,0.13); padding: 5px 0; font-size: 0.63rem; color: rgba(255,255,255,0.38); }
-        .form-minimal .df-f span { display: block; font-size: 0.52rem; color: rgba(255,255,255,0.28); margin-bottom: 1px; letter-spacing: 0.06em; text-transform: uppercase; }
-        .form-minimal .df-btn { margin-top: 3px; background: #fff; color: #000; font-size: 0.6rem; padding: 7px 12px; font-family: 'Syne'; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; border-radius: 2px; }
-
-        .form-boxed .df-f { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); padding: 6px 9px; font-size: 0.63rem; color: rgba(255,255,255,0.3); border-radius: 4px; }
-        .form-boxed .df-btn { background: #00e5ff; color: #000; font-size: 0.6rem; padding: 8px 12px; font-family: 'Syne'; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; border-radius: 4px; }
-
-        .form-outlined .df-f { border: 1px solid rgba(0,229,255,0.18); padding: 6px 9px; font-size: 0.63rem; color: rgba(255,255,255,0.3); border-radius: 4px; background: transparent; }
-        .form-outlined .df-btn { background: transparent; border: 1px solid #00e5ff; color: #00e5ff; font-size: 0.6rem; padding: 7px 12px; font-family: 'Syne'; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; border-radius: 4px; }
-
-        /* ══════════════════════════
-           SUMMARY BAR
-        ══════════════════════════ */
-        .summary-bar {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(8,8,8,0.97);
-            backdrop-filter: blur(24px);
-            border-top: 1px solid var(--border);
-            padding: 0.9rem 2rem;
-            display: flex; align-items: center; justify-content: space-between;
-            z-index: 200;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .summary-bar.visible { transform: translateY(0); }
-
-        .summary-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; flex: 1; }
-
-        .s-chip {
-            font-family: 'Syne'; font-size: 0.67rem; font-weight: 600;
-            color: var(--accent);
-            background: var(--accent-dim);
-            border: 1px solid var(--accent-border);
-            padding: 3px 10px; border-radius: 20px; letter-spacing: 0.04em;
-        }
-        .s-chip .s-cat { color: var(--text-dim); font-weight: 400; margin-right: 3px; }
-
-        .bar-actions { display: flex; gap: 0.5rem; margin-left: 1rem; }
-
-        .btn-clear {
-            font-family: 'Syne'; font-size: 0.68rem; color: var(--text-dim);
-            background: none; border: 1px solid var(--border);
-            padding: 7px 14px; border-radius: 4px; cursor: pointer;
-            letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.2s;
-        }
-        .btn-clear:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-
-        .btn-export {
-            font-family: 'Syne'; font-size: 0.7rem; font-weight: 700;
-            letter-spacing: 0.1em; text-transform: uppercase;
-            background: var(--accent); color: #000;
-            border: none; padding: 7px 18px; border-radius: 4px;
-            cursor: pointer; transition: opacity 0.2s;
-        }
-        .btn-export:hover { opacity: 0.85; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DesignRoom — Pick Your Style</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080808;--bg2:#111;--bg3:#1a1a1a;
+  --accent:#00e5ff;--accent-dim:rgba(0,229,255,0.1);--accent-b:rgba(0,229,255,0.25);
+  --text:#f0f0f0;--dim:#777;--dimmer:#333;--border:rgba(255,255,255,0.07);
+  --card-bg:#111;--input-bg:rgba(255,255,255,0.04);
+}
+.light-mode{
+  --bg:#f4f4f4;--bg2:#fff;--bg3:#e8e8e8;
+  --accent:#0099bb;--accent-dim:rgba(0,153,187,0.1);--accent-b:rgba(0,153,187,0.3);
+  --text:#111;--dim:#666;--dimmer:#bbb;--border:rgba(0,0,0,0.08);
+  --card-bg:#fff;--input-bg:rgba(0,0,0,0.04);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;transition:background 0.3s,color 0.3s}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:200;background:rgba(8,8,8,0.97);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 2rem;transition:background 0.3s}
+.light-mode header{background:rgba(244,244,244,0.97)}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;padding:1rem 0 0.6rem}
+.logo{font-family:'Bebas Neue';font-size:1.9rem;letter-spacing:0.08em}
+.logo span{color:var(--accent)}
+.hdr-sub{font-size:0.65rem;color:var(--dim);letter-spacing:0.18em;text-transform:uppercase;font-family:'Syne'}
+.hdr-right{display:flex;align-items:center;gap:0.75rem}
+.theme-toggle{background:none;border:1px solid var(--border);color:var(--dim);padding:6px 12px;border-radius:5px;cursor:pointer;font-size:0.75rem;font-family:'Syne';font-weight:600;letter-spacing:0.08em;transition:all 0.2s}
+.theme-toggle:hover{color:var(--text);border-color:rgba(255,255,255,0.2)}
+.light-mode .theme-toggle:hover{border-color:rgba(0,0,0,0.2)}
+.cart-btn{display:flex;align-items:center;gap:0.5rem;background:var(--accent-dim);border:1px solid var(--accent-b);color:var(--accent);font-family:'Syne';font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:7px 14px;border-radius:5px;cursor:pointer;transition:all 0.2s}
+.cart-btn:hover{background:rgba(0,229,255,0.18)}
+.cart-count{background:var(--accent);color:#000;border-radius:50%;width:18px;height:18px;font-size:0.65rem;font-weight:800;display:flex;align-items:center;justify-content:center}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{font-family:'Syne';font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);background:none;border:none;border-bottom:2px solid transparent;padding:0.7rem 1rem;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* MAIN */
+main{padding:2.5rem 2rem 6rem;max-width:1400px;margin:0 auto}
+.sec-hdr{margin-bottom:1.8rem}
+.sec-title{font-family:'Syne';font-size:1.5rem;font-weight:800;margin-bottom:0.25rem}
+.sec-desc{font-size:0.85rem;color:var(--dim)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+
+/* CARD */
+.preview-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;position:relative;user-select:none}
+.preview-card:hover{border-color:rgba(255,255,255,0.2);transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.4)}
+.light-mode .preview-card:hover{border-color:rgba(0,0,0,0.15);box-shadow:0 8px 30px rgba(0,0,0,0.1)}
+.preview-card.selected{border-color:var(--accent);background:var(--accent-dim)}
+.preview-card.selected::after{content:'✓';position:absolute;top:10px;right:10px;width:22px;height:22px;background:var(--accent);color:#000;border-radius:50%;font-size:0.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;z-index:10;line-height:22px;text-align:center}
+.pw{height:200px;position:relative;overflow:hidden}
+.card-foot{padding:0.8rem 1rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
+.cl{font-family:'Syne';font-size:0.8rem;font-weight:700}
+.ct{font-size:0.63rem;color:var(--dim);background:var(--bg3);padding:2px 8px;border-radius:20px}
+
+/* CART SIDEBAR */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:499;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-sidebar{position:fixed;top:0;right:0;width:360px;height:100vh;background:var(--bg2);border-left:1px solid var(--border);z-index:500;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column}
+.cart-sidebar.open{transform:translateX(0)}
+.cart-hdr{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-hdr-title{font-family:'Syne';font-size:1rem;font-weight:800}
+.cart-close{background:none;border:1px solid var(--border);color:var(--dim);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.cart-items{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.5rem}
+.cart-empty{text-align:center;color:var(--dimmer);font-size:0.85rem;margin-top:3rem}
+.cart-empty strong{display:block;color:var(--dim);font-family:'Syne';font-size:0.9rem;margin-bottom:0.4rem}
+.cart-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:flex;align-items:center;justify-content:space-between}
+.ci-cat{font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;font-family:'Syne';margin-bottom:2px}
+.ci-label{font-family:'Syne';font-size:0.8rem;font-weight:700}
+.ci-remove{background:none;border:none;color:var(--dimmer);cursor:pointer;font-size:1.1rem;padding:4px;line-height:1;transition:color 0.2s}
+.ci-remove:hover{color:#ff3366}
+.cart-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:0.5rem}
+.btn-primary{width:100%;font-family:'Syne';font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:var(--accent);color:#000;border:none;padding:12px;border-radius:6px;cursor:pointer;transition:opacity 0.2s}
+.btn-primary:hover{opacity:0.85}
+.btn-secondary{width:100%;font-family:'Syne';font-size:0.7rem;color:var(--dim);background:none;border:1px solid var(--border);padding:9px;border-radius:6px;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;transition:all 0.2s}
+.btn-secondary:hover{color:var(--text);border-color:rgba(255,255,255,0.2)}
+
+/* QUESTIONNAIRE MODAL */
+.q-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(12px)}
+.q-overlay.open{opacity:1;pointer-events:all}
+.q-box{width:90vw;max-width:720px;max-height:90vh;background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.q-header{padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.q-title{font-family:'Syne';font-size:1.1rem;font-weight:800}
+.q-step-ind{font-family:'Syne';font-size:0.7rem;color:var(--dim);letter-spacing:0.1em}
+.q-progress{height:3px;background:var(--bg3);flex-shrink:0}
+.q-progress-bar{height:100%;background:var(--accent);transition:width 0.4s ease}
+.q-body{flex:1;overflow-y:auto;padding:2rem}
+.q-step{display:none}
+.q-step.active{display:block}
+.q-step-title{font-family:'Syne';font-size:1rem;font-weight:700;margin-bottom:0.35rem}
+.q-step-desc{font-size:0.82rem;color:var(--dim);margin-bottom:1.5rem;line-height:1.5}
+.q-field{margin-bottom:1.2rem}
+.q-label{font-family:'Syne';font-size:0.72rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);margin-bottom:0.4rem;display:block}
+.q-input,.q-textarea,.q-select{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);font-family:'DM Sans';font-size:0.88rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color 0.2s}
+.q-input:focus,.q-textarea:focus,.q-select:focus{border-color:var(--accent)}
+.q-textarea{resize:vertical;min-height:80px;line-height:1.5}
+.q-select{cursor:pointer}
+.q-select option{background:var(--bg2)}
+.q-checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.q-check{display:flex;align-items:center;gap:0.5rem;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;cursor:pointer;transition:all 0.2s;font-size:0.82rem}
+.q-check:hover{border-color:var(--accent);background:var(--accent-dim)}
+.q-check input{accent-color:var(--accent);width:14px;height:14px}
+.q-check.checked{border-color:var(--accent);background:var(--accent-dim)}
+.q-footer{padding:1.2rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.q-back{font-family:'Syne';font-size:0.72rem;color:var(--dim);background:none;border:1px solid var(--border);padding:9px 18px;border-radius:6px;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;transition:all 0.2s}
+.q-back:hover{color:var(--text)}
+.q-next{font-family:'Syne';font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent);color:#000;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;transition:opacity 0.2s}
+.q-next:hover{opacity:0.85}
+.q-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* SUCCESS STATE */
+.q-success{text-align:center;padding:3rem 2rem;display:none}
+.q-success.show{display:block}
+.q-success-icon{font-size:3rem;margin-bottom:1rem}
+.q-success-title{font-family:'Syne';font-size:1.5rem;font-weight:800;margin-bottom:0.5rem}
+.q-success-sub{font-size:0.9rem;color:var(--dim);line-height:1.6}
+
+/* BACKGROUNDS */
+.bg-particles,.bg-stars,.bg-matrix,.bg-cctv{position:relative}
+.bg-particles canvas,.bg-stars canvas,.bg-matrix canvas,.bg-cctv canvas{position:absolute;inset:0;width:100%;height:100%}
+.bg-particles{background:#050510}
+.bg-stars{background:#020208}
+.bg-matrix{background:#000500}
+.bg-cctv{background:#080808}
+.bg-grad{background:linear-gradient(-45deg,#0a0015,#001a2e,#0d1f00,#1a0010);background-size:400% 400%;animation:gradFlow 6s ease infinite}
+@keyframes gradFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.bg-grid{background-color:#060612;background-image:linear-gradient(rgba(0,229,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.06) 1px,transparent 1px);background-size:28px 28px}
+.bg-geo{background:#0a0a0a}
+.geo-shape{position:absolute;border:1px solid rgba(255,255,255,0.05);border-radius:3px;animation:geoSpin linear infinite}
+@keyframes geoSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.bg-scan{background:#050505;position:relative}
+.bg-scan::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,100,0.012) 2px,rgba(0,255,100,0.012) 4px)}
+.bg-scan::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(0,255,100,0.07) 0%,transparent 65%)}
+.bg-mesh{background:radial-gradient(ellipse at 20% 50%,rgba(100,30,200,0.28) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(0,80,200,0.28) 0%,transparent 50%),radial-gradient(ellipse at 60% 80%,rgba(200,0,60,0.18) 0%,transparent 50%),#080808;animation:meshPulse 8s ease-in-out infinite alternate}
+@keyframes meshPulse{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(25deg)}}
+.bg-noise{background:#0c0c0c;position:relative}
+.bg-noise::before{content:'';position:absolute;inset:0;opacity:0.35;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E")}
+.bg-aurora{background:#030310;position:relative;overflow:hidden}
+.bg-aurora::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(0,200,150,0.2) 0%,transparent 55%),radial-gradient(ellipse at 70% 30%,rgba(100,0,200,0.2) 0%,transparent 55%);animation:auroraPulse 6s ease-in-out infinite alternate}
+@keyframes auroraPulse{0%{opacity:0.7}100%{opacity:1}}
+.bg-circuit{background:#050a05;background-image:linear-gradient(rgba(0,200,80,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,80,0.04) 1px,transparent 1px);background-size:20px 20px}
+.bg-blobs{background:#08080f;position:relative;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(40px);animation:blobFloat ease-in-out infinite alternate}
+@keyframes blobFloat{0%{transform:translate(0,0) scale(1)}100%{transform:translate(15px,-15px) scale(1.1)}}
+.bg-diagonal{background:#080808;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,0.02) 0px,rgba(255,255,255,0.02) 1px,transparent 1px,transparent 20px)}
+
+/* NAVBARS */
+.nav-preview{background:#06060e;align-items:flex-start}
+.nf{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:rgba(255,255,255,0.055);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.09);width:100%}
+.ns{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#111;border-bottom:2px solid #00e5ff;width:100%}
+.nm{display:flex;align-items:center;justify-content:center;gap:24px;padding:15px 18px;border-bottom:1px solid rgba(255,255,255,0.05);width:100%}
+.nb{display:flex;align-items:center;justify-content:space-between;padding:0 18px;height:50px;background:#0d0d0d;border-left:3px solid #ff3366;width:100%}
+.nh{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,0.06);width:100%}
+.n-logo{font-family:'Bebas Neue';font-size:1rem;letter-spacing:0.1em}
+.n-links{display:flex;gap:14px}
+.n-links span{font-size:0.6rem;color:rgba(255,255,255,0.55);letter-spacing:0.1em;text-transform:uppercase;font-family:'Syne';font-weight:600}
+.n-active{color:#fff!important;border-bottom:1px solid #fff;padding-bottom:2px}
+.n-cta{font-size:0.58rem;background:#ff3366;color:#fff;padding:5px 11px;border-radius:3px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Syne';font-weight:700}
+.hbg{display:flex;flex-direction:column;gap:4px}
+.hbg span{display:block;height:2px;background:#fff;border-radius:2px}
+.hbg span:nth-child(1){width:22px}.hbg span:nth-child(2){width:22px}.hbg span:nth-child(3){width:14px}
+.nav-pill-inner{display:flex;gap:4px;background:rgba(255,255,255,0.05);padding:4px;border-radius:30px}
+.np-item{font-size:0.58rem;color:rgba(255,255,255,0.45);padding:5px 10px;border-radius:24px;font-family:'Syne';font-weight:600;letter-spacing:0.08em;text-transform:uppercase}
+.np-item.a{background:#00e5ff;color:#000}
+.nav-sidebar-demo{display:flex;height:100%}
+.nav-sidebar-inner{width:70px;background:#0d0d0d;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:16px}
+.ns-logo{font-family:'Bebas Neue';font-size:0.85rem;color:var(--accent)}
+.ns-dot{width:6px;height:6px;background:rgba(255,255,255,0.2);border-radius:50%}
+.ns-dot.a{background:var(--accent)}
+.nav-split-inner{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,0.07);width:100%;background:#09090d}
+.nav-split-inner .nsl,.nav-split-inner .nsr{display:flex;gap:12px}
+.nav-split-inner .n-logo{font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:0.1em}
+.nav-trans{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;width:100%;background:transparent}
+
+/* HEROES */
+.hero-split-inner{display:grid;grid-template-columns:1fr 1fr;height:100%;background:#050508}
+.hs-text{padding:18px;display:flex;flex-direction:column;justify-content:center;gap:5px}
+.h-eye{font-size:0.5rem;color:#00e5ff;letter-spacing:0.2em;text-transform:uppercase;font-family:'Syne';font-weight:700}
+.h-t{font-family:'Bebas Neue';font-size:1.7rem;line-height:0.93}
+.h-t em{color:#00e5ff;font-style:normal}
+.h-s{font-size:0.6rem;color:rgba(255,255,255,0.45)}
+.h-b{margin-top:7px;background:#00e5ff;color:#000;font-size:0.58rem;padding:5px 12px;border-radius:3px;font-family:'Syne';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;width:fit-content}
+.hs-img{background:linear-gradient(135deg,#0a0a20,#180535);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hs-img::after{content:'';width:70px;height:70px;border-radius:50%;background:rgba(0,229,255,0.12);border:1px solid rgba(0,229,255,0.25);position:absolute;animation:pulseAnim 2.5s ease-in-out infinite}
+@keyframes pulseAnim{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.hero-ctr{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px;padding:18px;background:#050505;height:100%}
+.hero-ctr .h-eye{color:rgba(255,255,255,0.35);letter-spacing:0.28em}
+.hero-ctr .h-t{font-size:1.9rem;letter-spacing:0.07em}
+.h-line{width:36px;height:2px;background:#00e5ff}
+.hero-typo-inner{display:flex;flex-direction:column;justify-content:flex-end;padding:18px;background:#030303;height:100%;position:relative;overflow:hidden}
+.bg-n{position:absolute;font-family:'Bebas Neue';font-size:8rem;color:rgba(255,255,255,0.025);top:-10px;right:-8px;line-height:1;user-select:none}
+.typing{font-family:'Bebas Neue';font-size:1.4rem;border-right:2px solid #00e5ff;padding-right:3px;white-space:nowrap;overflow:hidden;animation:typing 3.5s steps(10) infinite,blink 0.6s step-end infinite;width:0}
+@keyframes typing{0%,8%{width:0}50%,88%{width:10ch}96%,100%{width:0}}@keyframes blink{50%{border-color:transparent}}
+.hero-anim-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#050510;height:100%;text-align:center;padding:18px}
+.hero-cin-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:100%;text-align:center;padding:18px;position:relative;background:linear-gradient(-45deg,#0a0020,#000a1e,#000e06,#1a0008);background-size:400% 400%;animation:gradFlow 5s ease infinite}
+.hero-cin-inner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.008) 2px,rgba(255,255,255,0.008) 4px)}
+.hero-cin-inner .h-eye,.hero-cin-inner .h-t{position:relative}
+.hero-cin-inner .h-eye{color:rgba(255,255,255,0.45);letter-spacing:0.28em}
+.hero-cin-inner .h-t{font-size:1.8rem;letter-spacing:0.08em}
+.play-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center}
+.play-btn::after{content:'▶';font-size:0.55rem;margin-left:2px}
+.hero-stats-inner{background:#060608;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:18px}
+.hs-stats-row{display:flex;gap:14px}
+.hs-stat .sv{font-family:'Bebas Neue';font-size:1.8rem;color:#00e5ff;line-height:1}
+.hs-stat .sl{font-size:0.55rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.1em;font-family:'Syne'}
+.hero-marquee-inner{background:#030303;height:100%;display:flex;flex-direction:column;justify-content:center;overflow:hidden;position:relative}
+.marquee-track{white-space:nowrap;animation:marqueeScroll 8s linear infinite;padding:10px 0}
+.marquee-track span{font-family:'Bebas Neue';font-size:2.5rem;letter-spacing:0.08em;color:rgba(255,255,255,0.08);margin-right:40px}
+.marquee-track span.acc{color:rgba(0,229,255,0.2)}
+@keyframes marqueeScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hero-marquee-inner .ct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.hero-marquee-inner .ct .cht{font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:0.08em}
+.hero-marquee-inner .ct .chs{font-size:0.6rem;color:rgba(255,255,255,0.4);font-family:'Syne';letter-spacing:0.1em;text-transform:uppercase}
+.hero-diag-inner{height:100%;position:relative;overflow:hidden;background:#050505}
+.hd-left{position:absolute;inset:0;clip-path:polygon(0 0,65% 0,50% 100%,0 100%);background:#0a0a14;display:flex;flex-direction:column;justify-content:center;padding:18px;gap:5px}
+.hd-right{position:absolute;right:0;top:0;bottom:0;width:50%;background:linear-gradient(135deg,#0a0a20,#180535)}
+
+/* COLOUR SCHEMES */
+.cs-preview{height:100%;display:flex;flex-direction:column}
+.cs-demo{flex:1;display:flex;flex-direction:column;padding:16px;gap:8px}
+.cs-swatches{display:flex;height:28px;flex-shrink:0}
+.sw{flex:1}
+.cd-nav{height:6px;border-radius:2px;opacity:0.4}
+.cd-t{height:12px;border-radius:2px;width:68%}
+.cd-s{height:6px;border-radius:2px;width:48%;opacity:0.4}
+.cd-b{height:8px;border-radius:3px;width:32%;margin-top:4px}
+.cs1 .cs-demo{background:#0a0a0a}.cs1 .cd-nav{background:#1a1a1a}.cs1 .cd-t{background:#fff}.cs1 .cd-s{background:#555}.cs1 .cd-b{background:#00e5ff}.cs1 .sw:nth-child(1){background:#0a0a0a}.cs1 .sw:nth-child(2){background:#1a1a1a}.cs1 .sw:nth-child(3){background:#00e5ff}.cs1 .sw:nth-child(4){background:#fff}
+.cs2 .cs-demo{background:#09101e}.cs2 .cd-nav{background:#131d30}.cs2 .cd-t{background:#eef0f4}.cs2 .cd-s{background:#4a5270}.cs2 .cd-b{background:#d4a843}.cs2 .sw:nth-child(1){background:#09101e}.cs2 .sw:nth-child(2){background:#131d30}.cs2 .sw:nth-child(3){background:#d4a843}.cs2 .sw:nth-child(4){background:#eef0f4}
+.cs3 .cs-demo{background:#fff}.cs3 .cd-nav{background:#eee}.cs3 .cd-t{background:#000}.cs3 .cd-s{background:#aaa}.cs3 .cd-b{background:#000}.cs3 .sw:nth-child(1){background:#fff}.cs3 .sw:nth-child(2){background:#eee}.cs3 .sw:nth-child(3){background:#000}.cs3 .sw:nth-child(4){background:#888}
+.cs4 .cs-demo{background:#0d0505}.cs4 .cd-nav{background:#1a0808}.cs4 .cd-t{background:#f5f2f2}.cs4 .cd-s{background:#5a3535}.cs4 .cd-b{background:#e63333}.cs4 .sw:nth-child(1){background:#0d0505}.cs4 .sw:nth-child(2){background:#1a0808}.cs4 .sw:nth-child(3){background:#e63333}.cs4 .sw:nth-child(4){background:#f5f2f2}
+.cs5 .cs-demo{background:#0e141a}.cs5 .cd-nav{background:#192028}.cs5 .cd-t{background:#e8edf2}.cs5 .cd-s{background:#445060}.cs5 .cd-b{background:#10b981}.cs5 .sw:nth-child(1){background:#0e141a}.cs5 .sw:nth-child(2){background:#192028}.cs5 .sw:nth-child(3){background:#10b981}.cs5 .sw:nth-child(4){background:#e8edf2}
+.cs6 .cs-demo{background:#080d08}.cs6 .cd-nav{background:#101a10}.cs6 .cd-t{background:#e8f0e8}.cs6 .cd-s{background:#3a5a3a}.cs6 .cd-b{background:#4ade80}.cs6 .sw:nth-child(1){background:#080d08}.cs6 .sw:nth-child(2){background:#101a10}.cs6 .sw:nth-child(3){background:#4ade80}.cs6 .sw:nth-child(4){background:#e8f0e8}
+.cs7 .cs-demo{background:#120820}.cs7 .cd-nav{background:#1e1030}.cs7 .cd-t{background:#f0eaff}.cs7 .cd-s{background:#6040a0}.cs7 .cd-b{background:#a855f7}.cs7 .sw:nth-child(1){background:#120820}.cs7 .sw:nth-child(2){background:#1e1030}.cs7 .sw:nth-child(3){background:#a855f7}.cs7 .sw:nth-child(4){background:#f0eaff}
+.cs8 .cs-demo{background:#0f0a06}.cs8 .cd-nav{background:#1e1408}.cs8 .cd-t{background:#f5efe8}.cs8 .cd-s{background:#8a6040}.cs8 .cd-b{background:#e8943a}.cs8 .sw:nth-child(1){background:#0f0a06}.cs8 .sw:nth-child(2){background:#1e1408}.cs8 .sw:nth-child(3){background:#e8943a}.cs8 .sw:nth-child(4){background:#f5efe8}
+.cs9 .cs-demo{background:#08080a}.cs9 .cd-nav{background:#141416}.cs9 .cd-t{background:#fff}.cs9 .cd-s{background:#444}.cs9 .cd-b{background:#ff3366}.cs9 .sw:nth-child(1){background:#08080a}.cs9 .sw:nth-child(2){background:#141416}.cs9 .sw:nth-child(3){background:#ff3366}.cs9 .sw:nth-child(4){background:#fff}
+.cs10 .cs-demo{background:#060c10}.cs10 .cd-nav{background:#0e1820}.cs10 .cd-t{background:#e8f4ff}.cs10 .cd-s{background:#304560}.cs10 .cd-b{background:#00bcd4}.cs10 .sw:nth-child(1){background:#060c10}.cs10 .sw:nth-child(2){background:#0e1820}.cs10 .sw:nth-child(3){background:#00bcd4}.cs10 .sw:nth-child(4){background:#e8f4ff}
+
+/* CARDS */
+.cards-preview{background:#060608;display:flex;align-items:center;justify-content:center;padding:16px}
+.dc{width:100%;max-width:195px;border-radius:7px;overflow:hidden}
+.card-glass{background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.09);backdrop-filter:blur(10px);padding:14px}
+.card-bordered{border:1px solid rgba(255,255,255,0.1);background:#0d0d0d;padding:14px}
+.card-gradb{background:linear-gradient(#0d0d0d,#0d0d0d) padding-box,linear-gradient(135deg,#00e5ff,#ff3366) border-box;border:1px solid transparent;padding:14px}
+.card-accent-h{background:#0d0d0d}
+.card-accent-h .dct{background:linear-gradient(135deg,rgba(0,229,255,0.1),rgba(0,229,255,0.03));height:36px;border-bottom:1px solid rgba(0,229,255,0.18)}
+.card-accent-h .dcb{padding:10px 14px}
+.card-num{background:#111;padding:14px}
+.card-glow-h{background:#0a0a12;border:1px solid rgba(80,80,200,0.12);padding:14px;transition:box-shadow 0.3s,border-color 0.3s}
+.preview-card:hover .card-glow-h{box-shadow:0 0 24px rgba(0,229,255,0.12);border-color:rgba(0,229,255,0.25)}
+.card-image{background:#0d0d0d;overflow:hidden}
+.card-image .ci-img{height:70px;background:linear-gradient(135deg,#0a0a20,#180535);display:flex;align-items:center;justify-content:center;font-size:1.5rem;opacity:0.5}
+.card-image .ci-body{padding:10px 14px}
+.card-horiz{background:#0d0d0d;border:1px solid rgba(255,255,255,0.08);display:flex;gap:10px;padding:12px;align-items:center}
+.card-horiz .ch-icon{width:36px;height:36px;border-radius:8px;background:rgba(0,229,255,0.15);border:1px solid rgba(0,229,255,0.3);flex-shrink:0}
+.card-pricing{background:#0d0d0d;border:1px solid rgba(255,255,255,0.1);padding:14px;text-align:center}
+.card-pricing .cp-price{font-family:'Bebas Neue';font-size:2rem;color:#00e5ff;line-height:1;margin-bottom:4px}
+.card-pricing .cp-per{font-size:0.55rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.1em}
+.dci{width:26px;height:26px;background:rgba(0,229,255,0.18);border:1px solid rgba(0,229,255,0.35);border-radius:6px;margin-bottom:8px}
+.dcline{width:26px;height:2px;background:#00e5ff;margin-bottom:9px}
+.dcnum{font-family:'Bebas Neue';font-size:2rem;color:rgba(255,255,255,0.06);line-height:1;margin-bottom:3px}
+.dct2{font-family:'Syne';font-size:0.78rem;font-weight:700;margin-bottom:3px}
+.dcd{font-size:0.63rem;color:rgba(255,255,255,0.42);line-height:1.5}
+
+/* FOOTERS */
+.footer-preview{background:#050505;display:flex;align-items:flex-end}
+.f3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:14px;background:#0d0d0d;border-top:1px solid rgba(255,255,255,0.05);width:100%}
+.f3col .fc{display:flex;flex-direction:column;gap:4px}
+.fch{font-family:'Syne';font-size:0.58rem;font-weight:700;color:#fff;letter-spacing:0.1em;margin-bottom:1px}
+.fcl{font-size:0.58rem;color:rgba(255,255,255,0.3)}
+.fmin{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#080808;border-top:1px solid rgba(255,255,255,0.05);font-size:0.58rem;color:rgba(255,255,255,0.3);width:100%}
+.fmin .fl{font-family:'Bebas Neue';font-size:0.9rem;color:#fff;letter-spacing:0.1em}
+.fmin .flinks{display:flex;gap:10px}
+.fbig{background:#080808;border-top:1px solid rgba(255,255,255,0.05);width:100%}
+.fbig .fbt{padding:14px}
+.fbig .fbl{font-family:'Bebas Neue';font-size:2rem;color:rgba(255,255,255,0.06);letter-spacing:0.04em}
+.fbig .fbb{padding:8px 14px;border-top:1px solid rgba(255,255,255,0.04);font-size:0.56rem;color:rgba(255,255,255,0.22);display:flex;justify-content:space-between}
+.fas-f{background:#080808;width:100%}
+.fas-f .fat{background:rgba(0,229,255,0.035);padding:12px 14px;border-bottom:1px solid rgba(0,229,255,0.1);display:flex;justify-content:space-between;align-items:center}
+.fas-f .fal{font-family:'Bebas Neue';font-size:0.95rem;color:#00e5ff;letter-spacing:0.1em}
+.fas-f .falinks{display:flex;gap:10px}
+.fas-f .falinks span{font-size:0.56rem;color:rgba(255,255,255,0.38);font-family:'Syne';letter-spacing:0.05em}
+.fas-f .fab{padding:8px 14px;font-size:0.56rem;color:rgba(255,255,255,0.2)}
+.fnews{background:#080808;border-top:1px solid rgba(255,255,255,0.05);width:100%;padding:14px}
+.fnews .fn-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.fnews .fn-logo{font-family:'Bebas Neue';font-size:0.9rem;letter-spacing:0.1em}
+.fnews .fn-social{display:flex;gap:6px}
+.fnews .fn-social span{width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,0.06);display:block}
+.fnews .fn-input{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:7px 10px;font-size:0.58rem;color:rgba(255,255,255,0.25);display:flex;justify-content:space-between;align-items:center}
+.fnews .fn-btn{font-size:0.55rem;background:#00e5ff;color:#000;padding:2px 7px;border-radius:3px;font-family:'Syne';font-weight:700}
+.fnews .fn-copy{font-size:0.52rem;color:rgba(255,255,255,0.2);margin-top:6px}
+.fmap{background:#080808;border-top:1px solid rgba(255,255,255,0.05);width:100%;display:flex}
+.fmap .fm-info{padding:14px;flex:1;display:flex;flex-direction:column;gap:5px}
+.fmap .fml{font-family:'Bebas Neue';font-size:0.9rem;letter-spacing:0.1em}
+.fmap .fmd{font-size:0.56rem;color:rgba(255,255,255,0.3);line-height:1.6}
+.fmap .fm-map{width:80px;background:linear-gradient(135deg,#0a1020,#0a2010);border-left:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:1.2rem;opacity:0.4}
+.fdark-f{background:#050505;border-top:3px solid #ff3366;width:100%}
+.fdark-f .fd-inner{display:grid;grid-template-columns:1fr 1fr}
+.fdark-f .fd-left{padding:12px 14px;border-right:1px solid rgba(255,255,255,0.05)}
+.fdark-f .fd-logo{font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:0.08em;color:#ff3366}
+.fdark-f .fd-sub{font-size:0.55rem;color:rgba(255,255,255,0.25);margin-top:2px}
+.fdark-f .fd-right{padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.fdark-f .fdr-l{font-size:0.56rem;color:rgba(255,255,255,0.3)}
+
+/* FORMS */
+.form-preview{background:#060608;display:flex;align-items:center;justify-content:center;padding:16px}
+.dform{width:100%;max-width:215px;display:flex;flex-direction:column;gap:7px}
+.dform .dft{font-family:'Syne';font-size:0.78rem;font-weight:700;margin-bottom:3px}
+.fm .dff{border-bottom:1px solid rgba(255,255,255,0.13);padding:5px 0;font-size:0.63rem;color:rgba(255,255,255,0.38)}
+.fm .dff span{display:block;font-size:0.52rem;color:rgba(255,255,255,0.28);margin-bottom:1px;letter-spacing:0.06em;text-transform:uppercase}
+.fm .dfb{margin-top:3px;background:#fff;color:#000;font-size:0.6rem;padding:7px 12px;font-family:'Syne';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:center;border-radius:2px}
+.fb .dff{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:6px 9px;font-size:0.63rem;color:rgba(255,255,255,0.3);border-radius:4px}
+.fb .dfb{background:#00e5ff;color:#000;font-size:0.6rem;padding:8px 12px;font-family:'Syne';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:center;border-radius:4px}
+.fo .dff{border:1px solid rgba(0,229,255,0.18);padding:6px 9px;font-size:0.63rem;color:rgba(255,255,255,0.3);border-radius:4px;background:transparent}
+.fo .dfb{background:transparent;border:1px solid #00e5ff;color:#00e5ff;font-size:0.6rem;padding:7px 12px;font-family:'Syne';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:center;border-radius:4px}
+.fsplit-form{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%;max-width:260px}
+.fsplit-form .dft{grid-column:1/-1;font-family:'Syne';font-size:0.78rem;font-weight:700;margin-bottom:3px}
+.fsplit-form .dff{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:6px 9px;font-size:0.6rem;color:rgba(255,255,255,0.3);border-radius:4px}
+.fsplit-form .dff.full{grid-column:1/-1}
+.fsplit-form .dfb{grid-column:1/-1;background:#00e5ff;color:#000;font-size:0.6rem;padding:8px 12px;font-family:'Syne';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:center;border-radius:4px}
+.fstep-form{width:100%;max-width:215px;display:flex;flex-direction:column;gap:7px}
+.fstep-form .dft{font-family:'Syne';font-size:0.78rem;font-weight:700;margin-bottom:3px}
+.fstep-form .fsteps{display:flex;gap:5px;align-items:center;margin-bottom:4px}
+.fstep-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-family:'Syne';font-weight:700;color:rgba(255,255,255,0.35);flex-shrink:0}
+.fstep-dot.a{border-color:#00e5ff;color:#00e5ff}
+.fstep-line-d{flex:1;height:1px;background:rgba(255,255,255,0.08)}
+.fstep-form .dff{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:6px 9px;font-size:0.63rem;color:rgba(255,255,255,0.3);border-radius:4px}
+.fstep-form .dfb{background:#00e5ff;color:#000;font-size:0.6rem;padding:8px 12px;font-family:'Syne';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:center;border-radius:4px}
+.fglow-form{width:100%;max-width:215px;display:flex;flex-direction:column;gap:7px}
+.fglow-form .dft{font-family:'Syne';font-size:0.78rem;font-weight:700;margin-bottom:3px}
+.fglow-form .dff{border:1px solid rgba(0,229,255,0.15);padding:6px 9px;font-size:0.63rem;color:rgba(255,255,255,0.3);border-radius:4px;background:rgba(0,229,255,0.02);transition:border-color 0.2s,box-shadow 0.2s}
+.preview-card:hover .fglow-form .dff{border-color:rgba(0,229,255,0.4);box-shadow:0 0 10px rgba(0,229,255,0.1)}
+.fglow-form .dfb{background:linear-gradient(135deg,#00e5ff,#0099bb);color:#000;font-size:0.6rem;padding:8px 12px;font-family:'Syne';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:center;border-radius:4px}
+
+/* SCROLL ANIMATIONS */
+.anim-preview{background:#060608;display:flex;align-items:center;justify-content:center;padding:24px;gap:10px;flex-direction:column}
+.anim-box{width:100%;max-width:200px}
+.ab-item{background:#111;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 14px;margin-bottom:8px}
+.ab-t{font-family:'Syne';font-size:0.75rem;font-weight:700;margin-bottom:3px}
+.ab-d{font-size:0.6rem;color:rgba(255,255,255,0.4);line-height:1.4}
+.anim-fade .ab-item{opacity:0;animation:fadeInUp 1.5s ease forwards infinite}
+.anim-fade .ab-item:nth-child(2){animation-delay:0.3s}.anim-fade .ab-item:nth-child(3){animation-delay:0.6s}
+@keyframes fadeInUp{0%{opacity:0;transform:translateY(20px)}30%,80%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(0)}}
+.anim-slide .ab-item{opacity:0;animation:slideInLeft 1.5s ease forwards infinite}
+.anim-slide .ab-item:nth-child(2){animation-delay:0.25s}.anim-slide .ab-item:nth-child(3){animation-delay:0.5s}
+@keyframes slideInLeft{0%{opacity:0;transform:translateX(-30px)}30%,80%{opacity:1;transform:translateX(0)}100%{opacity:0}}
+.anim-scale .ab-item{opacity:0;animation:scaleIn 1.5s ease forwards infinite}
+.anim-scale .ab-item:nth-child(2){animation-delay:0.3s}.anim-scale .ab-item:nth-child(3){animation-delay:0.6s}
+@keyframes scaleIn{0%{opacity:0;transform:scale(0.85)}30%,80%{opacity:1;transform:scale(1)}100%{opacity:0}}
+.count-item{text-align:center}
+.count-num{font-family:'Bebas Neue';font-size:2rem;color:#00e5ff;line-height:1;animation:countPulse 3s ease-in-out infinite}
+.count-lbl{font-size:0.55rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.1em;font-family:'Syne'}
+@keyframes countPulse{0%{opacity:0.3}50%{opacity:1}100%{opacity:0.3}}
+.anim-parallax-inner{position:relative;overflow:hidden;background:#030308;width:100%;height:100%}
+.ap-layer{position:absolute;width:100%;text-align:center;font-family:'Bebas Neue';color:rgba(255,255,255,0.04);letter-spacing:0.05em}
+.ap-layer.l1{font-size:3rem;top:10%;animation:plax1 6s ease-in-out infinite alternate}
+.ap-layer.l2{font-size:5rem;top:25%;animation:plax2 6s ease-in-out infinite alternate}
+.ap-layer.l3{font-size:2rem;top:55%;animation:plax3 6s ease-in-out infinite alternate}
+.ap-fg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px}
+.ap-fg .aft{font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:0.08em}
+.ap-fg .afs{font-size:0.6rem;color:rgba(255,255,255,0.35);font-family:'Syne';letter-spacing:0.1em;text-transform:uppercase}
+@keyframes plax1{from{transform:translateY(-10px)}to{transform:translateY(10px)}}
+@keyframes plax2{from{transform:translateY(8px)}to{transform:translateY(-8px)}}
+@keyframes plax3{from{transform:translateY(-5px)}to{transform:translateY(5px)}}
+.sg-item{flex:1;min-width:55px;background:#111;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px;opacity:0;animation:sgIn 2s ease forwards infinite}
+.sg-item:nth-child(1){animation-delay:0s}.sg-item:nth-child(2){animation-delay:0.15s}.sg-item:nth-child(3){animation-delay:0.3s}.sg-item:nth-child(4){animation-delay:0.45s}
+@keyframes sgIn{0%{opacity:0;transform:translateY(12px)}30%,80%{opacity:1;transform:translateY(0)}100%{opacity:0}}
+.sg-icon{width:20px;height:20px;border-radius:4px;background:rgba(0,229,255,0.2);margin-bottom:6px}
+.sg-t{font-family:'Syne';font-size:0.65rem;font-weight:700}
+.sg-d{font-size:0.55rem;color:rgba(255,255,255,0.3);line-height:1.4;margin-top:2px}
+.rv-line-a{height:2px;background:rgba(255,255,255,0.1);width:0;border-radius:2px;animation:rvLine 2s ease forwards infinite}
+.rv-t{font-family:'Syne';font-size:0.8rem;font-weight:800;overflow:hidden}
+.rv-t span{display:block;transform:translateY(100%);animation:rvText 2s ease forwards infinite}
+.rv-t:nth-child(3) span{animation-delay:0.2s}.rv-t:nth-child(4) span{animation-delay:0.4s}
+@keyframes rvLine{0%{width:0}40%,80%{width:100%}100%{width:100%}}
+@keyframes rvText{0%{transform:translateY(100%)}30%,80%{transform:translateY(0)}100%{transform:translateY(0)}}
+
+/* GENERATE PREVIEW */
+.generate-panel{text-align:center;padding:3rem 2rem}
+.gen-icon{font-size:3rem;margin-bottom:1rem;opacity:0.5}
+.gen-title{font-family:'Syne';font-size:1.8rem;font-weight:800;margin-bottom:0.5rem}
+.gen-sub{font-size:0.9rem;color:var(--dim);margin-bottom:1.5rem;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.6}
+.gen-chips{display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;margin-bottom:2rem;min-height:32px}
+.gen-chip{font-family:'Syne';font-size:0.68rem;font-weight:600;color:var(--accent);background:var(--accent-dim);border:1px solid var(--accent-b);padding:4px 12px;border-radius:20px}
+.gen-chip .gc-cat{color:var(--dim);font-weight:400;margin-right:4px}
+.gen-btn{font-family:'Syne';font-size:0.85rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:var(--accent);color:#000;border:none;padding:14px 32px;border-radius:6px;cursor:pointer;transition:all 0.2s;display:inline-block;margin-bottom:0.75rem}
+.gen-btn:hover{opacity:0.85;transform:translateY(-1px)}
+.gen-btn:disabled{opacity:0.4;cursor:default;transform:none}
+.gen-hint{font-size:0.72rem;color:var(--dimmer)}
+
+/* MAC BROWSER PREVIEW */
+.mac-browser{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:2rem;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.mac-bar{background:#1e1e1e;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.light-mode .mac-bar{background:#e0e0e0}
+.mac-dots{display:flex;gap:6px}
+.mac-dot{width:12px;height:12px;border-radius:50%}
+.mac-dot:nth-child(1){background:#ff5f57}
+.mac-dot:nth-child(2){background:#febc2e}
+.mac-dot:nth-child(3){background:#28c840}
+.mac-url{flex:1;background:rgba(255,255,255,0.08);border-radius:6px;padding:5px 14px;font-size:0.7rem;color:rgba(255,255,255,0.4);text-align:center;font-family:'DM Sans'}
+.light-mode .mac-url{background:rgba(0,0,0,0.08);color:rgba(0,0,0,0.4)}
+.mac-actions{display:flex;gap:6px}
+.mac-action{width:26px;height:26px;border-radius:5px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:rgba(255,255,255,0.3);cursor:pointer}
+.light-mode .mac-action{background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.3)}
+#preview-iframe{width:100%;height:560px;border:none;display:block;background:#fff}
+
+/* SITE FOOTER */
+.site-footer{text-align:center;padding:2rem;border-top:1px solid var(--border);margin-top:1rem}
+.site-footer p{font-size:0.68rem;color:var(--dimmer);letter-spacing:0.08em}
+.site-footer a{color:var(--accent);text-decoration:none;font-weight:600}
+.site-footer a:hover{opacity:0.7}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:'Syne';font-size:0.8rem;font-weight:600;padding:12px 24px;border-radius:8px;z-index:2000;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:var(--accent);color:var(--accent)}
+.toast.error{border-color:#ff3366;color:#ff3366}
+</style>
 </head>
 <body>
 
-<header>
-    <div class="header-top">
-        <div>
-            <div class="logo">DESIGN<span>ROOM</span></div>
-            <div class="header-sub">Pick your style — we'll build the rest</div>
-        </div>
-        <div class="sel-count"><strong id="sel-count">0</strong> selections</div>
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="toast" id="toast"></div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-hdr">
+    <span class="cart-hdr-title">Your Selections</span>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty"><strong>Nothing selected yet</strong>Browse the tabs and click cards to build your brief.</div>
+  </div>
+  <div class="cart-footer">
+    <button class="btn-primary" onclick="openQuestionnaire()">Submit My Brief →</button>
+    <button class="btn-secondary" onclick="clearAll()">Clear All</button>
+  </div>
+</div>
+
+<!-- QUESTIONNAIRE MODAL -->
+<div class="q-overlay" id="q-overlay">
+  <div class="q-box">
+    <div class="q-header">
+      <div class="q-title" id="q-title">Your Details</div>
+      <span class="q-step-ind" id="q-step-ind">Step 1 of 5</span>
     </div>
-    <nav class="tabs">
-        <button class="tab-btn active" data-tab="backgrounds">Backgrounds</button>
-        <button class="tab-btn" data-tab="navbars">Navbars</button>
-        <button class="tab-btn" data-tab="heroes">Hero Sections</button>
-        <button class="tab-btn" data-tab="colors">Colour Schemes</button>
-        <button class="tab-btn" data-tab="cards">Cards</button>
-        <button class="tab-btn" data-tab="footers">Footers</button>
-        <button class="tab-btn" data-tab="forms">Contact Forms</button>
-    </nav>
+    <div class="q-progress"><div class="q-progress-bar" id="q-progress-bar" style="width:20%"></div></div>
+    <div class="q-body" id="q-body">
+
+      <!-- STEP 1: Contact -->
+      <div class="q-step active" id="step-1">
+        <div class="q-step-title">Let's start with you</div>
+        <div class="q-step-desc">We just need a few details so we can get in touch once we've reviewed your brief.</div>
+        <div class="q-row">
+          <div class="q-field"><label class="q-label">Your Name *</label><input class="q-input" id="q-name" placeholder="John Smith" required></div>
+          <div class="q-field"><label class="q-label">Your Email *</label><input class="q-input" id="q-email" type="email" placeholder="john@example.com" required></div>
+        </div>
+        <div class="q-field"><label class="q-label">Business Name *</label><input class="q-input" id="q-biz" placeholder="e.g. Unique Fire Security Ltd."></div>
+        <div class="q-field"><label class="q-label">What does your business do?</label><textarea class="q-textarea" id="q-what" placeholder="Brief description of your business and services..."></textarea></div>
+        <div class="q-row">
+          <div class="q-field"><label class="q-label">Phone Number</label><input class="q-input" id="q-phone" placeholder="+353 87 000 0000"></div>
+          <div class="q-field"><label class="q-label">Location / Town</label><input class="q-input" id="q-location" placeholder="Dublin, Ireland"></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Pages & Features -->
+      <div class="q-step" id="step-2">
+        <div class="q-step-title">Pages & Features</div>
+        <div class="q-step-desc">Tick everything you'd like included on your website.</div>
+        <div class="q-field">
+          <label class="q-label">Pages Needed</label>
+          <div class="q-checkgrid">
+            <label class="q-check"><input type="checkbox" value="Home Page"> Home Page</label>
+            <label class="q-check"><input type="checkbox" value="About Us"> About Us</label>
+            <label class="q-check"><input type="checkbox" value="Services Page"> Services Page</label>
+            <label class="q-check"><input type="checkbox" value="Contact Page"> Contact Page</label>
+            <label class="q-check"><input type="checkbox" value="Gallery / Portfolio"> Gallery / Portfolio</label>
+            <label class="q-check"><input type="checkbox" value="Testimonials"> Testimonials</label>
+            <label class="q-check"><input type="checkbox" value="FAQ Page"> FAQ Page</label>
+            <label class="q-check"><input type="checkbox" value="Pricing Page"> Pricing Page</label>
+          </div>
+        </div>
+        <div class="q-field">
+          <label class="q-label">Features Needed</label>
+          <div class="q-checkgrid">
+            <label class="q-check"><input type="checkbox" value="Contact Form"> Contact Form</label>
+            <label class="q-check"><input type="checkbox" value="Google Maps"> Google Maps</label>
+            <label class="q-check"><input type="checkbox" value="WhatsApp Button"> WhatsApp Button</label>
+            <label class="q-check"><input type="checkbox" value="Cookie Banner"> Cookie Banner</label>
+            <label class="q-check"><input type="checkbox" value="Social Media Icons"> Social Media Icons</label>
+            <label class="q-check"><input type="checkbox" value="Live Chat Widget"> Live Chat Widget</label>
+            <label class="q-check"><input type="checkbox" value="Photo Gallery"> Photo Gallery</label>
+            <label class="q-check"><input type="checkbox" value="Before & After Slider"> Before & After Slider</label>
+            <label class="q-check"><input type="checkbox" value="Scroll Animations"> Scroll Animations</label>
+            <label class="q-check"><input type="checkbox" value="Mobile Optimised"> Mobile Optimised</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Content -->
+      <div class="q-step" id="step-3">
+        <div class="q-step-title">Your Content</div>
+        <div class="q-step-desc">Tell us what you want visitors to know. Don't worry about perfecting it — we'll tidy it up.</div>
+        <div class="q-field"><label class="q-label">What's your main headline / tagline?</label><input class="q-input" id="q-tagline" placeholder="e.g. Ireland's Most Trusted Security Company"></div>
+        <div class="q-field"><label class="q-label">List your main services (one per line)</label><textarea class="q-textarea" id="q-services" placeholder="CCTV Installation&#10;Alarm Systems&#10;Access Control&#10;24/7 Monitoring" style="min-height:100px"></textarea></div>
+        <div class="q-field"><label class="q-label">Anything specific you want said on the homepage?</label><textarea class="q-textarea" id="q-homepage" placeholder="Key facts, achievements, years in business, number of clients etc."></textarea></div>
+        <div class="q-field"><label class="q-label">Social media links (paste any you have)</label><textarea class="q-textarea" id="q-social" placeholder="Facebook: https://...&#10;Instagram: https://...&#10;LinkedIn: https://..."></textarea></div>
+      </div>
+
+      <!-- STEP 4: Style & Branding -->
+      <div class="q-step" id="step-4">
+        <div class="q-step-title">Style & Branding</div>
+        <div class="q-step-desc">Help us match the look to your brand.</div>
+        <div class="q-field"><label class="q-label">Do you have a logo?</label>
+          <select class="q-select" id="q-logo">
+            <option value="">Select...</option>
+            <option value="Yes — I will email it">Yes — I will email it</option>
+            <option value="Yes — I have a file to share">Yes — I have a file to share</option>
+            <option value="No — I need one designed">No — I need one designed</option>
+            <option value="No — use text only">No — use text only</option>
+          </select>
+        </div>
+        <div class="q-field"><label class="q-label">Do you have photos / images for the site?</label>
+          <select class="q-select" id="q-photos">
+            <option value="">Select...</option>
+            <option value="Yes — I will email them">Yes — I will email them</option>
+            <option value="Yes — I have a Google Drive / Dropbox link">Yes — I have a Google Drive / Dropbox link</option>
+            <option value="No — please use stock photos">No — please use stock photos</option>
+          </select>
+        </div>
+        <div class="q-field"><label class="q-label">If you have specific brand colours, list them here (hex codes welcome)</label><input class="q-input" id="q-colours" placeholder="e.g. #FF0000 (red), #1a1a1a (dark grey)"></div>
+        <div class="q-field"><label class="q-label">Any websites you like the look of? (paste links)</label><textarea class="q-textarea" id="q-inspo" placeholder="https://example.com — I like the layout&#10;https://another.com — I like the colours"></textarea></div>
+        <div class="q-field"><label class="q-label">Anything you definitely DO NOT want on your site?</label><input class="q-input" id="q-donts" placeholder="e.g. no pop-ups, no videos, no bright colours"></input></div>
+      </div>
+
+      <!-- STEP 5: Technical -->
+      <div class="q-step" id="step-5">
+        <div class="q-step-title">Almost done!</div>
+        <div class="q-step-desc">Just a few technical questions to wrap up.</div>
+        <div class="q-field"><label class="q-label">Do you already have a domain name? (e.g. yourbusiness.ie)</label>
+          <select class="q-select" id="q-domain">
+            <option value="">Select...</option>
+            <option value="Yes — I own one already">Yes — I own one already</option>
+            <option value="No — I need one registered">No — I need one registered</option>
+            <option value="Not sure">Not sure</option>
+          </select>
+        </div>
+        <div class="q-field" id="q-domain-name-field" style="display:none"><label class="q-label">What is your domain name?</label><input class="q-input" id="q-domain-name" placeholder="e.g. uniquefire.ie"></div>
+        <div class="q-field"><label class="q-label">Do you have an existing website?</label>
+          <select class="q-select" id="q-existing">
+            <option value="">Select...</option>
+            <option value="Yes — replace it completely">Yes — replace it completely</option>
+            <option value="Yes — keep some content from it">Yes — keep some content from it</option>
+            <option value="No — this is brand new">No — this is brand new</option>
+          </select>
+        </div>
+        <div class="q-field"><label class="q-label">Existing website URL (if any)</label><input class="q-input" id="q-existing-url" placeholder="https://yoursite.ie"></div>
+        <div class="q-field"><label class="q-label">Anything else we should know?</label><textarea class="q-textarea" id="q-notes" placeholder="Any other requests, deadlines, budget info, or things we haven't covered..."></textarea></div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="q-success" id="q-success">
+        <div class="q-success-icon">✦</div>
+        <div class="q-success-title">Brief Submitted!</div>
+        <div class="q-success-sub">Thanks — your design brief has been sent successfully.<br>We'll be in touch at your email address within 24–48 hours.</div>
+      </div>
+
+    </div>
+    <div class="q-footer" id="q-footer">
+      <button class="q-back" id="q-back" onclick="prevStep()" style="visibility:hidden">← Back</button>
+      <button class="q-next" id="q-next" onclick="nextStep()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="hdr-top">
+    <div>
+      <div class="logo">DESIGN<span>ROOM</span></div>
+      <div class="hdr-sub">Pick your style — we'll build the rest</div>
+    </div>
+    <div class="hdr-right">
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">☀ Light</button>
+      <button class="cart-btn" onclick="toggleCart()">
+        Selections <span class="cart-count" id="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="backgrounds">Backgrounds</button>
+    <button class="tab-btn" data-tab="navbars">Navbars</button>
+    <button class="tab-btn" data-tab="heroes">Hero Sections</button>
+    <button class="tab-btn" data-tab="colors">Colour Schemes</button>
+    <button class="tab-btn" data-tab="cards">Cards</button>
+    <button class="tab-btn" data-tab="footers">Footers</button>
+    <button class="tab-btn" data-tab="forms">Contact Forms</button>
+    <button class="tab-btn" data-tab="animations">Scroll Animations</button>
+    <button class="tab-btn" data-tab="generate">✦ Preview</button>
+  </nav>
 </header>
 
 <main>
 
-    <!-- BACKGROUNDS -->
-    <div class="tab-panel active" id="tab-backgrounds">
-        <div class="section-header">
-            <div class="section-title">Backgrounds</div>
-            <div class="section-desc">The first thing a visitor sees. Sets the entire tone.</div>
-        </div>
-        <div class="preview-grid">
+<!-- BACKGROUNDS -->
+<div class="tab-panel active" id="tab-backgrounds">
+  <div class="sec-hdr"><div class="sec-title">Backgrounds</div><div class="sec-desc">The first thing a visitor sees. Sets the entire tone.</div></div>
+  <div class="preview-grid">
+    <div class="preview-card" data-category="Background" data-label="Particle Field" onclick="toggleSelect(this)"><div class="pw bg-particles"><canvas class="c-particles"></canvas></div><div class="card-foot"><span class="cl">Particle Field</span><span class="ct">Animated</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Gradient Flow" onclick="toggleSelect(this)"><div class="pw bg-grad"></div><div class="card-foot"><span class="cl">Gradient Flow</span><span class="ct">Animated</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Dark Grid" onclick="toggleSelect(this)"><div class="pw bg-grid"></div><div class="card-foot"><span class="cl">Dark Grid</span><span class="ct">Static</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Geometric Shapes" onclick="toggleSelect(this)"><div class="pw bg-geo" data-geo="true"></div><div class="card-foot"><span class="cl">Geometric Shapes</span><span class="ct">Animated</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Scanlines" onclick="toggleSelect(this)"><div class="pw bg-scan"></div><div class="card-foot"><span class="cl">Scanlines</span><span class="ct">Cinematic</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Starfield" onclick="toggleSelect(this)"><div class="pw bg-stars"><canvas class="c-stars"></canvas></div><div class="card-foot"><span class="cl">Starfield</span><span class="ct">Animated</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Mesh Gradient" onclick="toggleSelect(this)"><div class="pw bg-mesh"></div><div class="card-foot"><span class="cl">Mesh Gradient</span><span class="ct">Animated</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Noise Texture" onclick="toggleSelect(this)"><div class="pw bg-noise"></div><div class="card-foot"><span class="cl">Noise Texture</span><span class="ct">Static</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Aurora" onclick="toggleSelect(this)"><div class="pw bg-aurora"></div><div class="card-foot"><span class="cl">Aurora</span><span class="ct">Animated</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Circuit Board" onclick="toggleSelect(this)"><div class="pw bg-circuit"></div><div class="card-foot"><span class="cl">Circuit Board</span><span class="ct">Static</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Floating Blobs" onclick="toggleSelect(this)"><div class="pw bg-blobs" data-blobs="true"></div><div class="card-foot"><span class="cl">Floating Blobs</span><span class="ct">Animated</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Diagonal Stripes" onclick="toggleSelect(this)"><div class="pw bg-diagonal"></div><div class="card-foot"><span class="cl">Diagonal Stripes</span><span class="ct">Static</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="Matrix Rain" onclick="toggleSelect(this)"><div class="pw bg-matrix"><canvas class="c-matrix"></canvas></div><div class="card-foot"><span class="cl">Matrix Rain</span><span class="ct">Animated</span></div></div>
+    <div class="preview-card" data-category="Background" data-label="CCTV Tracker" onclick="toggleSelect(this)"><div class="pw bg-cctv"><canvas class="c-cctv"></canvas></div><div class="card-foot"><span class="cl">CCTV Tracker</span><span class="ct">Interactive</span></div></div>
+  </div>
+</div>
 
-            <div class="preview-card" data-category="Background" data-label="Particle Field" onclick="toggleSelect(this)">
-                <div class="preview-window bg-particles"><canvas id="c-particles"></canvas></div>
-                <div class="card-footer"><span class="card-label">Particle Field</span><span class="card-tag">Animated</span></div>
-            </div>
+<!-- NAVBARS -->
+<div class="tab-panel" id="tab-navbars">
+  <div class="sec-hdr"><div class="sec-title">Navbars</div><div class="sec-desc">How visitors find their way. First impression of your brand.</div></div>
+  <div class="preview-grid">
+    <div class="preview-card" data-category="Navbar" data-label="Frosted Glass" onclick="toggleSelect(this)"><div class="pw nav-preview"><div class="nf"><span class="n-logo">BRAND</span><div class="n-links"><span>Home</span><span>Services</span><span>Contact</span></div></div></div><div class="card-foot"><span class="cl">Frosted Glass</span><span class="ct">Modern</span></div></div>
+    <div class="preview-card" data-category="Navbar" data-label="Solid Accent Bar" onclick="toggleSelect(this)"><div class="pw nav-preview"><div class="ns"><span class="n-logo" style="color:#00e5ff">BRAND</span><div class="n-links"><span>Home</span><span>Services</span><span>Contact</span></div></div></div><div class="card-foot"><span class="cl">Solid Accent Bar</span><span class="ct">Bold</span></div></div>
+    <div class="preview-card" data-category="Navbar" data-label="Minimal Centered" onclick="toggleSelect(this)"><div class="pw nav-preview"><div class="nm"><span>Home</span><span class="n-active">Services</span><span>About</span><span>Contact</span></div></div><div class="card-foot"><span class="cl">Minimal Centered</span><span class="ct">Minimal</span></div></div>
+    <div class="preview-card" data-category="Navbar" data-label="Bold with CTA" onclick="toggleSelect(this)"><div class="pw nav-preview"><div class="nb"><span class="n-logo">BRAND</span><div class="n-links"><span>Services</span><span>About</span></div><span class="n-cta">Get Quote</span></div></div><div class="card-foot"><span class="cl">Bold with CTA</span><span class="ct">Conversion</span></div></div>
+    <div class="preview-card" data-category="Navbar" data-label="Hamburger Mobile" onclick="toggleSelect(this)"><div class="pw nav-preview"><div class="nh"><span class="n-logo">BRAND</span><div class="hbg"><span></span><span></span><span></span></div></div></div><div class="card-foot"><span class="cl">Hamburger Mobile</span><span class="ct">Responsive</span></div></div>
+    <div class="preview-card" data-category="Navbar" data-label="Sidebar Vertical" onclick="toggleSelect(this)"><div class="pw nav-preview" style="padding:0"><div class="nav-sidebar-demo" style="width:100%;height:100%"><div class="nav-sidebar-inner"><span class="ns-logo">B</span><span class="ns-dot a"></span><span class="ns-dot"></span><span class="ns-dot"></span><span class="ns-dot"></span></div><div style="flex:1;background:#06060e;display:flex;align-items:center;padding:18px"><div><div style="font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:0.05em">Page Title</div><div style="font-size:0.58rem;color:rgba(255,255,255,0.3);margin-top:4px">Sidebar navigation layout</div></div></div></div></div><div class="card-foot"><span class="cl">Sidebar Vertical</span><span class="ct">Dashboard</span></div></div>
+    <div class="preview-card" data-category="Navbar" data-label="Split Centered Logo" onclick="toggleSelect(this)"><div class="pw nav-preview"><div class="nav-split-inner"><div class="nsl"><span style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;font-family:'Syne';font-weight:600">Services</span><span style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;font-family:'Syne';font-weight:600">About</span></div><span class="n-logo">BRAND</span><div class="nsr"><span style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;font-family:'Syne';font-weight:600">Portfolio</span><span style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;font-family:'Syne';font-weight:600">Contact</span></div></div></div><div class="card-foot"><span class="cl">Split Centered Logo</span><span class="ct">Elegant</span></div></div>
+    <div class="preview-card" data-category="Navbar" data-label="Pill Style" onclick="toggleSelect(this)"><div class="pw nav-preview" style="align-items:center;justify-content:center;display:flex"><div class="nav-pill-inner"><span class="np-item a">Home</span><span class="np-item">Services</span><span class="np-item">About</span><span class="np-item">Contact</span></div></div><div class="card-foot"><span class="cl">Pill Style</span><span class="ct">Modern</span></div></div>
+    <div class="preview-card" data-category="Navbar" data-label="Transparent Overlay" onclick="toggleSelect(this)"><div class="pw nav-preview" style="background:linear-gradient(180deg,rgba(0,229,255,0.05) 0%,transparent 100%)"><div class="nav-trans"><span class="n-logo">BRAND</span><div class="n-links"><span>Home</span><span>Services</span><span>Contact</span></div></div></div><div class="card-foot"><span class="cl">Transparent Overlay</span><span class="ct">Overlay</span></div></div>
+  </div>
+</div>
 
-            <div class="preview-card" data-category="Background" data-label="Gradient Flow" onclick="toggleSelect(this)">
-                <div class="preview-window bg-gradient-flow"></div>
-                <div class="card-footer"><span class="card-label">Gradient Flow</span><span class="card-tag">Animated</span></div>
-            </div>
+<!-- HEROES -->
+<div class="tab-panel" id="tab-heroes">
+  <div class="sec-hdr"><div class="sec-title">Hero Sections</div><div class="sec-desc">The first thing people read. Make it land immediately.</div></div>
+  <div class="preview-grid">
+    <div class="preview-card" data-category="Hero Section" data-label="Split Layout" onclick="toggleSelect(this)"><div class="pw"><div class="hero-split-inner"><div class="hs-text"><span class="h-eye">Est. 2024</span><span class="h-t">WE BUILD<br>THINGS</span><span class="h-s">Professional services</span><span class="h-b">Get Started</span></div><div class="hs-img"></div></div></div><div class="card-foot"><span class="cl">Split Layout</span><span class="ct">Modern</span></div></div>
+    <div class="preview-card" data-category="Hero Section" data-label="Centered Minimal" onclick="toggleSelect(this)"><div class="pw"><div class="hero-ctr"><span class="h-eye">Welcome</span><span class="h-t">YOUR BRAND</span><div class="h-line"></div><span style="font-size:0.62rem;color:rgba(255,255,255,0.4);max-width:170px;line-height:1.5;text-align:center">Professional services for modern businesses</span></div></div><div class="card-foot"><span class="cl">Centered Minimal</span><span class="ct">Classic</span></div></div>
+    <div class="preview-card" data-category="Hero Section" data-label="Bold Typography" onclick="toggleSelect(this)"><div class="pw"><div class="hero-typo-inner"><span class="bg-n">01</span><span class="h-t">WE ARE<br><em>DIFFERENT</em></span><span class="h-s">Security solutions you can trust</span></div></div><div class="card-foot"><span class="cl">Bold Typography</span><span class="ct">Impactful</span></div></div>
+    <div class="preview-card" data-category="Hero Section" data-label="Typing Animation" onclick="toggleSelect(this)"><div class="pw"><div class="hero-anim-inner"><span class="h-eye">Welcome to</span><span class="typing">YOUR BRAND</span></div></div><div class="card-foot"><span class="cl">Typing Animation</span><span class="ct">Animated</span></div></div>
+    <div class="preview-card" data-category="Hero Section" data-label="Cinematic Video" onclick="toggleSelect(this)"><div class="pw"><div class="hero-cin-inner"><span class="h-eye">Now Playing</span><span class="h-t">YOUR STORY</span><div class="play-btn"></div></div></div><div class="card-foot"><span class="cl">Cinematic Video</span><span class="ct">Premium</span></div></div>
+    <div class="preview-card" data-category="Hero Section" data-label="Stats Hero" onclick="toggleSelect(this)"><div class="pw"><div class="hero-stats-inner"><div style="font-family:'Bebas Neue';font-size:0.95rem;letter-spacing:0.08em;color:rgba(255,255,255,0.5)">Trusted by Hundreds</div><div class="hs-stats-row"><div class="hs-stat"><div class="sv">500+</div><div class="sl">Clients</div></div><div class="hs-stat"><div class="sv">12yr</div><div class="sl">Experience</div></div><div class="hs-stat"><div class="sv">24/7</div><div class="sl">Support</div></div></div></div></div><div class="card-foot"><span class="cl">Stats / Numbers</span><span class="ct">Trust Building</span></div></div>
+    <div class="preview-card" data-category="Hero Section" data-label="Marquee Text" onclick="toggleSelect(this)"><div class="pw"><div class="hero-marquee-inner"><div class="marquee-track"><span>YOUR BRAND</span><span class="acc">——</span><span>YOUR BRAND</span><span class="acc">——</span><span>YOUR BRAND</span><span class="acc">——</span><span>YOUR BRAND</span><span class="acc">——</span></div><div class="ct"><div class="cht">Professional Services</div><div class="chs">Est. Ireland 2024</div></div></div></div><div class="card-foot"><span class="cl">Marquee Text</span><span class="ct">Striking</span></div></div>
+    <div class="preview-card" data-category="Hero Section" data-label="Diagonal Split" onclick="toggleSelect(this)"><div class="pw"><div class="hero-diag-inner"><div class="hd-left"><span class="h-t">SHARP<br><em>FOCUS</em></span><span class="h-s">Professional security</span></div><div class="hd-right"></div></div></div><div class="card-foot"><span class="cl">Diagonal Split</span><span class="ct">Dynamic</span></div></div>
+  </div>
+</div>
 
-            <div class="preview-card" data-category="Background" data-label="Dark Grid" onclick="toggleSelect(this)">
-                <div class="preview-window bg-grid"></div>
-                <div class="card-footer"><span class="card-label">Dark Grid</span><span class="card-tag">Static</span></div>
-            </div>
+<!-- COLOUR SCHEMES -->
+<div class="tab-panel" id="tab-colors">
+  <div class="sec-hdr"><div class="sec-title">Colour Schemes</div><div class="sec-desc">The palette that defines your brand's personality. Swatches shown at the bottom of each card.</div></div>
+  <div class="preview-grid">
+    <div class="preview-card" data-category="Colour Scheme" data-label="Charcoal + Cyan" onclick="toggleSelect(this)"><div class="pw cs1"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Charcoal + Cyan</span><span class="ct">Dark / Tech</span></div></div>
+    <div class="preview-card" data-category="Colour Scheme" data-label="Navy + Gold" onclick="toggleSelect(this)"><div class="pw cs2"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Navy + Gold</span><span class="ct">Premium</span></div></div>
+    <div class="preview-card" data-category="Colour Scheme" data-label="Black + White" onclick="toggleSelect(this)"><div class="pw cs3"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Black + White</span><span class="ct">Minimal</span></div></div>
+    <div class="preview-card" data-category="Colour Scheme" data-label="Dark + Red" onclick="toggleSelect(this)"><div class="pw cs4"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Dark + Red</span><span class="ct">Bold</span></div></div>
+    <div class="preview-card" data-category="Colour Scheme" data-label="Slate + Emerald" onclick="toggleSelect(this)"><div class="pw cs5"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Slate + Emerald</span><span class="ct">Fresh</span></div></div>
+    <div class="preview-card" data-category="Colour Scheme" data-label="Dark Forest" onclick="toggleSelect(this)"><div class="pw cs6"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Dark Forest</span><span class="ct">Natural</span></div></div>
+    <div class="preview-card" data-category="Colour Scheme" data-label="Deep Purple + Violet" onclick="toggleSelect(this)"><div class="pw cs7"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Deep Purple + Violet</span><span class="ct">Creative</span></div></div>
+    <div class="preview-card" data-category="Colour Scheme" data-label="Copper + Orange" onclick="toggleSelect(this)"><div class="pw cs8"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Copper + Orange</span><span class="ct">Warm</span></div></div>
+    <div class="preview-card" data-category="Colour Scheme" data-label="Midnight + Pink" onclick="toggleSelect(this)"><div class="pw cs9"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Midnight + Pink</span><span class="ct">Vibrant</span></div></div>
+    <div class="preview-card" data-category="Colour Scheme" data-label="Ocean Dark + Teal" onclick="toggleSelect(this)"><div class="pw cs10"><div class="cs-preview"><div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div><div class="cs-swatches"><div class="sw"></div><div class="sw"></div><div class="sw"></div><div class="sw"></div></div></div></div><div class="card-foot"><span class="cl">Ocean Dark + Teal</span><span class="ct">Cool</span></div></div>
+  </div>
+</div>
 
-            <div class="preview-card" data-category="Background" data-label="Geometric Shapes" onclick="toggleSelect(this)">
-                <div class="preview-window bg-geometric" id="geo-wrap"></div>
-                <div class="card-footer"><span class="card-label">Geometric Shapes</span><span class="card-tag">Animated</span></div>
-            </div>
+<!-- CARDS -->
+<div class="tab-panel" id="tab-cards">
+  <div class="sec-hdr"><div class="sec-title">Cards & Containers</div><div class="sec-desc">How your services, features and content are packaged and presented.</div></div>
+  <div class="preview-grid">
+    <div class="preview-card" data-category="Card Style" data-label="Glass Morphism" onclick="toggleSelect(this)"><div class="pw cards-preview"><div class="dc"><div class="card-glass"><div class="dci"></div><div class="dct2">Service Title</div><div class="dcd">Brief description of what this service includes for your business.</div></div></div></div><div class="card-foot"><span class="cl">Glass Morphism</span><span class="ct">Modern</span></div></div>
+    <div class="preview-card" data-category="Card Style" data-label="Bordered Minimal" onclick="toggleSelect(this)"><div class="pw cards-preview"><div class="dc"><div class="card-bordered"><div class="dcline"></div><div class="dct2">Service Title</div><div class="dcd">Brief description of what this service includes for your business.</div></div></div></div><div class="card-foot"><span class="cl">Bordered Minimal</span><span class="ct">Clean</span></div></div>
+    <div class="preview-card" data-category="Card Style" data-label="Gradient Border" onclick="toggleSelect(this)"><div class="pw cards-preview"><div class="dc"><div class="card-gradb"><div class="dci" style="background:linear-gradient(135deg,rgba(0,229,255,0.18),rgba(255,51,102,0.18))"></div><div class="dct2">Service Title</div><div class="dcd">Brief description of what this service includes for your business.</div></div></div></div><div class="card-foot"><span class="cl">Gradient Border</span><span class="ct">Premium</span></div></div>
+    <div class="preview-card" data-category="Card Style" data-label="Accent Header" onclick="toggleSelect(this)"><div class="pw cards-preview"><div class="dc"><div class="card-accent-h"><div class="dct"></div><div class="dcb"><div class="dct2">Service Title</div><div class="dcd">Brief description of what this service includes.</div></div></div></div></div><div class="card-foot"><span class="cl">Accent Header</span><span class="ct">Structured</span></div></div>
+    <div class="preview-card" data-category="Card Style" data-label="Flat Numbered" onclick="toggleSelect(this)"><div class="pw cards-preview"><div class="dc"><div class="card-num"><div class="dcnum">01</div><div class="dct2">Service Title</div><div class="dcd">Brief description of what this service includes.</div></div></div></div><div class="card-foot"><span class="cl">Flat Numbered</span><span class="ct">Editorial</span></div></div>
+    <div class="preview-card" data-category="Card Style" data-label="Glow on Hover" onclick="toggleSelect(this)"><div class="pw cards-preview"><div class="dc"><div class="card-glow-h"><div class="dci" style="border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem">✦</div><div class="dct2">Service Title</div><div class="dcd">Brief description of what this service includes.</div></div></div></div><div class="card-foot"><span class="cl">Glow on Hover</span><span class="ct">Interactive</span></div></div>
+    <div class="preview-card" data-category="Card Style" data-label="Image Card" onclick="toggleSelect(this)"><div class="pw cards-preview"><div class="dc"><div class="card-image"><div class="ci-img">📷</div><div class="ci-body"><div class="dct2">Service Title</div><div class="dcd">Brief description.</div></div></div></div></div><div class="card-foot"><span class="cl">Image Card</span><span class="ct">Visual</span></div></div>
+    <div class="preview-card" data-category="Card Style" data-label="Horizontal Card" onclick="toggleSelect(this)"><div class="pw cards-preview" style="align-items:center"><div style="width:100%;max-width:220px"><div class="card-horiz"><div class="ch-icon"></div><div><div class="dct2">Service Title</div><div class="dcd">Brief description here.</div></div></div></div></div><div class="card-foot"><span class="cl">Horizontal Card</span><span class="ct">Compact</span></div></div>
+    <div class="preview-card" data-category="Card Style" data-label="Pricing Card" onclick="toggleSelect(this)"><div class="pw cards-preview"><div class="dc"><div class="card-pricing"><div class="cp-price">€299</div><div class="cp-per">Per Month</div><div class="dct2" style="margin-top:8px">Starter Package</div><div class="dcd">Everything you need to get started online.</div></div></div></div><div class="card-foot"><span class="cl">Pricing Card</span><span class="ct">Sales</span></div></div>
+  </div>
+</div>
 
-            <div class="preview-card" data-category="Background" data-label="Scanlines" onclick="toggleSelect(this)">
-                <div class="preview-window bg-scanlines"></div>
-                <div class="card-footer"><span class="card-label">Scanlines</span><span class="card-tag">Cinematic</span></div>
-            </div>
+<!-- FOOTERS -->
+<div class="tab-panel" id="tab-footers">
+  <div class="sec-hdr"><div class="sec-title">Footers</div><div class="sec-desc">The last thing they see. Make it useful, trustworthy and on-brand.</div></div>
+  <div class="preview-grid">
+    <div class="preview-card" data-category="Footer" data-label="3 Column" onclick="toggleSelect(this)"><div class="pw footer-preview"><div class="f3col"><div class="fc"><span class="fch">BRAND</span><span class="fcl">About</span><span class="fcl">Services</span></div><div class="fc"><span class="fch">LINKS</span><span class="fcl">Privacy</span><span class="fcl">Terms</span></div><div class="fc"><span class="fch">CONTACT</span><span class="fcl">hello@brand.ie</span><span class="fcl">+353 87 000</span></div></div></div><div class="card-foot"><span class="cl">3 Column</span><span class="ct">Full</span></div></div>
+    <div class="preview-card" data-category="Footer" data-label="Minimal Single Row" onclick="toggleSelect(this)"><div class="pw footer-preview"><div class="fmin"><span class="fl">BRAND</span><div class="flinks"><span>Privacy</span><span>Terms</span><span>Contact</span></div><span>© 2025</span></div></div><div class="card-foot"><span class="cl">Minimal Single Row</span><span class="ct">Clean</span></div></div>
+    <div class="preview-card" data-category="Footer" data-label="Big Logo" onclick="toggleSelect(this)"><div class="pw footer-preview"><div class="fbig"><div class="fbt"><span class="fbl">BRAND NAME</span></div><div class="fbb"><span>© 2025 Brand Name Ltd.</span><span>Privacy · Terms</span></div></div></div><div class="card-foot"><span class="cl">Big Logo</span><span class="ct">Bold</span></div></div>
+    <div class="preview-card" data-category="Footer" data-label="Accent Strip" onclick="toggleSelect(this)"><div class="pw footer-preview"><div class="fas-f"><div class="fat"><span class="fal">BRAND</span><div class="falinks"><span>Services</span><span>About</span><span>Contact</span></div></div><div class="fab">© 2025 Brand Name. All rights reserved.</div></div></div><div class="card-foot"><span class="cl">Accent Strip</span><span class="ct">On-brand</span></div></div>
+    <div class="preview-card" data-category="Footer" data-label="Newsletter Footer" onclick="toggleSelect(this)"><div class="pw footer-preview"><div class="fnews"><div class="fn-top"><span class="fn-logo">BRAND</span><div class="fn-social"><span></span><span></span><span></span></div></div><div class="fn-input"><span style="color:rgba(255,255,255,0.2)">Your email address</span><span class="fn-btn">Join</span></div><div class="fn-copy">© 2025 Brand Name Ltd.</div></div></div><div class="card-foot"><span class="cl">Newsletter Footer</span><span class="ct">Engagement</span></div></div>
+    <div class="preview-card" data-category="Footer" data-label="Map + Contact" onclick="toggleSelect(this)"><div class="pw footer-preview"><div class="fmap"><div class="fm-info"><span class="fml">BRAND</span><div class="fmd">123 Main Street<br>Dublin, Ireland<br>+353 1 000 0000</div></div><div class="fm-map">📍</div></div></div><div class="card-foot"><span class="cl">Map + Contact</span><span class="ct">Local Business</span></div></div>
+    <div class="preview-card" data-category="Footer" data-label="Dark Accent Red" onclick="toggleSelect(this)"><div class="pw footer-preview"><div class="fdark-f"><div class="fd-inner"><div class="fd-left"><div class="fd-logo">BRAND</div><div class="fd-sub">Professional Services</div></div><div class="fd-right"><div class="fdr-l">Services</div><div class="fdr-l">About Us</div><div class="fdr-l">Contact</div></div></div></div></div><div class="card-foot"><span class="cl">Dark Accent Red</span><span class="ct">Bold</span></div></div>
+  </div>
+</div>
 
-            <div class="preview-card" data-category="Background" data-label="Starfield" onclick="toggleSelect(this)">
-                <div class="preview-window bg-stars"><canvas id="c-stars"></canvas></div>
-                <div class="card-footer"><span class="card-label">Starfield</span><span class="card-tag">Animated</span></div>
-            </div>
+<!-- CONTACT FORMS -->
+<div class="tab-panel" id="tab-forms">
+  <div class="sec-hdr"><div class="sec-title">Contact Forms</div><div class="sec-desc">How customers get in touch. Submissions go straight to your email inbox.</div></div>
+  <div class="preview-grid">
+    <div class="preview-card" data-category="Contact Form" data-label="Minimal Floating Label" onclick="toggleSelect(this)"><div class="pw form-preview"><div class="dform fm"><div class="dft">Get in Touch</div><div class="dff"><span>Name</span>John Smith</div><div class="dff"><span>Email</span>john@email.com</div><div class="dff"><span>Message</span>Hi, I'd like to...</div><div class="dfb">Send Message</div></div></div><div class="card-foot"><span class="cl">Minimal Floating Label</span><span class="ct">Elegant</span></div></div>
+    <div class="preview-card" data-category="Contact Form" data-label="Boxed Dark" onclick="toggleSelect(this)"><div class="pw form-preview"><div class="dform fb"><div class="dft">Get in Touch</div><div class="dff">Your name</div><div class="dff">Your email</div><div class="dff">Your message</div><div class="dfb">Send Message</div></div></div><div class="card-foot"><span class="cl">Boxed Dark</span><span class="ct">Professional</span></div></div>
+    <div class="preview-card" data-category="Contact Form" data-label="Outlined Accent" onclick="toggleSelect(this)"><div class="pw form-preview"><div class="dform fo"><div class="dft">Get in Touch</div><div class="dff">Your name</div><div class="dff">Your email</div><div class="dff">Your message</div><div class="dfb">Send Message</div></div></div><div class="card-foot"><span class="cl">Outlined Accent</span><span class="ct">Sharp</span></div></div>
+    <div class="preview-card" data-category="Contact Form" data-label="Split Layout" onclick="toggleSelect(this)"><div class="pw form-preview"><div class="fsplit-form"><div class="dft">Get in Touch</div><div class="dff">First name</div><div class="dff">Last name</div><div class="dff full">Email address</div><div class="dff full">Your message</div><div class="dfb">Send Message</div></div></div><div class="card-foot"><span class="cl">Split Layout</span><span class="ct">Spacious</span></div></div>
+    <div class="preview-card" data-category="Contact Form" data-label="Multi-Step Form" onclick="toggleSelect(this)"><div class="pw form-preview"><div class="fstep-form"><div class="dft">Get in Touch</div><div class="fsteps"><div class="fstep-dot a">1</div><div class="fstep-line-d"></div><div class="fstep-dot">2</div><div class="fstep-line-d"></div><div class="fstep-dot">3</div></div><div class="dff">Your full name</div><div class="dff">Your email</div><div class="dfb">Next →</div></div></div><div class="card-foot"><span class="cl">Multi-Step Form</span><span class="ct">Guided</span></div></div>
+    <div class="preview-card" data-category="Contact Form" data-label="Glow Focus" onclick="toggleSelect(this)"><div class="pw form-preview"><div class="fglow-form"><div class="dft">Get in Touch</div><div class="dff">Your name</div><div class="dff">Your email</div><div class="dff">Your message</div><div class="dfb">Send Message</div></div></div><div class="card-foot"><span class="cl">Glow Focus</span><span class="ct">Interactive</span></div></div>
+  </div>
+</div>
 
-            <div class="preview-card" data-category="Background" data-label="Mesh Gradient" onclick="toggleSelect(this)">
-                <div class="preview-window bg-mesh"></div>
-                <div class="card-footer"><span class="card-label">Mesh Gradient</span><span class="card-tag">Animated</span></div>
-            </div>
+<!-- SCROLL ANIMATIONS -->
+<div class="tab-panel" id="tab-animations">
+  <div class="sec-hdr"><div class="sec-title">Scroll Animations</div><div class="sec-desc">How content appears as visitors scroll. Scroll down within each card to see the effect in action.</div></div>
+  <div class="preview-grid">
+    <div class="preview-card" data-category="Scroll Animation" data-label="Fade In Up" onclick="toggleSelect(this)"><div class="pw anim-preview anim-fade"><div class="anim-box"><div class="ab-item"><div class="ab-t">Service One</div><div class="ab-d">Fades in from below on scroll.</div></div><div class="ab-item"><div class="ab-t">Service Two</div><div class="ab-d">Each item staggered slightly.</div></div><div class="ab-item"><div class="ab-t">Service Three</div><div class="ab-d">Smooth and professional.</div></div></div></div><div class="card-foot"><span class="cl">Fade In Up</span><span class="ct">Popular</span></div></div>
+    <div class="preview-card" data-category="Scroll Animation" data-label="Slide In Left" onclick="toggleSelect(this)"><div class="pw anim-preview anim-slide"><div class="anim-box"><div class="ab-item"><div class="ab-t">Service One</div><div class="ab-d">Slides in from the left side.</div></div><div class="ab-item"><div class="ab-t">Service Two</div><div class="ab-d">Each item follows the last.</div></div><div class="ab-item"><div class="ab-t">Service Three</div><div class="ab-d">Dynamic and energetic.</div></div></div></div><div class="card-foot"><span class="cl">Slide In Left</span><span class="ct">Dynamic</span></div></div>
+    <div class="preview-card" data-category="Scroll Animation" data-label="Scale In" onclick="toggleSelect(this)"><div class="pw anim-preview anim-scale"><div class="anim-box"><div class="ab-item"><div class="ab-t">Service One</div><div class="ab-d">Scales up from slightly smaller.</div></div><div class="ab-item"><div class="ab-t">Service Two</div><div class="ab-d">Subtle and satisfying.</div></div><div class="ab-item"><div class="ab-t">Service Three</div><div class="ab-d">Works great for cards.</div></div></div></div><div class="card-foot"><span class="cl">Scale In</span><span class="ct">Subtle</span></div></div>
+    <div class="preview-card" data-category="Scroll Animation" data-label="Count Up Numbers" onclick="toggleSelect(this)"><div class="pw anim-preview" style="flex-direction:row;gap:14px;flex-wrap:wrap;justify-content:center"><div class="count-item"><div class="count-num">500+</div><div class="count-lbl">Clients</div></div><div class="count-item"><div class="count-num">12yr</div><div class="count-lbl">Experience</div></div><div class="count-item"><div class="count-num">24/7</div><div class="count-lbl">Support</div></div></div><div class="card-foot"><span class="cl">Count Up Numbers</span><span class="ct">Trust Building</span></div></div>
+    <div class="preview-card" data-category="Scroll Animation" data-label="Parallax Layers" onclick="toggleSelect(this)"><div class="pw"><div class="anim-parallax-inner"><div class="ap-layer l1">BRAND</div><div class="ap-layer l2">YOUR</div><div class="ap-layer l3">NAME</div><div class="ap-fg"><div class="aft">Parallax Effect</div><div class="afs">Layers move at different speeds</div></div></div></div><div class="card-foot"><span class="cl">Parallax Layers</span><span class="ct">Depth</span></div></div>
+    <div class="preview-card" data-category="Scroll Animation" data-label="Stagger Grid" onclick="toggleSelect(this)"><div class="pw anim-preview" style="flex-direction:row;flex-wrap:wrap;gap:6px;padding:16px"><div class="sg-item"><div class="sg-icon"></div><div class="sg-t">CCTV</div><div class="sg-d">24hr monitoring</div></div><div class="sg-item"><div class="sg-icon"></div><div class="sg-t">Alarms</div><div class="sg-d">Full coverage</div></div><div class="sg-item"><div class="sg-icon"></div><div class="sg-t">Access</div><div class="sg-d">Key control</div></div><div class="sg-item"><div class="sg-icon"></div><div class="sg-t">Support</div><div class="sg-d">Always on</div></div></div><div class="card-foot"><span class="cl">Stagger Grid</span><span class="ct">For Services</span></div></div>
+    <div class="preview-card" data-category="Scroll Animation" data-label="Text Reveal" onclick="toggleSelect(this)"><div class="pw anim-preview" style="align-items:flex-start;padding:20px"><div class="rv-line-a"></div><div class="rv-t"><span>WE PROTECT</span></div><div class="rv-t"><span>WHAT MATTERS</span></div><div class="rv-line-a"></div></div><div class="card-foot"><span class="cl">Text Reveal</span><span class="ct">Cinematic</span></div></div>
+  </div>
+</div>
 
-            <div class="preview-card" data-category="Background" data-label="Noise Texture" onclick="toggleSelect(this)">
-                <div class="preview-window bg-noise"></div>
-                <div class="card-footer"><span class="card-label">Noise Texture</span><span class="card-tag">Static</span></div>
-            </div>
-
-        </div>
+<!-- GENERATE PREVIEW -->
+<div class="tab-panel" id="tab-generate">
+  <div class="generate-panel">
+    <div class="gen-icon">✦</div>
+    <div class="gen-title">Live Preview</div>
+    <div class="gen-sub">Select styles from each tab then hit Generate to see a live mockup of your site built from your choices.</div>
+    <div class="gen-chips" id="gen-chips"></div>
+    <button class="gen-btn" id="gen-btn" onclick="generatePreview()">Generate Live Preview</button>
+    <div class="gen-hint" id="gen-hint">Make at least one selection to generate</div>
+  </div>
+  <div id="gen-preview-wrap" style="display:none;padding:0 0 2rem">
+    <div class="mac-browser">
+      <div class="mac-bar">
+        <div class="mac-dots"><div class="mac-dot"></div><div class="mac-dot"></div><div class="mac-dot"></div></div>
+        <div class="mac-url" id="mac-url">yoursite.ie — DesignRoom Preview</div>
+        <div class="mac-actions"><div class="mac-action">←</div><div class="mac-action">→</div><div class="mac-action">⟳</div></div>
+      </div>
+      <iframe id="preview-iframe" sandbox="allow-scripts" title="Site Preview"></iframe>
     </div>
-
-    <!-- NAVBARS -->
-    <div class="tab-panel" id="tab-navbars">
-        <div class="section-header">
-            <div class="section-title">Navbars</div>
-            <div class="section-desc">How visitors navigate your site. First impression of your brand.</div>
-        </div>
-        <div class="preview-grid">
-
-            <div class="preview-card" data-category="Navbar" data-label="Frosted Glass" onclick="toggleSelect(this)">
-                <div class="preview-window nav-preview">
-                    <div class="nav-frosted">
-                        <span class="n-logo">BRAND</span>
-                        <div class="n-links"><span>Home</span><span>Services</span><span>Contact</span></div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Frosted Glass</span><span class="card-tag">Modern</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Navbar" data-label="Solid + Accent Bar" onclick="toggleSelect(this)">
-                <div class="preview-window nav-preview">
-                    <div class="nav-solid">
-                        <span class="n-logo">BRAND</span>
-                        <div class="n-links"><span>Home</span><span>Services</span><span>Contact</span></div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Solid + Accent Bar</span><span class="card-tag">Bold</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Navbar" data-label="Minimal Centered" onclick="toggleSelect(this)">
-                <div class="preview-window nav-preview">
-                    <div class="nav-minimal">
-                        <span>Home</span><span class="n-active">Services</span><span>About</span><span>Contact</span>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Minimal Centered</span><span class="card-tag">Minimal</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Navbar" data-label="Bold with CTA Button" onclick="toggleSelect(this)">
-                <div class="preview-window nav-preview">
-                    <div class="nav-bold">
-                        <span class="n-logo">BRAND</span>
-                        <div class="n-links"><span>Services</span><span>About</span></div>
-                        <span class="n-cta">Get Quote</span>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Bold with CTA Button</span><span class="card-tag">High Conversion</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Navbar" data-label="Hamburger / Mobile First" onclick="toggleSelect(this)">
-                <div class="preview-window nav-preview">
-                    <div class="nav-hamburger">
-                        <span class="n-logo">BRAND</span>
-                        <div class="hbg"><span></span><span></span><span></span></div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Hamburger / Mobile First</span><span class="card-tag">Responsive</span></div>
-            </div>
-
-        </div>
+    <div style="text-align:center;margin-top:1.5rem">
+      <button class="gen-btn" onclick="resetPreview()">← Change Selections</button>
     </div>
-
-    <!-- HEROES -->
-    <div class="tab-panel" id="tab-heroes">
-        <div class="section-header">
-            <div class="section-title">Hero Sections</div>
-            <div class="section-desc">The first thing people read. Make it land.</div>
-        </div>
-        <div class="preview-grid">
-
-            <div class="preview-card" data-category="Hero Section" data-label="Split Layout" onclick="toggleSelect(this)">
-                <div class="preview-window">
-                    <div class="hero-split">
-                        <div class="hs-text">
-                            <span class="h-eyebrow">Est. 2024</span>
-                            <span class="h-title">WE BUILD<br>THINGS</span>
-                            <span class="h-sub">Professional services</span>
-                            <span class="h-btn">Get Started</span>
-                        </div>
-                        <div class="hs-image"></div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Split Layout</span><span class="card-tag">Modern</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Hero Section" data-label="Centered Minimal" onclick="toggleSelect(this)">
-                <div class="preview-window">
-                    <div class="hero-centered">
-                        <span class="h-eyebrow">Welcome</span>
-                        <span class="h-title">YOUR BRAND</span>
-                        <div class="h-line"></div>
-                        <span class="h-sub">Professional services for modern businesses</span>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Centered Minimal</span><span class="card-tag">Classic</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Hero Section" data-label="Bold Typography" onclick="toggleSelect(this)">
-                <div class="preview-window">
-                    <div class="hero-typo">
-                        <span class="bg-num">01</span>
-                        <span class="h-title">WE ARE<br><em>DIFFERENT</em></span>
-                        <span class="h-sub">Security solutions you can trust</span>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Bold Typography</span><span class="card-tag">Impactful</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Hero Section" data-label="Typing Animation" onclick="toggleSelect(this)">
-                <div class="preview-window">
-                    <div class="hero-animated">
-                        <span class="h-eyebrow">Welcome to</span>
-                        <span class="typing-text">YOUR BRAND</span>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Typing Animation</span><span class="card-tag">Animated</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Hero Section" data-label="Cinematic / Video BG" onclick="toggleSelect(this)">
-                <div class="preview-window">
-                    <div class="hero-cinematic">
-                        <span class="h-eyebrow">Now Playing</span>
-                        <span class="h-title">YOUR STORY</span>
-                        <div class="play-btn"></div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Cinematic / Video BG</span><span class="card-tag">Premium</span></div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- COLOUR SCHEMES -->
-    <div class="tab-panel" id="tab-colors">
-        <div class="section-header">
-            <div class="section-title">Colour Schemes</div>
-            <div class="section-desc">The palette that defines your brand's personality online.</div>
-        </div>
-        <div class="preview-grid">
-
-            <div class="preview-card" data-category="Colour Scheme" data-label="Charcoal + Cyan" onclick="toggleSelect(this)">
-                <div class="preview-window"><div class="color-demo cs1"><div class="cd-nav"></div><div class="cd-title"></div><div class="cd-sub"></div><div class="cd-btn"></div></div></div>
-                <div class="card-footer"><span class="card-label">Charcoal + Cyan</span><span class="card-tag">Dark / Tech</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Colour Scheme" data-label="Navy + Gold" onclick="toggleSelect(this)">
-                <div class="preview-window"><div class="color-demo cs2"><div class="cd-nav"></div><div class="cd-title"></div><div class="cd-sub"></div><div class="cd-btn"></div></div></div>
-                <div class="card-footer"><span class="card-label">Navy + Gold</span><span class="card-tag">Premium</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Colour Scheme" data-label="Black + White Minimal" onclick="toggleSelect(this)">
-                <div class="preview-window"><div class="color-demo cs3"><div class="cd-nav"></div><div class="cd-title"></div><div class="cd-sub"></div><div class="cd-btn"></div></div></div>
-                <div class="card-footer"><span class="card-label">Black + White</span><span class="card-tag">Minimal</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Colour Scheme" data-label="Dark + Red" onclick="toggleSelect(this)">
-                <div class="preview-window"><div class="color-demo cs4"><div class="cd-nav"></div><div class="cd-title"></div><div class="cd-sub"></div><div class="cd-btn"></div></div></div>
-                <div class="card-footer"><span class="card-label">Dark + Red</span><span class="card-tag">Bold</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Colour Scheme" data-label="Slate + Emerald" onclick="toggleSelect(this)">
-                <div class="preview-window"><div class="color-demo cs5"><div class="cd-nav"></div><div class="cd-title"></div><div class="cd-sub"></div><div class="cd-btn"></div></div></div>
-                <div class="card-footer"><span class="card-label">Slate + Emerald</span><span class="card-tag">Fresh</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Colour Scheme" data-label="Dark Forest" onclick="toggleSelect(this)">
-                <div class="preview-window"><div class="color-demo cs6"><div class="cd-nav"></div><div class="cd-title"></div><div class="cd-sub"></div><div class="cd-btn"></div></div></div>
-                <div class="card-footer"><span class="card-label">Dark Forest</span><span class="card-tag">Natural</span></div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- CARDS -->
-    <div class="tab-panel" id="tab-cards">
-        <div class="section-header">
-            <div class="section-title">Cards & Containers</div>
-            <div class="section-desc">How your services and content are packaged and presented.</div>
-        </div>
-        <div class="preview-grid">
-
-            <div class="preview-card" data-category="Card Style" data-label="Glass Morphism" onclick="toggleSelect(this)">
-                <div class="preview-window cards-preview">
-                    <div class="demo-card"><div class="card-glass"><div class="dc-icon"></div><div class="dc-t">Service Title</div><div class="dc-d">Brief description of this service.</div></div></div>
-                </div>
-                <div class="card-footer"><span class="card-label">Glass Morphism</span><span class="card-tag">Modern</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Card Style" data-label="Bordered Minimal" onclick="toggleSelect(this)">
-                <div class="preview-window cards-preview">
-                    <div class="demo-card"><div class="card-bordered"><div class="dc-line"></div><div class="dc-t">Service Title</div><div class="dc-d">Brief description of this service.</div></div></div>
-                </div>
-                <div class="card-footer"><span class="card-label">Bordered Minimal</span><span class="card-tag">Clean</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Card Style" data-label="Gradient Border" onclick="toggleSelect(this)">
-                <div class="preview-window cards-preview">
-                    <div class="demo-card"><div class="card-grad-border"><div class="dc-icon"></div><div class="dc-t">Service Title</div><div class="dc-d">Brief description of this service.</div></div></div>
-                </div>
-                <div class="card-footer"><span class="card-label">Gradient Border</span><span class="card-tag">Premium</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Card Style" data-label="Accent Header" onclick="toggleSelect(this)">
-                <div class="preview-window cards-preview">
-                    <div class="demo-card"><div class="card-accent-head"><div class="dc-top"></div><div class="dc-body"><div class="dc-t">Service Title</div><div class="dc-d">Brief description of this service.</div></div></div></div>
-                </div>
-                <div class="card-footer"><span class="card-label">Accent Header</span><span class="card-tag">Structured</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Card Style" data-label="Flat Numbered" onclick="toggleSelect(this)">
-                <div class="preview-window cards-preview">
-                    <div class="demo-card"><div class="card-numbered"><div class="dc-num">01</div><div class="dc-t">Service Title</div><div class="dc-d">Brief description of this service.</div></div></div>
-                </div>
-                <div class="card-footer"><span class="card-label">Flat Numbered</span><span class="card-tag">Editorial</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Card Style" data-label="Glow on Hover" onclick="toggleSelect(this)">
-                <div class="preview-window cards-preview">
-                    <div class="demo-card"><div class="card-glow-hover"><div class="dc-icon">✦</div><div class="dc-t">Service Title</div><div class="dc-d">Brief description of this service.</div></div></div>
-                </div>
-                <div class="card-footer"><span class="card-label">Glow on Hover</span><span class="card-tag">Interactive</span></div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- FOOTERS -->
-    <div class="tab-panel" id="tab-footers">
-        <div class="section-header">
-            <div class="section-title">Footers</div>
-            <div class="section-desc">The last thing they see. Make it useful and on-brand.</div>
-        </div>
-        <div class="preview-grid">
-
-            <div class="preview-card" data-category="Footer" data-label="3 Column" onclick="toggleSelect(this)">
-                <div class="preview-window footer-preview">
-                    <div class="footer-3col">
-                        <div class="fc"><span class="fc-h">BRAND</span><span class="fc-l">About</span><span class="fc-l">Services</span></div>
-                        <div class="fc"><span class="fc-h">LINKS</span><span class="fc-l">Privacy</span><span class="fc-l">Terms</span></div>
-                        <div class="fc"><span class="fc-h">CONTACT</span><span class="fc-l">hello@brand.ie</span><span class="fc-l">+353 87 000 0000</span></div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">3 Column</span><span class="card-tag">Full</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Footer" data-label="Minimal Single Row" onclick="toggleSelect(this)">
-                <div class="preview-window footer-preview">
-                    <div class="footer-minimal">
-                        <span class="f-logo">BRAND</span>
-                        <div class="f-links"><span>Privacy</span><span>Terms</span><span>Contact</span></div>
-                        <span>© 2025</span>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Minimal Single Row</span><span class="card-tag">Clean</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Footer" data-label="Big Logo" onclick="toggleSelect(this)">
-                <div class="preview-window footer-preview">
-                    <div class="footer-biglogo">
-                        <div class="fbl-top"><span class="fbl-logo">BRAND NAME</span></div>
-                        <div class="fbl-bot"><span>© 2025 Brand Name Ltd.</span><span>Privacy · Terms</span></div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Big Logo</span><span class="card-tag">Bold</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Footer" data-label="Accent Strip" onclick="toggleSelect(this)">
-                <div class="preview-window footer-preview">
-                    <div class="footer-accent-strip">
-                        <div class="fas-top">
-                            <span class="fas-logo">BRAND</span>
-                            <div class="fas-links"><span>Services</span><span>About</span><span>Contact</span></div>
-                        </div>
-                        <div class="fas-bot">© 2025 Brand Name. All rights reserved.</div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Accent Strip</span><span class="card-tag">On-brand</span></div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- CONTACT FORMS -->
-    <div class="tab-panel" id="tab-forms">
-        <div class="section-header">
-            <div class="section-title">Contact Forms</div>
-            <div class="section-desc">How customers get in touch. Submissions go straight to your email.</div>
-        </div>
-        <div class="preview-grid">
-
-            <div class="preview-card" data-category="Contact Form" data-label="Minimal Floating Label" onclick="toggleSelect(this)">
-                <div class="preview-window form-preview">
-                    <div class="demo-form form-minimal">
-                        <div class="df-h">Get in Touch</div>
-                        <div class="df-f"><span>Name</span>John Smith</div>
-                        <div class="df-f"><span>Email</span>john@email.com</div>
-                        <div class="df-f"><span>Message</span>Hi, I'd like to...</div>
-                        <div class="df-btn">Send Message</div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Minimal Floating Label</span><span class="card-tag">Elegant</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Contact Form" data-label="Boxed Dark" onclick="toggleSelect(this)">
-                <div class="preview-window form-preview">
-                    <div class="demo-form form-boxed">
-                        <div class="df-h">Get in Touch</div>
-                        <div class="df-f">Your name</div>
-                        <div class="df-f">Your email</div>
-                        <div class="df-f">Your message</div>
-                        <div class="df-btn">Send Message</div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Boxed Dark</span><span class="card-tag">Professional</span></div>
-            </div>
-
-            <div class="preview-card" data-category="Contact Form" data-label="Outlined Accent" onclick="toggleSelect(this)">
-                <div class="preview-window form-preview">
-                    <div class="demo-form form-outlined">
-                        <div class="df-h">Get in Touch</div>
-                        <div class="df-f">Your name</div>
-                        <div class="df-f">Your email</div>
-                        <div class="df-f">Your message</div>
-                        <div class="df-btn">Send Message</div>
-                    </div>
-                </div>
-                <div class="card-footer"><span class="card-label">Outlined Accent</span><span class="card-tag">Sharp</span></div>
-            </div>
-
-        </div>
-    </div>
+  </div>
+</div>
 
 </main>
 
-<!-- SUMMARY BAR -->
-<div class="summary-bar" id="summary-bar">
-    <div class="summary-chips" id="summary-chips"></div>
-    <div class="bar-actions">
-        <button class="btn-clear" onclick="clearAll()">Clear All</button>
-        <button class="btn-export" id="export-btn" onclick="exportBrief()">Copy Brief</button>
-    </div>
-</div>
+<footer class="site-footer">
+  <p>Built by <a href="mailto:cian.mccaul2@mail.dcu.ie">Cian McCaul</a> · Web Design & Development · Ireland</p>
+</footer>
 
 <script>
-    // ── TABS ──
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-        });
+// ── INIT ──
+const SUPABASE_URL = 'https://keqizgtvunwdabwvgrik.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_omG3I_QFY_hpIhCcugVlmA_H2HqvTkm';
+const EMAILJS_SERVICE = 'service_p4zuxps';
+const EMAILJS_TEMPLATE = 'template_2dn06z6';
+const EMAILJS_KEY = 'M9uCIf7tZKXTnZZ_a';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+emailjs.init(EMAILJS_KEY);
+
+// ── THEME ──
+let dark = true;
+function toggleTheme() {
+  dark = !dark;
+  document.body.classList.toggle('light-mode', !dark);
+  document.getElementById('theme-btn').textContent = dark ? '☀ Light' : '☾ Dark';
+}
+
+// ── TABS ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'generate') updateGeneratePanel();
+  });
+});
+
+// ── SELECTION ──
+const selections = {};
+function toggleSelect(card) {
+  const cat = card.dataset.category;
+  const label = card.dataset.label;
+  if (card.classList.contains('selected')) {
+    card.classList.remove('selected');
+    if (selections[cat] === label) delete selections[cat];
+  } else {
+    document.querySelectorAll(`.preview-card[data-category="${cat}"]`).forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selections[cat] = label;
+  }
+  updateCart();
+}
+
+// ── CART ──
+let cartOpen = false;
+function toggleCart() {
+  cartOpen = !cartOpen;
+  document.getElementById('cart-sidebar').classList.toggle('open', cartOpen);
+  document.getElementById('cart-overlay').classList.toggle('open', cartOpen);
+}
+function updateCart() {
+  const keys = Object.keys(selections);
+  document.getElementById('cart-count').textContent = keys.length;
+  const el = document.getElementById('cart-items');
+  if (!keys.length) { el.innerHTML = '<div class="cart-empty"><strong>Nothing selected yet</strong>Browse the tabs and click cards to build your brief.</div>'; return; }
+  el.innerHTML = keys.map(k => `<div class="cart-item"><div class="ci-info"><div class="ci-cat">${k}</div><div class="ci-label">${selections[k]}</div></div><button class="ci-remove" onclick="removeItem('${k}')">✕</button></div>`).join('');
+}
+function removeItem(cat) {
+  delete selections[cat];
+  document.querySelectorAll(`.preview-card[data-category="${cat}"]`).forEach(c => c.classList.remove('selected'));
+  updateCart();
+}
+function clearAll() {
+  document.querySelectorAll('.preview-card.selected').forEach(c => c.classList.remove('selected'));
+  Object.keys(selections).forEach(k => delete selections[k]);
+  updateCart();
+  if (cartOpen) toggleCart();
+}
+
+// ── TOAST ──
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3500);
+}
+
+// ── QUESTIONNAIRE ──
+let currentStep = 1;
+const totalSteps = 5;
+
+function openQuestionnaire() {
+  if (!Object.keys(selections).length) { showToast('Make at least one selection first', 'error'); return; }
+  toggleCart();
+  currentStep = 1;
+  showStep(1);
+  document.getElementById('q-overlay').classList.add('open');
+}
+
+function showStep(n) {
+  document.querySelectorAll('.q-step').forEach(s => s.classList.remove('active'));
+  const stepEl = document.getElementById('step-' + n);
+  if (stepEl) stepEl.classList.add('active');
+  document.getElementById('q-title').textContent = ['Your Details', 'Pages & Features', 'Your Content', 'Style & Branding', 'Almost Done!'][n - 1];
+  document.getElementById('q-step-ind').textContent = `Step ${n} of ${totalSteps}`;
+  document.getElementById('q-progress-bar').style.width = ((n / totalSteps) * 100) + '%';
+  document.getElementById('q-back').style.visibility = n > 1 ? 'visible' : 'hidden';
+  document.getElementById('q-next').textContent = n === totalSteps ? 'Submit Brief ✦' : 'Next →';
+}
+
+function prevStep() {
+  if (currentStep > 1) { currentStep--; showStep(currentStep); }
+}
+
+async function nextStep() {
+  if (currentStep === 1) {
+    const name = document.getElementById('q-name').value.trim();
+    const email = document.getElementById('q-email').value.trim();
+    if (!name || !email) { showToast('Please enter your name and email', 'error'); return; }
+  }
+  if (currentStep < totalSteps) {
+    currentStep++;
+    showStep(currentStep);
+  } else {
+    await submitBrief();
+  }
+}
+
+function getChecked(container) {
+  return Array.from(container.querySelectorAll('input[type=checkbox]:checked')).map(c => c.value);
+}
+
+async function submitBrief() {
+  const btn = document.getElementById('q-next');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  const name = document.getElementById('q-name').value.trim();
+  const email = document.getElementById('q-email').value.trim();
+
+  const questionnaire = {
+    business_name: document.getElementById('q-biz').value,
+    what_they_do: document.getElementById('q-what').value,
+    phone: document.getElementById('q-phone').value,
+    location: document.getElementById('q-location').value,
+    pages_needed: getChecked(document.getElementById('step-2')).filter(v => ['Home Page','About Us','Services Page','Contact Page','Gallery / Portfolio','Testimonials','FAQ Page','Pricing Page'].includes(v)),
+    features_needed: getChecked(document.getElementById('step-2')).filter(v => ['Contact Form','Google Maps','WhatsApp Button','Cookie Banner','Social Media Icons','Live Chat Widget','Photo Gallery','Before & After Slider','Scroll Animations','Mobile Optimised'].includes(v)),
+    tagline: document.getElementById('q-tagline').value,
+    services: document.getElementById('q-services').value,
+    homepage_content: document.getElementById('q-homepage').value,
+    social_links: document.getElementById('q-social').value,
+    has_logo: document.getElementById('q-logo').value,
+    has_photos: document.getElementById('q-photos').value,
+    brand_colours: document.getElementById('q-colours').value,
+    inspiration_sites: document.getElementById('q-inspo').value,
+    dont_wants: document.getElementById('q-donts').value,
+    has_domain: document.getElementById('q-domain').value,
+    domain_name: document.getElementById('q-domain-name').value,
+    existing_site: document.getElementById('q-existing').value,
+    existing_url: document.getElementById('q-existing-url').value,
+    extra_notes: document.getElementById('q-notes').value,
+  };
+
+  const selectionText = Object.entries(selections).map(([k,v]) => `${k}: ${v}`).join('\n');
+  const questionnaireText = Object.entries(questionnaire).filter(([,v])=>v&&(Array.isArray(v)?v.length:v)).map(([k,v]) => `${k.replace(/_/g,' ')}: ${Array.isArray(v)?v.join(', '):v}`).join('\n');
+
+  try {
+    // Save to Supabase
+    const { error } = await db.from('submissions').insert({
+      client_name: name,
+      client_email: email,
+      selections: selections,
+      questionnaire: questionnaire
+    });
+    if (error) throw error;
+
+    // Send email
+    await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+      client_name: name,
+      client_email: email,
+      selections: selectionText,
+      questionnaire: questionnaireText
     });
 
-    // ── SELECTION ──
-    const selections = {};
+    // Show success
+    document.querySelectorAll('.q-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('q-success').classList.add('show');
+    document.getElementById('q-footer').style.display = 'none';
+    document.getElementById('q-progress-bar').style.width = '100%';
+    showToast('Brief submitted successfully!', 'success');
 
-    function toggleSelect(card) {
-        const cat = card.dataset.category;
-        const label = card.dataset.label;
-        if (card.classList.contains('selected')) {
-            card.classList.remove('selected');
-            if (selections[cat] === label) delete selections[cat];
-        } else {
-            document.querySelectorAll(`.preview-card[data-category="${cat}"]`).forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            selections[cat] = label;
-        }
-        updateSummary();
-    }
+  } catch (err) {
+    console.error(err);
+    showToast('Something went wrong. Please try again.', 'error');
+    btn.textContent = 'Submit Brief ✦';
+    btn.disabled = false;
+  }
+}
 
-    function updateSummary() {
-        const bar = document.getElementById('summary-bar');
-        const chips = document.getElementById('summary-chips');
-        const count = document.getElementById('sel-count');
-        const keys = Object.keys(selections);
-        count.textContent = keys.length;
-        if (!keys.length) { bar.classList.remove('visible'); return; }
-        bar.classList.add('visible');
-        chips.innerHTML = keys.map(k =>
-            `<div class="s-chip"><span class="s-cat">${k}:</span>${selections[k]}</div>`
-        ).join('');
-    }
+// Close questionnaire
+document.getElementById('q-overlay').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('open');
+    document.getElementById('q-footer').style.display = '';
+    document.getElementById('q-success').classList.remove('show');
+  }
+});
 
-    function clearAll() {
-        document.querySelectorAll('.preview-card.selected').forEach(c => c.classList.remove('selected'));
-        Object.keys(selections).forEach(k => delete selections[k]);
-        updateSummary();
-    }
+// Domain field toggle
+document.getElementById('q-domain').addEventListener('change', function() {
+  document.getElementById('q-domain-name-field').style.display = this.value === 'Yes — I own one already' ? 'block' : 'none';
+});
 
-    function exportBrief() {
-        const keys = Object.keys(selections);
-        if (!keys.length) return;
-        const lines = ['DESIGN BRIEF', '============', '', ...keys.map(k => `${k}: ${selections[k]}`), '', 'Generated by DesignRoom'];
-        navigator.clipboard.writeText(lines.join('\n')).then(() => {
-            const btn = document.getElementById('export-btn');
-            btn.textContent = '✓ Copied!';
-            setTimeout(() => btn.textContent = 'Copy Brief', 2200);
-        });
-    }
+// Checkbox styling
+document.querySelectorAll('.q-check').forEach(label => {
+  label.addEventListener('change', () => label.classList.toggle('checked', label.querySelector('input').checked));
+});
 
-    // ── PARTICLES CANVAS ──
-    (function() {
-        const canvas = document.getElementById('c-particles');
-        const ctx = canvas.getContext('2d');
-        const p = canvas.parentElement;
-        canvas.width = p.offsetWidth; canvas.height = p.offsetHeight;
-        const pts = Array.from({length: 45}, () => ({
-            x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-            vx: (Math.random()-.5)*.5, vy: (Math.random()-.5)*.5,
-            r: Math.random()*1.4+.4
-        }));
-        function draw() {
-            ctx.fillStyle = '#050510'; ctx.fillRect(0,0,canvas.width,canvas.height);
-            pts.forEach(p => {
-                p.x+=p.vx; p.y+=p.vy;
-                if(p.x<0||p.x>canvas.width) p.vx*=-1;
-                if(p.y<0||p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-                ctx.fillStyle='rgba(0,229,255,0.7)'; ctx.fill();
-            });
-            for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++) {
-                const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
-                const d=Math.sqrt(dx*dx+dy*dy);
-                if(d<55){ ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
-                ctx.strokeStyle=`rgba(0,229,255,${.18*(1-d/55)})`; ctx.lineWidth=.5; ctx.stroke(); }
-            }
-            requestAnimationFrame(draw);
-        }
-        draw();
-    })();
+// ── GENERATE PREVIEW ──
+function updateGeneratePanel() {
+  const keys = Object.keys(selections);
+  const chips = document.getElementById('gen-chips');
+  const hint = document.getElementById('gen-hint');
+  const btn = document.getElementById('gen-btn');
+  chips.innerHTML = keys.map(k => `<div class="gen-chip"><span class="gc-cat">${k}:</span>${selections[k]}</div>`).join('');
+  hint.textContent = keys.length ? `${keys.length} selection${keys.length>1?'s':''} ready — click to generate` : 'Make at least one selection to generate';
+  btn.disabled = !keys.length;
+}
 
-    // ── STARS CANVAS ──
-    (function() {
-        const canvas = document.getElementById('c-stars');
-        const ctx = canvas.getContext('2d');
-        const p = canvas.parentElement;
-        canvas.width = p.offsetWidth; canvas.height = p.offsetHeight;
-        const stars = Array.from({length: 90}, () => ({
-            x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-            r: Math.random()*.9+.1, o: Math.random()
-        }));
-        function draw() {
-            ctx.fillStyle='#020208'; ctx.fillRect(0,0,canvas.width,canvas.height);
-            stars.forEach(s => {
-                s.o+=(Math.random()-.5)*.025;
-                s.o=Math.max(.05,Math.min(1,s.o));
-                ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-                ctx.fillStyle=`rgba(255,255,255,${s.o})`; ctx.fill();
-            });
-            requestAnimationFrame(draw);
-        }
-        draw();
-    })();
+function resetPreview() {
+  document.getElementById('gen-preview-wrap').style.display = 'none';
+  document.querySelector('.generate-panel').style.display = 'block';
+}
 
-    // ── GEOMETRIC SHAPES ──
-    (function() {
-        const wrap = document.getElementById('geo-wrap');
-        if (!wrap) return;
-        [{w:55,h:55,t:'18%',l:'8%',d:'0s',dur:'9s'},
-         {w:38,h:38,t:'48%',l:'62%',d:'-2s',dur:'7s'},
-         {w:72,h:72,t:'8%',l:'62%',d:'-4s',dur:'11s'},
-         {w:28,h:28,t:'62%',l:'18%',d:'-1s',dur:'8s'},
-         {w:46,h:46,t:'28%',l:'38%',d:'-3s',dur:'10s'}].forEach(s => {
-            const el = document.createElement('div');
-            el.className = 'geo-shape';
-            el.style.cssText=`width:${s.w}px;height:${s.h}px;top:${s.t};left:${s.l};animation-delay:${s.d};animation-duration:${s.dur}`;
-            wrap.appendChild(el);
-        });
-    })();
+function generatePreview() {
+  const keys = Object.keys(selections);
+  if (!keys.length) return;
+
+  const scheme = selections['Colour Scheme'] || 'Charcoal + Cyan';
+  const schemeColors = {
+    'Charcoal + Cyan':{bg:'#0a0a0a',nav:'#111',accent:'#00e5ff',text:'#f0f0f0',btn:'#00e5ff',btnText:'#000'},
+    'Navy + Gold':{bg:'#09101e',nav:'#131d30',accent:'#d4a843',text:'#eef0f4',btn:'#d4a843',btnText:'#000'},
+    'Black + White':{bg:'#ffffff',nav:'#eeeeee',accent:'#000000',text:'#111111',btn:'#000',btnText:'#fff'},
+    'Dark + Red':{bg:'#0d0505',nav:'#1a0808',accent:'#e63333',text:'#f5f2f2',btn:'#e63333',btnText:'#fff'},
+    'Slate + Emerald':{bg:'#0e141a',nav:'#192028',accent:'#10b981',text:'#e8edf2',btn:'#10b981',btnText:'#000'},
+    'Dark Forest':{bg:'#080d08',nav:'#101a10',accent:'#4ade80',text:'#e8f0e8',btn:'#4ade80',btnText:'#000'},
+    'Deep Purple + Violet':{bg:'#120820',nav:'#1e1030',accent:'#a855f7',text:'#f0eaff',btn:'#a855f7',btnText:'#fff'},
+    'Copper + Orange':{bg:'#0f0a06',nav:'#1e1408',accent:'#e8943a',text:'#f5efe8',btn:'#e8943a',btnText:'#000'},
+    'Midnight + Pink':{bg:'#08080a',nav:'#141416',accent:'#ff3366',text:'#ffffff',btn:'#ff3366',btnText:'#fff'},
+    'Ocean Dark + Teal':{bg:'#060c10',nav:'#0e1820',accent:'#00bcd4',text:'#e8f4ff',btn:'#00bcd4',btnText:'#000'},
+  };
+  const c = schemeColors[scheme] || schemeColors['Charcoal + Cyan'];
+  const bg = selections['Background'] || 'Dark Grid';
+  const bgStyle = bg==='Dark Grid'?`background:${c.bg};background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:28px 28px`
+    :bg==='Mesh Gradient'?`background:radial-gradient(ellipse at 20% 50%,${c.accent}22 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,${c.accent}18 0%,transparent 50%),${c.bg}`
+    :bg==='Gradient Flow'?`background:linear-gradient(-45deg,${c.bg},${c.nav},${c.bg});background-size:400% 400%;animation:gf 6s ease infinite`
+    :bg==='Scanlines'?`background:${c.bg};position:relative`
+    :`background:${c.bg}`;
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+@keyframes gf{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+body{${bgStyle};color:${c.text};font-family:'Segoe UI',sans-serif;min-height:100vh}
+nav{background:${c.nav};padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(128,128,128,0.15)}
+.logo{font-size:1.3rem;font-weight:900;letter-spacing:0.06em}.logo span{color:${c.accent}}
+.navlinks{display:flex;gap:1.5rem}.navlinks a{font-size:0.8rem;color:${c.text};opacity:0.6;text-decoration:none;letter-spacing:0.05em}
+.hero{padding:5rem 2rem;text-align:center;max-width:740px;margin:0 auto}
+.eyebrow{font-size:0.7rem;color:${c.accent};letter-spacing:0.28em;text-transform:uppercase;margin-bottom:1rem}
+h1{font-size:3.8rem;font-weight:900;line-height:0.93;letter-spacing:0.03em;margin-bottom:1rem}
+h1 em{color:${c.accent};font-style:normal}
+.sub{font-size:1rem;color:${c.text};opacity:0.55;line-height:1.7;margin-bottom:2.5rem;max-width:480px;margin-left:auto;margin-right:auto}
+.btn{background:${c.btn};color:${c.btnText};padding:15px 36px;border:none;border-radius:5px;font-size:0.85rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;display:inline-block;margin-right:12px}
+.btn-ghost{background:transparent;border:1px solid ${c.accent};color:${c.accent};padding:14px 28px;border-radius:5px;font-size:0.85rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;display:inline-block}
+.services{padding:4rem 2rem;max-width:960px;margin:0 auto}
+.s-eye{font-size:0.65rem;color:${c.accent};letter-spacing:0.22em;text-transform:uppercase;margin-bottom:0.5rem}
+.s-h{font-size:2rem;font-weight:800;margin-bottom:2.5rem}
+.s-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.s-card{background:${c.nav};border:1px solid rgba(128,128,128,0.12);border-radius:10px;padding:1.5rem}
+.s-card-icon{width:36px;height:36px;border-radius:8px;background:${c.accent}22;border:1px solid ${c.accent}44;margin-bottom:1rem}
+.s-card h3{font-size:1rem;font-weight:700;margin-bottom:0.4rem;color:${c.accent}}
+.s-card p{font-size:0.8rem;color:${c.text};opacity:0.5;line-height:1.6}
+.stats{padding:3rem 2rem;max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;text-align:center;border-top:1px solid rgba(128,128,128,0.1);border-bottom:1px solid rgba(128,128,128,0.1)}
+.stat .sv{font-size:2.5rem;font-weight:900;color:${c.accent};line-height:1}
+.stat .sl{font-size:0.7rem;color:${c.text};opacity:0.4;text-transform:uppercase;letter-spacing:0.12em;margin-top:0.3rem}
+footer{border-top:1px solid rgba(128,128,128,0.1);padding:1.5rem 2rem;display:flex;justify-content:space-between;font-size:0.7rem;color:${c.text};opacity:0.35;margin-top:3rem}
+</style></head><body>
+<nav><div class="logo">UNIQUE<span>FIRE</span></div><div class="navlinks"><a href="#">Home</a><a href="#">Services</a><a href="#">About</a><a href="#">Contact</a></div></nav>
+<div class="hero"><div class="eyebrow">Security & Protection · Ireland</div><h1>WE KEEP YOU <em>SAFE</em></h1><p class="sub">Professional CCTV, alarm systems and access control for homes and businesses across Ireland. Trusted by hundreds of clients for over a decade.</p><button class="btn">Get a Free Quote</button><button class="btn-ghost">Our Services</button></div>
+<div class="stats"><div class="stat"><div class="sv">500+</div><div class="sl">Clients</div></div><div class="stat"><div class="sv">12yr</div><div class="sl">Experience</div></div><div class="stat"><div class="sv">24/7</div><div class="sl">Support</div></div></div>
+<div class="services"><div class="s-eye">What We Do</div><div class="s-h">Our Services</div><div class="s-grid"><div class="s-card"><div class="s-card-icon"></div><h3>CCTV Systems</h3><p>HD camera systems with remote viewing for homes and businesses. Installation and maintenance included.</p></div><div class="s-card"><div class="s-card-icon"></div><h3>Alarm Systems</h3><p>Intruder alarms, fire alarms and monitored security solutions. 24/7 monitoring available.</p></div><div class="s-card"><div class="s-card-icon"></div><h3>Access Control</h3><p>Key fobs, intercoms and gate automation systems professionally installed and maintained.</p></div></div></div>
+<footer><span>© 2025 Unique Fire Security Ltd. All rights reserved.</span><span>Dublin, Ireland · hello@uniquefire.ie</span></footer>
+</body></html>`;
+
+  document.querySelector('.generate-panel').style.display='none';
+  document.getElementById('gen-preview-wrap').style.display='block';
+  const iframe=document.getElementById('preview-iframe');
+  iframe.srcdoc=html;
+}
+
+// ── CANVASES ──
+document.querySelectorAll('.c-particles').forEach(canvas=>{
+  const ctx=canvas.getContext('2d'),p=canvas.parentElement;
+  canvas.width=p.offsetWidth;canvas.height=p.offsetHeight;
+  const pts=Array.from({length:40},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,r:Math.random()*1.4+.4}));
+  function draw(){ctx.fillStyle='#050510';ctx.fillRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,0.7)';ctx.fill()});for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<50){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(0,229,255,${.15*(1-d/50)})`;ctx.lineWidth=.5;ctx.stroke()}}requestAnimationFrame(draw)}
+  draw();
+});
+document.querySelectorAll('.c-stars').forEach(canvas=>{
+  const ctx=canvas.getContext('2d'),p=canvas.parentElement;
+  canvas.width=p.offsetWidth;canvas.height=p.offsetHeight;
+  const stars=Array.from({length:80},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*.9+.1,o:Math.random()}));
+  function draw(){ctx.fillStyle='#020208';ctx.fillRect(0,0,canvas.width,canvas.height);stars.forEach(s=>{s.o+=(Math.random()-.5)*.025;s.o=Math.max(.05,Math.min(1,s.o));ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${s.o})`;ctx.fill()});requestAnimationFrame(draw)}
+  draw();
+});
+document.querySelectorAll('.c-matrix').forEach(canvas=>{
+  const ctx=canvas.getContext('2d'),p=canvas.parentElement;
+  canvas.width=p.offsetWidth;canvas.height=p.offsetHeight;
+  const cols=Math.floor(canvas.width/14),drops=Array(cols).fill(1);
+  const chars='01アイウエオカキクケコ';
+  function draw(){ctx.fillStyle='rgba(0,5,0,0.05)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.font='11px monospace';drops.forEach((y,i)=>{const c=chars[Math.floor(Math.random()*chars.length)];ctx.fillStyle=y*14<40?'#fff':'rgba(0,229,255,0.7)';ctx.fillText(c,i*14,y*14);if(y*14>canvas.height&&Math.random()>.975)drops[i]=0;drops[i]++});} setInterval(draw,60);
+});
+document.querySelectorAll('.c-cctv').forEach(canvas=>{
+  const ctx=canvas.getContext('2d'),p=canvas.parentElement;
+  canvas.width=p.offsetWidth;canvas.height=p.offsetHeight;
+  let mx=canvas.width/2,my=canvas.height/2;
+  p.addEventListener('mousemove',e=>{const r=p.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top});
+  function draw(){
+    ctx.fillStyle='#080808';ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(let i=0;i<canvas.height;i+=4){ctx.fillStyle='rgba(0,0,0,0.08)';ctx.fillRect(0,i,canvas.width,2)}
+    const cx=canvas.width/2,cy=30;
+    ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,cy);ctx.stroke();
+    const ang=Math.atan2(my-cy,mx-cx);
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(ang);
+    ctx.fillStyle='#1a1a1a';ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(-18,-8,36,16,4);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#00e5ff';ctx.beginPath();ctx.arc(18,0,5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(0,229,255,0.2)';ctx.beginPath();ctx.arc(18,0,9,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+    const spread=0.35;
+    ctx.save();ctx.translate(cx,cy);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(ang-spread)*120,Math.sin(ang-spread)*120);ctx.lineTo(Math.cos(ang+spread)*120,Math.sin(ang+spread)*120);ctx.closePath();ctx.fillStyle='rgba(0,229,255,0.04)';ctx.fill();ctx.restore();
+    ctx.fillStyle=Math.sin(Date.now()/500)>0?'#ff3333':'#660000';ctx.beginPath();ctx.arc(12,12,5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='9px monospace';ctx.fillText('REC',20,16);
+    ctx.fillStyle='rgba(0,229,255,0.2)';ctx.font='8px monospace';ctx.fillText('CAM 01',canvas.width-52,canvas.height-8);
+    requestAnimationFrame(draw);
+  }
+  draw();
+});
+document.querySelectorAll('[data-geo="true"]').forEach(wrap=>{
+  [{w:55,h:55,t:'18%',l:'8%',d:'0s',dur:'9s'},{w:38,h:38,t:'48%',l:'62%',d:'-2s',dur:'7s'},{w:72,h:72,t:'8%',l:'62%',d:'-4s',dur:'11s'},{w:28,h:28,t:'62%',l:'18%',d:'-1s',dur:'8s'},{w:46,h:46,t:'28%',l:'38%',d:'-3s',dur:'10s'}].forEach(s=>{
+    const el=document.createElement('div');el.className='geo-shape';el.style.cssText=`width:${s.w}px;height:${s.h}px;top:${s.t};left:${s.l};animation-delay:${s.d};animation-duration:${s.dur}`;wrap.appendChild(el);
+  });
+});
+document.querySelectorAll('[data-blobs="true"]').forEach(wrap=>{
+  [{s:80,t:'10%',l:'10%',c:'rgba(100,30,200,0.25)',dur:'6s'},{s:60,t:'50%',l:'55%',c:'rgba(0,80,200,0.2)',dur:'8s'},{s:70,t:'60%',l:'20%',c:'rgba(200,0,100,0.15)',dur:'7s'}].forEach(b=>{
+    const el=document.createElement('div');el.className='blob';el.style.cssText=`width:${b.s}px;height:${b.s}px;top:${b.t};left:${b.l};background:${b.c};animation-duration:${b.dur}`;wrap.appendChild(el);
+  });
+});
 </script>
-
 </body>
 </html>
