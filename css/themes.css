@@ -1,0 +1,389 @@
+/* ═══════════════════════════════════════
+   CM STUDIO — DESIGNROOM V3
+   css/themes.css
+   Live colour scheme transforms
+═══════════════════════════════════════ */
+
+/* ══════════════════════════════════════
+   SCHEME: CHARCOAL + CYAN (default)
+══════════════════════════════════════ */
+body.scheme-cyan {
+  --bg: #0a0a0a;
+  --bg2: #141414;
+  --bg3: #1e1e1e;
+  --bg4: #282828;
+  --accent: #00e5ff;
+  --accent-dim: rgba(0,229,255,0.1);
+  --accent-b: rgba(0,229,255,0.25);
+  --accent-rgb: 0,229,255;
+  --text: #f0f0f0;
+  --text2: #999;
+  --dim: #666;
+  --dimmer: #333;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --card-bg: #141414;
+  --input-bg: rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: NAVY + GOLD
+══════════════════════════════════════ */
+body.scheme-gold {
+  --bg: #09101e;
+  --bg2: #111828;
+  --bg3: #1a2338;
+  --bg4: #222e48;
+  --accent: #d4a843;
+  --accent-dim: rgba(212,168,67,0.12);
+  --accent-b: rgba(212,168,67,0.3);
+  --accent-rgb: 212,168,67;
+  --text: #eef0f4;
+  --text2: #8899bb;
+  --dim: #556688;
+  --dimmer: #2a3550;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --card-bg: #111828;
+  --input-bg: rgba(255,255,255,0.05);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: BLACK + WHITE
+══════════════════════════════════════ */
+body.scheme-mono {
+  --bg: #ffffff;
+  --bg2: #f5f5f5;
+  --bg3: #ebebeb;
+  --bg4: #e0e0e0;
+  --accent: #000000;
+  --accent-dim: rgba(0,0,0,0.08);
+  --accent-b: rgba(0,0,0,0.2);
+  --accent-rgb: 0,0,0;
+  --text: #111111;
+  --text2: #555555;
+  --dim: #888888;
+  --dimmer: #cccccc;
+  --border: rgba(0,0,0,0.1);
+  --border2: rgba(0,0,0,0.18);
+  --card-bg: #ffffff;
+  --input-bg: rgba(0,0,0,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: DARK + RED
+══════════════════════════════════════ */
+body.scheme-red {
+  --bg: #0d0505;
+  --bg2: #160808;
+  --bg3: #200c0c;
+  --bg4: #2a1010;
+  --accent: #e63333;
+  --accent-dim: rgba(230,51,51,0.12);
+  --accent-b: rgba(230,51,51,0.3);
+  --accent-rgb: 230,51,51;
+  --text: #f5f2f2;
+  --text2: #aa8888;
+  --dim: #775555;
+  --dimmer: #3a2020;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --card-bg: #160808;
+  --input-bg: rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: SLATE + EMERALD
+══════════════════════════════════════ */
+body.scheme-emerald {
+  --bg: #0e141a;
+  --bg2: #16202a;
+  --bg3: #1e2c38;
+  --bg4: #263848;
+  --accent: #10b981;
+  --accent-dim: rgba(16,185,129,0.12);
+  --accent-b: rgba(16,185,129,0.3);
+  --accent-rgb: 16,185,129;
+  --text: #e8edf2;
+  --text2: #7a9aaa;
+  --dim: #4a6a7a;
+  --dimmer: #223040;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --card-bg: #16202a;
+  --input-bg: rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: DARK FOREST
+══════════════════════════════════════ */
+body.scheme-forest {
+  --bg: #080d08;
+  --bg2: #101810;
+  --bg3: #182418;
+  --bg4: #203020;
+  --accent: #4ade80;
+  --accent-dim: rgba(74,222,128,0.1);
+  --accent-b: rgba(74,222,128,0.28);
+  --accent-rgb: 74,222,128;
+  --text: #e8f0e8;
+  --text2: #7aaa7a;
+  --dim: #4a7a4a;
+  --dimmer: #203020;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --card-bg: #101810;
+  --input-bg: rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: DEEP PURPLE + VIOLET
+══════════════════════════════════════ */
+body.scheme-violet {
+  --bg: #120820;
+  --bg2: #1a1030;
+  --bg3: #241840;
+  --bg4: #2e2050;
+  --accent: #a855f7;
+  --accent-dim: rgba(168,85,247,0.12);
+  --accent-b: rgba(168,85,247,0.3);
+  --accent-rgb: 168,85,247;
+  --text: #f0eaff;
+  --text2: #9988cc;
+  --dim: #6655aa;
+  --dimmer: #2e2050;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --card-bg: #1a1030;
+  --input-bg: rgba(255,255,255,0.05);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: COPPER + ORANGE
+══════════════════════════════════════ */
+body.scheme-copper {
+  --bg: #0f0a06;
+  --bg2: #1a1008;
+  --bg3: #261810;
+  --bg4: #322018;
+  --accent: #e8943a;
+  --accent-dim: rgba(232,148,58,0.12);
+  --accent-b: rgba(232,148,58,0.3);
+  --accent-rgb: 232,148,58;
+  --text: #f5efe8;
+  --text2: #aa8866;
+  --dim: #775544;
+  --dimmer: #3a2818;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --card-bg: #1a1008;
+  --input-bg: rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: MIDNIGHT + PINK
+══════════════════════════════════════ */
+body.scheme-pink {
+  --bg: #08080a;
+  --bg2: #121218;
+  --bg3: #1c1c26;
+  --bg4: #262634;
+  --accent: #ff3366;
+  --accent-dim: rgba(255,51,102,0.12);
+  --accent-b: rgba(255,51,102,0.3);
+  --accent-rgb: 255,51,102;
+  --text: #ffffff;
+  --text2: #aa88aa;
+  --dim: #775577;
+  --dimmer: #332233;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --card-bg: #121218;
+  --input-bg: rgba(255,255,255,0.05);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: OCEAN DARK + TEAL
+══════════════════════════════════════ */
+body.scheme-teal {
+  --bg: #060c10;
+  --bg2: #0e1820;
+  --bg3: #162430;
+  --bg4: #1e3040;
+  --accent: #00bcd4;
+  --accent-dim: rgba(0,188,212,0.12);
+  --accent-b: rgba(0,188,212,0.3);
+  --accent-rgb: 0,188,212;
+  --text: #e8f4ff;
+  --text2: #6699bb;
+  --dim: #446688;
+  --dimmer: #1e3044;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --card-bg: #0e1820;
+  --input-bg: rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME TRANSITION
+   Smooth animation when scheme changes
+══════════════════════════════════════ */
+body {
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
+}
+
+header,
+.cart-sidebar,
+.q-box,
+.modal-overlay,
+.preview-card,
+.cart-item,
+.w-step,
+.ab-item,
+.welcome-box {
+  transition:
+    background-color 0.5s ease,
+    border-color 0.5s ease,
+    color 0.5s ease;
+}
+
+/* ══════════════════════════════════════
+   COLOUR SCHEME PREVIEW CARDS
+   Each has hardcoded colours so they
+   always display correctly regardless
+   of the active scheme
+══════════════════════════════════════ */
+
+/* Charcoal + Cyan */
+.cs-cyan .cs-demo { background: #0a0a0a; }
+.cs-cyan .cd-nav { background: #1a1a1a; }
+.cs-cyan .cd-t { background: #ffffff; }
+.cs-cyan .cd-s { background: #555555; }
+.cs-cyan .cd-b { background: #00e5ff; }
+.cs-cyan .csw:nth-child(1) { background: #0a0a0a; }
+.cs-cyan .csw:nth-child(2) { background: #1a1a1a; }
+.cs-cyan .csw:nth-child(3) { background: #00e5ff; }
+.cs-cyan .csw:nth-child(4) { background: #ffffff; }
+
+/* Navy + Gold */
+.cs-gold .cs-demo { background: #09101e; }
+.cs-gold .cd-nav { background: #131d30; }
+.cs-gold .cd-t { background: #eef0f4; }
+.cs-gold .cd-s { background: #4a5270; }
+.cs-gold .cd-b { background: #d4a843; }
+.cs-gold .csw:nth-child(1) { background: #09101e; }
+.cs-gold .csw:nth-child(2) { background: #131d30; }
+.cs-gold .csw:nth-child(3) { background: #d4a843; }
+.cs-gold .csw:nth-child(4) { background: #eef0f4; }
+
+/* Black + White */
+.cs-mono .cs-demo { background: #ffffff; }
+.cs-mono .cd-nav { background: #eeeeee; }
+.cs-mono .cd-t { background: #000000; }
+.cs-mono .cd-s { background: #aaaaaa; }
+.cs-mono .cd-b { background: #000000; }
+.cs-mono .csw:nth-child(1) { background: #ffffff; }
+.cs-mono .csw:nth-child(2) { background: #eeeeee; }
+.cs-mono .csw:nth-child(3) { background: #000000; }
+.cs-mono .csw:nth-child(4) { background: #888888; }
+
+/* Dark + Red */
+.cs-red .cs-demo { background: #0d0505; }
+.cs-red .cd-nav { background: #1a0808; }
+.cs-red .cd-t { background: #f5f2f2; }
+.cs-red .cd-s { background: #5a3535; }
+.cs-red .cd-b { background: #e63333; }
+.cs-red .csw:nth-child(1) { background: #0d0505; }
+.cs-red .csw:nth-child(2) { background: #1a0808; }
+.cs-red .csw:nth-child(3) { background: #e63333; }
+.cs-red .csw:nth-child(4) { background: #f5f2f2; }
+
+/* Slate + Emerald */
+.cs-emerald .cs-demo { background: #0e141a; }
+.cs-emerald .cd-nav { background: #192028; }
+.cs-emerald .cd-t { background: #e8edf2; }
+.cs-emerald .cd-s { background: #445060; }
+.cs-emerald .cd-b { background: #10b981; }
+.cs-emerald .csw:nth-child(1) { background: #0e141a; }
+.cs-emerald .csw:nth-child(2) { background: #192028; }
+.cs-emerald .csw:nth-child(3) { background: #10b981; }
+.cs-emerald .csw:nth-child(4) { background: #e8edf2; }
+
+/* Dark Forest */
+.cs-forest .cs-demo { background: #080d08; }
+.cs-forest .cd-nav { background: #101a10; }
+.cs-forest .cd-t { background: #e8f0e8; }
+.cs-forest .cd-s { background: #3a5a3a; }
+.cs-forest .cd-b { background: #4ade80; }
+.cs-forest .csw:nth-child(1) { background: #080d08; }
+.cs-forest .csw:nth-child(2) { background: #101a10; }
+.cs-forest .csw:nth-child(3) { background: #4ade80; }
+.cs-forest .csw:nth-child(4) { background: #e8f0e8; }
+
+/* Deep Purple + Violet */
+.cs-violet .cs-demo { background: #120820; }
+.cs-violet .cd-nav { background: #1e1030; }
+.cs-violet .cd-t { background: #f0eaff; }
+.cs-violet .cd-s { background: #6040a0; }
+.cs-violet .cd-b { background: #a855f7; }
+.cs-violet .csw:nth-child(1) { background: #120820; }
+.cs-violet .csw:nth-child(2) { background: #1e1030; }
+.cs-violet .csw:nth-child(3) { background: #a855f7; }
+.cs-violet .csw:nth-child(4) { background: #f0eaff; }
+
+/* Copper + Orange */
+.cs-copper .cs-demo { background: #0f0a06; }
+.cs-copper .cd-nav { background: #1e1408; }
+.cs-copper .cd-t { background: #f5efe8; }
+.cs-copper .cd-s { background: #8a6040; }
+.cs-copper .cd-b { background: #e8943a; }
+.cs-copper .csw:nth-child(1) { background: #0f0a06; }
+.cs-copper .csw:nth-child(2) { background: #1e1408; }
+.cs-copper .csw:nth-child(3) { background: #e8943a; }
+.cs-copper .csw:nth-child(4) { background: #f5efe8; }
+
+/* Midnight + Pink */
+.cs-pink .cs-demo { background: #08080a; }
+.cs-pink .cd-nav { background: #141416; }
+.cs-pink .cd-t { background: #ffffff; }
+.cs-pink .cd-s { background: #444444; }
+.cs-pink .cd-b { background: #ff3366; }
+.cs-pink .csw:nth-child(1) { background: #08080a; }
+.cs-pink .csw:nth-child(2) { background: #141416; }
+.cs-pink .csw:nth-child(3) { background: #ff3366; }
+.cs-pink .csw:nth-child(4) { background: #ffffff; }
+
+/* Ocean Dark + Teal */
+.cs-teal .cs-demo { background: #060c10; }
+.cs-teal .cd-nav { background: #0e1820; }
+.cs-teal .cd-t { background: #e8f4ff; }
+.cs-teal .cd-s { background: #304560; }
+.cs-teal .cd-b { background: #00bcd4; }
+.cs-teal .csw:nth-child(1) { background: #060c10; }
+.cs-teal .csw:nth-child(2) { background: #0e1820; }
+.cs-teal .csw:nth-child(3) { background: #00bcd4; }
+.cs-teal .csw:nth-child(4) { background: #e8f4ff; }
+
+/* ══════════════════════════════════════
+   SCHEME ACTIVE INDICATOR
+   Highlights the selected scheme card
+══════════════════════════════════════ */
+.scheme-active-ring {
+  box-shadow: 0 0 0 3px var(--accent), 0 0 20px rgba(var(--accent-rgb), 0.3);
+}
+
+/* ══════════════════════════════════════
+   ADMIN PANEL THEMES
+   Matches the colour scheme in admin
+══════════════════════════════════════ */
+body.admin-scheme-gold { --accent: #d4a843; --accent-rgb: 212,168,67; }
+body.admin-scheme-red { --accent: #e63333; --accent-rgb: 230,51,51; }
+body.admin-scheme-emerald { --accent: #10b981; --accent-rgb: 16,185,129; }
+body.admin-scheme-forest { --accent: #4ade80; --accent-rgb: 74,222,128; }
+body.admin-scheme-violet { --accent: #a855f7; --accent-rgb: 168,85,247; }
+body.admin-scheme-copper { --accent: #e8943a; --accent-rgb: 232,148,58; }
+body.admin-scheme-pink { --accent: #ff3366; --accent-rgb: 255,51,102; }
+body.admin-scheme-teal { --accent: #00bcd4; --accent-rgb: 0,188,212; }
+body.admin-scheme-mono { --accent: #000000; --accent-rgb: 0,0,0; }
