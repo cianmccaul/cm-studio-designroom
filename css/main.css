@@ -361,21 +361,27 @@ main { padding: 2rem 2rem 6rem; max-width: 1440px; margin: 0 auto; }
   --m1: rgb(100,30,200);
   --m2: rgb(0,80,200);
   --m3: rgb(200,0,60);
+  --mesh-bg: #080808;
   background:
     radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--m1) 28%, transparent) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 20%, color-mix(in srgb, var(--m2) 28%, transparent) 0%, transparent 50%),
     radial-gradient(ellipse at 60% 80%, color-mix(in srgb, var(--m3) 18%, transparent) 0%, transparent 50%),
-    #080808;
+    var(--mesh-bg);
   animation: meshPulse 8s ease-in-out infinite alternate;
 }
 @keyframes meshPulse { 0%{filter:hue-rotate(0deg)} 100%{filter:hue-rotate(25deg)} }
-.bg-aurora { background: #030310; position: relative; overflow: hidden; }
+.bg-aurora {
+  --aurora-c1: rgba(0,200,150,0.2);
+  --aurora-c2: rgba(100,0,200,0.2);
+  --aurora-c3: rgba(0,150,255,0.15);
+  background: #030310; position: relative; overflow: hidden;
+}
 .bg-aurora::before {
   content: ''; position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse at 30% 60%, rgba(0,200,150,0.2) 0%, transparent 55%),
-    radial-gradient(ellipse at 70% 30%, rgba(100,0,200,0.2) 0%, transparent 55%),
-    radial-gradient(ellipse at 50% 80%, rgba(0,150,255,0.15) 0%, transparent 50%);
+    radial-gradient(ellipse at 30% 60%, var(--aurora-c1) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 30%, var(--aurora-c2) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 80%, var(--aurora-c3) 0%, transparent 50%);
   animation: auroraPulse 6s ease-in-out infinite alternate;
 }
 @keyframes auroraPulse { 0%{opacity:0.7;transform:scale(1)} 100%{opacity:1;transform:scale(1.04)} }
@@ -518,16 +524,20 @@ body.light-mode .form-preview-bg { background: #e8e8ec; }
 @keyframes scaleIn{0%{opacity:0;transform:scale(0.85)}30%,75%{opacity:1;transform:scale(1)}95%,100%{opacity:0}}
 .count-item { text-align: center; }
 .count-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: #00e5ff; line-height: 1; animation: countPulse 3s ease-in-out infinite; }
+.count-item[style*="animation-delay"] .count-num { animation-delay: inherit; }
 .count-lbl { font-size: 0.55rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Syne', sans-serif; }
 @keyframes countPulse{0%{opacity:0.3}50%{opacity:1}100%{opacity:0.3}}
 .sg-item { flex: 1; min-width: 50px; background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px; opacity: 0; animation: sgIn 2s ease infinite; }
 .sg-item:nth-child(1){animation-delay:0s}.sg-item:nth-child(2){animation-delay:0.15s}.sg-item:nth-child(3){animation-delay:0.3s}.sg-item:nth-child(4){animation-delay:0.45s}
 @keyframes sgIn{0%{opacity:0;transform:translateY(10px)}30%,75%{opacity:1;transform:translateY(0)}95%,100%{opacity:0}}
 .sg-icon { width: 18px; height: 18px; border-radius: 4px; background: rgba(0,229,255,0.2); margin-bottom: 5px; }
+.rv-line { width: 0; height: 2px; background: #00e5ff; margin-bottom: 12px; animation: lineGrow 2s ease-in-out infinite; }
+.rv-t { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.06em; clip-path: inset(0 100% 0 0); animation: textReveal 2s ease-in-out infinite; }
+.rv-t:nth-child(3) { animation-delay: 0.3s; }
 
-/* ── PREVIEW TOP BUTTON ── */
+/* ── PREVIEW BUTTON (sits top-right inside .pw, never over swatches) ── */
 .preview-top-btn {
-  position: absolute; bottom: 44px; left: 8px; z-index: 10;
+  position: absolute; top: 8px; right: 8px; z-index: 10;
   font-family: 'Syne', sans-serif; font-size: 0.58rem; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
   background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.85);

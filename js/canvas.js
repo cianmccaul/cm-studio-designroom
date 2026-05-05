@@ -71,13 +71,147 @@ function swapGrid(e, swatch, rgba) {
   if (pw) pw.style.setProperty('--grid-color', rgba);
 }
 
-function swapGradFlow(e, swatch, c1, c2) {
+function swapGradFlow(e, swatch, c1, c2, c3, c4) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.card-swatches:first-of-type .cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-grad-flow');
+  if (pw) pw.style.background = `linear-gradient(-45deg,${c1},${c2},${c3},${c4})`;
+}
+
+function swapGradFlowBg(e, swatch, cls, c1, c2, c3, c4) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = `linear-gradient(-45deg,${c1},${c2},${c3},${c4})`;
+}
+
+function swapGridBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.backgroundColor = bg;
+}
+
+function swapMeshBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.setProperty('--mesh-bg', bg);
+}
+
+function swapAurora(e, swatch, r1, r2, r3) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.card-swatches:first-of-type .cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-aurora');
+  if (pw) {
+    pw.style.setProperty('--aurora-c1', `rgba(${r1},0.2)`);
+    pw.style.setProperty('--aurora-c2', `rgba(${r2},0.2)`);
+    pw.style.setProperty('--aurora-c3', `rgba(${r3},0.15)`);
+  }
+}
+
+function swapAuroraBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = bg;
+}
+
+function swapScanBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = bg;
+}
+
+function swapNoiseBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = bg;
+}
+
+function swapCircuitBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = bg;
+}
+
+function swapBlobColors(e, swatch, r1, r2, r3) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.card-swatches:first-of-type .cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const blobs = card.querySelectorAll('.blob');
+  const colors = [`rgb(${r1})`, `rgb(${r2})`, `rgb(${r3})`];
+  blobs.forEach((b, i) => { b.style.background = colors[i % colors.length]; });
+}
+
+function swapBlobBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = bg;
+}
+
+function swapWhiteBg(e, swatch, cls, bg) {
   e.stopPropagation();
   const card = swatch.closest('.preview-card');
   card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
   swatch.classList.add('active');
-  const pw = card.querySelector('.bg-grad-flow');
-  if (pw) pw.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = bg;
+}
+
+function swapPaperBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = bg;
+}
+
+function swapLightGrad(e, swatch, cls, c1, c2) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = `linear-gradient(135deg,${c1},${c2})`;
+}
+
+function swapDiagonalBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) {
+    pw.style.backgroundColor = bg;
+    pw.style.backgroundImage = `repeating-linear-gradient(45deg, rgba(128,128,128,0.04) 0px, rgba(128,128,128,0.04) 1px, transparent 1px, transparent 20px)`;
+  }
 }
 
 // ── INIT ALL CANVASES ──
