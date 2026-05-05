@@ -4,15 +4,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CM Studio — DesignRoom</title>
+<title>CM Studio - Website Brief Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="css/intro.css">
 <link rel="stylesheet" href="css/themes.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
 </head>
 <body>
 <div id="intro-screen">
@@ -24,7 +22,7 @@
     <div class="intro-sub">Web Design &amp; Development</div>
     <div class="intro-line"></div>
     <div class="intro-tagline">We build websites people remember.</div>
-    <div class="intro-hint">Move through the tabs. Pick what speaks to you. We'll build the rest.</div>
+    <div class="intro-hint">Choose a direction, shape the brief, and leave with something clear enough to build from.</div>
   </div>
 </div>
 <!-- Welcome overlay removed — replaced by cinematic intro -->
@@ -34,11 +32,11 @@
   <div class="cart-hdr"><span class="cart-hdr-title">Your Selections</span><button class="cart-close" onclick="toggleCart()">✕</button></div>
   <div class="cart-items" id="cart-items"><div class="cart-empty"><strong>Nothing selected yet</strong>Browse the tabs and click anything you like.</div></div>
   <div class="cart-save">
-    <span class="save-label">Save your progress</span>
-    <div class="save-row"><input class="save-input" id="save-email" type="email" placeholder="Enter your email"><button class="save-btn" onclick="saveProgress()">Save Link</button></div>
+    <span class="save-label">Save and resume later</span>
+    <div class="save-row"><input class="save-input" id="save-email" type="email" placeholder="Enter your email"><button class="save-btn" onclick="saveProgress()">Copy Link</button></div>
   </div>
   <div class="cart-footer">
-    <button class="btn-primary" onclick="openQuestionnaire()">Submit My Brief →</button>
+    <button class="btn-primary" onclick="openQuestionnaire()">Review Brief →</button>
     <button class="btn-secondary" onclick="clearAll()">Clear All</button>
   </div>
 </div>
@@ -49,7 +47,7 @@
     <div class="q-body" id="q-body">
       <div class="q-step active" id="step-1">
         <div class="q-step-title">Let's start with you</div>
-        <div class="q-step-desc">A few details so we can get back to you once we've reviewed your brief.</div>
+        <div class="q-step-desc">A few contact details so this brief stays tied to the right business.</div>
         <div class="q-row">
           <div class="q-field"><label class="q-label">Your Name *</label><input class="q-input" id="q-name" placeholder="John Smith"></div>
           <div class="q-field"><label class="q-label">Your Email *</label><input class="q-input" id="q-email" type="email" placeholder="john@example.com"></div>
@@ -63,7 +61,7 @@
       </div>
       <div class="q-step" id="step-2">
         <div class="q-step-title">Pages & Features</div>
-        <div class="q-step-desc">Tick everything you'd like included on your website.</div>
+        <div class="q-step-desc">Choose the pages and features your site genuinely needs so the first scope is grounded.</div>
         <div class="q-field"><label class="q-label">Pages Needed</label>
           <div class="q-checkgrid">
             <label class="q-check"><input type="checkbox" value="Home Page"> Home Page</label>
@@ -93,7 +91,7 @@
       </div>
       <div class="q-step" id="step-3">
         <div class="q-step-title">Your Content</div>
-        <div class="q-step-desc">Tell us what you want visitors to know. Don't worry about perfecting it.</div>
+        <div class="q-step-desc">Rough notes are perfect here. We just need the key facts, services and tone.</div>
         <div class="q-field"><label class="q-label">Main Headline / Tagline</label><input class="q-input" id="q-tagline" placeholder="e.g. Ireland's Most Trusted Security Company"></div>
         <div class="q-field"><label class="q-label">Your Main Services (one per line)</label><textarea class="q-textarea" id="q-services" placeholder="CCTV Installation&#10;Alarm Systems&#10;Access Control" style="min-height:90px"></textarea></div>
         <div class="q-field"><label class="q-label">Anything specific for the homepage?</label><textarea class="q-textarea" id="q-homepage" placeholder="Key facts, achievements, years in business..."></textarea></div>
@@ -101,7 +99,7 @@
       </div>
       <div class="q-step" id="step-4">
         <div class="q-step-title">Style & Branding</div>
-        <div class="q-step-desc">Help us match the look to your brand.</div>
+        <div class="q-step-desc">Point us toward the right visual direction. Strong references beat polished answers.</div>
         <div class="q-field"><label class="q-label">Do you have a logo?</label>
           <select class="q-select" id="q-logo"><option value="">Select...</option><option>Yes — I will email it</option><option>Yes — I have a file to share</option><option>No — I need one designed</option><option>No — use text only</option></select>
         </div>
@@ -124,7 +122,7 @@
       </div>
       <div class="q-step" id="step-5">
         <div class="q-step-title">Almost done!</div>
-        <div class="q-step-desc">Just a few technical questions to wrap up.</div>
+        <div class="q-step-desc">A few final details so the brief is practical enough to build from.</div>
         <div class="q-field"><label class="q-label">Do you have a domain name?</label>
           <select class="q-select" id="q-domain"><option value="">Select...</option><option>Yes — I own one already</option><option>No — I need one registered</option><option>Not sure</option></select>
         </div>
@@ -137,7 +135,7 @@
       </div>
       <div class="q-success" id="q-success">
         <div class="q-success-icon">✦</div>
-        <div class="q-success-title">Brief Submitted!</div>
+        <div class="q-success-title">Brief Ready</div>
         <div class="q-success-sub">Thanks — your design brief has been received.<br>We'll be in touch within 48 hours.<br><br>Check your email for a confirmation from CM Studio.</div>
         <div class="q-success-steps">
           <div class="qs-step"><span>01</span> We review your brief and selections</div>
@@ -169,8 +167,8 @@
 <header>
   <div class="hdr-top">
     <div>
-      <div class="logo" onclick="showWelcome()">CM <span>STUDIO</span></div>
-      <div class="logo-sub">DesignRoom — Pick your style</div>
+      <div class="logo">CM <span>STUDIO</span></div>
+      <div class="logo-sub">Website Brief Builder</div>
     </div>
     <div class="hdr-right">
       <button class="hdr-btn" id="theme-btn" onclick="toggleTheme()">☀ Light</button>
@@ -179,25 +177,25 @@
     </div>
   </div>
   <nav class="tabs" id="main-tabs">
-    <button class="tab-btn active" data-tab="backgrounds">Backgrounds</button>
-    <button class="tab-btn" data-tab="navbars">Navbars</button>
-    <button class="tab-btn" data-tab="heroes">Heroes</button>
-    <button class="tab-btn" data-tab="colors">Colour Schemes</button>
-    <button class="tab-btn" data-tab="cards">Cards</button>
-    <button class="tab-btn" data-tab="footers">Footers</button>
-    <button class="tab-btn" data-tab="forms">Contact Forms</button>
-    <button class="tab-btn" data-tab="animations">Scroll Animations</button>
+    <button class="tab-btn active" data-tab="backgrounds">Style Direction</button>
+    <button class="tab-btn" data-tab="navbars">Header</button>
+    <button class="tab-btn" data-tab="heroes">First Section</button>
+    <button class="tab-btn" data-tab="colors">Palette</button>
+    <button class="tab-btn" data-tab="cards">Content Blocks</button>
+    <button class="tab-btn" data-tab="footers">Footer</button>
+    <button class="tab-btn" data-tab="forms">Contact Flow</button>
+    <button class="tab-btn" data-tab="animations">Motion</button>
     <button class="tab-btn special" data-tab="generate">✦ Live Preview</button>
   </nav>
   <div class="nudge-line">
     <div class="nudge-dots" id="nudge-dots"></div>
-    <span class="nudge-msg" id="nudge-msg">Start by picking a background</span>
+    <span class="nudge-msg" id="nudge-msg">Pick a visual direction first</span>
     <span class="nudge-action" onclick="toggleCart()">View selections →</span>
   </div>
 </header>
 <main>
   <div class="tab-panel active" id="tab-backgrounds">
-    <div class="sec-hdr"><div class="sec-title">Backgrounds</div><div class="sec-desc">This is the first thing your visitor feels. Choose something that matches your ambition.</div></div>
+    <div class="sec-hdr"><div class="sec-title">Style Direction</div><div class="sec-desc">Start with the overall atmosphere. Think calm, premium, technical, warm, or bold.</div></div>
     <div class="preview-grid" id="backgrounds-grid">
       <div class="preview-card" data-category="Background" data-label="Particle Field" onclick="toggleSelect(this)">
         <div class="popular-badge">Popular</div>
@@ -391,16 +389,16 @@
       </div>
     </div>
   </div>
-  <div class="tab-panel" id="tab-navbars"><div class="sec-hdr"><div class="sec-title">Navbars</div><div class="sec-desc">How visitors find their way. The architectural backbone of every great site.</div></div><div class="preview-grid" id="navbars-grid"></div></div>
-  <div class="tab-panel" id="tab-heroes"><div class="sec-hdr"><div class="sec-title">Hero Sections</div><div class="sec-desc">The first thing people read. You have three seconds. Make them count.</div></div><div class="preview-grid" id="heroes-grid"></div></div>
-  <div class="tab-panel" id="tab-colors"><div class="sec-hdr"><div class="sec-title">Colour Schemes</div><div class="sec-desc">Hover any card to flip it and see the palette's personality. Click to apply it across the whole showroom.</div></div><div class="preview-grid" id="colors-grid"></div></div>
-  <div class="tab-panel" id="tab-cards"><div class="sec-hdr"><div class="sec-title">Cards & Containers</div><div class="sec-desc">How your services and content are packaged and presented to visitors.</div></div><div class="preview-grid" id="cards-grid"></div></div>
-  <div class="tab-panel" id="tab-footers"><div class="sec-hdr"><div class="sec-title">Footers</div><div class="sec-desc">The last thing they see. Make it useful, trustworthy and unmistakably yours.</div></div><div class="preview-grid" id="footers-grid"></div></div>
-  <div class="tab-panel" id="tab-forms"><div class="sec-hdr"><div class="sec-title">Contact Forms</div><div class="sec-desc">How customers reach you. Every form connects directly to your email inbox.</div></div><div class="preview-grid" id="forms-grid"></div></div>
-  <div class="tab-panel" id="tab-animations"><div class="sec-hdr"><div class="sec-title">Scroll Animations</div><div class="sec-desc">How content appears as visitors scroll. Click fullscreen on any card for a live demo.</div></div><div class="preview-grid" id="animations-grid"></div></div>
-  <div class="tab-panel" id="tab-generate"><div class="sec-hdr"><div class="sec-title">Live Preview</div><div class="sec-desc">Your selections assembled into a working mockup. Updates as you choose.</div></div><div id="preview-container"></div></div>
+  <div class="tab-panel" id="tab-navbars"><div class="sec-hdr"><div class="sec-title">Header</div><div class="sec-desc">Choose how the site introduces the brand and gets people moving.</div></div><div class="preview-grid" id="navbars-grid"></div></div>
+  <div class="tab-panel" id="tab-heroes"><div class="sec-hdr"><div class="sec-title">First Section</div><div class="sec-desc">This is the first message block a visitor sees. Pick the clearest shape for your offer.</div></div><div class="preview-grid" id="heroes-grid"></div></div>
+  <div class="tab-panel" id="tab-colors"><div class="sec-hdr"><div class="sec-title">Palette</div><div class="sec-desc">Choose the color system that best matches the trust level and energy of the brand.</div></div><div class="preview-grid" id="colors-grid"></div></div>
+  <div class="tab-panel" id="tab-cards"><div class="sec-hdr"><div class="sec-title">Content Blocks</div><div class="sec-desc">How services, proof points and supporting content will be packaged on the page.</div></div><div class="preview-grid" id="cards-grid"></div></div>
+  <div class="tab-panel" id="tab-footers"><div class="sec-hdr"><div class="sec-title">Footer</div><div class="sec-desc">The closing section should feel useful, trustworthy and complete.</div></div><div class="preview-grid" id="footers-grid"></div></div>
+  <div class="tab-panel" id="tab-forms"><div class="sec-hdr"><div class="sec-title">Contact Flow</div><div class="sec-desc">Pick the contact style that best fits how clients usually reach out.</div></div><div class="preview-grid" id="forms-grid"></div></div>
+  <div class="tab-panel" id="tab-animations"><div class="sec-hdr"><div class="sec-title">Motion</div><div class="sec-desc">Use motion to guide attention, not to compete with the message.</div></div><div class="preview-grid" id="animations-grid"></div></div>
+  <div class="tab-panel" id="tab-generate"><div class="sec-hdr"><div class="sec-title">Live Preview</div><div class="sec-desc">A rough assembled concept based on your selections so far.</div></div><div id="preview-container"></div></div>
 </main>
-<footer class="site-footer"><p>Built by <a href="mailto:cian.mccaul2@mail.dcu.ie">Cian McCaul</a> · <strong>CM Studio</strong> · Web Design &amp; Development · Ireland</p></footer>
+<footer class="site-footer"><p><strong>CM Studio</strong> · Website brief builder · Ireland</p></footer>
 </div><!-- end #main-app -->
 <script src="js/cursor.js"></script>
 <script src="js/canvas.js"></script>

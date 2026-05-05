@@ -5,6 +5,9 @@
 ═══════════════════════════════════════ */
 
 // ── COLOUR SWATCH SWAP ──
+const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let canvasesInitialised = false;
+
 function swapCanvasColor(e, swatch, canvasClass, color) {
   e.stopPropagation();
   const card = swatch.closest('.preview-card');
@@ -20,6 +23,8 @@ function swapCanvasColor(e, swatch, canvasClass, color) {
 
 // ── INIT ALL CANVASES ──
 function initAllCanvases() {
+  if (canvasesInitialised) return;
+  canvasesInitialised = true;
   initParticles();
   initStars();
   initMatrix();
@@ -39,7 +44,7 @@ function initParticles() {
     const ctx = canvas.getContext('2d');
     canvas._currentColor = canvas.dataset.color || '#00e5ff';
 
-    const pts = Array.from({ length: 45 }, () => ({
+    const pts = Array.from({ length: prefersReducedMotion ? 10 : 24 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.6,
@@ -83,7 +88,7 @@ function initParticles() {
           }
         }
       }
-      requestAnimationFrame(draw);
+      if (!prefersReducedMotion) requestAnimationFrame(draw);
     }
     draw();
   });
@@ -100,7 +105,7 @@ function initStars() {
     const ctx = canvas.getContext('2d');
     canvas._currentColor = canvas.dataset.color || '#ffffff';
 
-    const stars = Array.from({ length: 90 }, () => ({
+    const stars = Array.from({ length: prefersReducedMotion ? 24 : 60 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       r: Math.random() * 1.2 + 0.2,
@@ -157,7 +162,7 @@ function initStars() {
         s.alpha -= 0.025;
         if (s.alpha <= 0) shooters.splice(i, 1);
       }
-      requestAnimationFrame(draw);
+      if (!prefersReducedMotion) requestAnimationFrame(draw);
     }
     draw();
   });
@@ -197,7 +202,11 @@ function initMatrix() {
         }
       });
     }
-    setInterval(draw, 55);
+    if (prefersReducedMotion) {
+      draw();
+    } else {
+      setInterval(draw, 55);
+    }
   });
 }
 
@@ -365,7 +374,7 @@ function initCCTV() {
       ctx.fillText('CAM 01  ' + ts, 6, canvas.height - 8);
       ctx.globalAlpha = 1;
 
-      requestAnimationFrame(draw);
+      if (!prefersReducedMotion) requestAnimationFrame(draw);
     }
     draw();
   });
@@ -499,7 +508,7 @@ function buildFullscreenCanvas(type, color) {
 function initSingleParticleCanvas(canvas) {
   const ctx = canvas.getContext('2d');
   canvas._currentColor = canvas.dataset.color || '#00e5ff';
-  const pts = Array.from({ length: 80 }, () => ({
+  const pts = Array.from({ length: prefersReducedMotion ? 20 : 48 }, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
     vx: (Math.random() - 0.5) * 0.6,
@@ -537,7 +546,7 @@ function initSingleParticleCanvas(canvas) {
         }
       }
     }
-    requestAnimationFrame(draw);
+    if (!prefersReducedMotion) requestAnimationFrame(draw);
   }
   draw();
 }
@@ -545,7 +554,7 @@ function initSingleParticleCanvas(canvas) {
 function initSingleStarCanvas(canvas) {
   const ctx = canvas.getContext('2d');
   canvas._currentColor = canvas.dataset.color || '#ffffff';
-  const stars = Array.from({ length: 160 }, () => ({
+  const stars = Array.from({ length: prefersReducedMotion ? 36 : 100 }, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
     r: Math.random() * 1.4 + 0.2,
@@ -566,7 +575,7 @@ function initSingleStarCanvas(canvas) {
       ctx.fill();
       ctx.globalAlpha = 1;
     });
-    requestAnimationFrame(draw);
+    if (!prefersReducedMotion) requestAnimationFrame(draw);
   }
   draw();
 }
@@ -592,7 +601,11 @@ function initSingleMatrixCanvas(canvas) {
       if (drops[i] > canvas.height && Math.random() > 0.975) drops[i] = Math.random() * -100;
     });
   }
-  setInterval(draw, 55);
+  if (prefersReducedMotion) {
+    draw();
+  } else {
+    setInterval(draw, 55);
+  }
 }
 
 function initSingleCCTVCanvas(canvas) {
@@ -728,10 +741,9 @@ function initSingleCCTVCanvas(canvas) {
     ctx.fillText('CAM 01  ' + ts, 8, canvas.height - 10);
     ctx.globalAlpha = 1;
 
-    requestAnimationFrame(draw);
+    if (!prefersReducedMotion) requestAnimationFrame(draw);
   }
   draw();
 }
 
 // ── INIT ON DOM READY ──
-document.addEventListener('DOMContentLoaded', initAllCanvases);

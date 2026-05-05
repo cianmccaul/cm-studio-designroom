@@ -3,552 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CM Studio — Admin</title>
+<title>CM Studio Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-:root {
-  --bg:#080808; --bg2:#111; --bg3:#1a1a1a; --bg4:#222;
-  --accent:#00e5ff; --accent-dim:rgba(0,229,255,0.1); --accent-b:rgba(0,229,255,0.25);
-  --text:#f0f0f0; --text2:#999; --dim:#666; --dimmer:#333;
-  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.14);
-  --shadow:rgba(0,0,0,0.5);
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: #0b0d10;
+  color: #edf2f7;
+  font-family: 'DM Sans', sans-serif;
 }
-html, body { height:100%; background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow:hidden; }
-
-/* ── LOGIN ── */
-#login-screen {
-  position:fixed; inset:0; background:var(--bg);
-  display:flex; align-items:center; justify-content:center; z-index:1000;
+.panel {
+  width: min(640px, 100%);
+  background: #12161c;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 2rem;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
 }
-.login-box { width:100%; max-width:380px; padding:2.5rem; }
-.login-logo { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.1em; margin-bottom:0.2rem; }
-.login-logo span { color:var(--accent); }
-.login-tagline { font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--dim); margin-bottom:2.5rem; }
-.login-field { margin-bottom:1rem; }
-.login-label { font-family:'Syne',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); display:block; margin-bottom:0.4rem; }
-.login-input { width:100%; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.9rem; padding:11px 14px; border-radius:6px; outline:none; transition:border-color 0.2s; }
-.login-input:focus { border-color:var(--accent); }
-.login-btn { width:100%; font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; background:var(--accent); color:#000; border:none; padding:12px; border-radius:6px; cursor:pointer; margin-top:0.5rem; transition:opacity 0.2s; }
-.login-btn:hover { opacity:0.85; }
-.login-err { font-size:0.78rem; color:#ff3366; margin-top:0.5rem; display:none; font-family:'Syne',sans-serif; }
-
-/* ── ADMIN LAYOUT ── */
-.admin { display:none; height:100vh; overflow:hidden; }
-.admin.visible { display:flex; }
-
-/* SIDEBAR */
-.sidebar { width:270px; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; }
-.sidebar-hdr { padding:1.4rem 1.5rem; border-bottom:1px solid var(--border); }
-.sidebar-logo { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:0.1em; }
-.sidebar-logo span { color:var(--accent); }
-.sidebar-tagline { font-family:'Syne',sans-serif; font-size:0.6rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--dim); margin-top:2px; }
-.sidebar-search { padding:0.75rem 1rem; border-bottom:1px solid var(--border); }
-.sidebar-search input { width:100%; background:var(--bg3); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.8rem; padding:7px 10px; border-radius:6px; outline:none; }
-.sidebar-search input:focus { border-color:var(--accent); }
-.sidebar-list { flex:1; overflow-y:auto; padding:0.75rem; }
-.sidebar-section { font-family:'Syne',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--dimmer); padding:0.4rem 0.5rem; margin-bottom:0.25rem; }
-.sub-item { padding:0.75rem 0.9rem; border-radius:7px; cursor:pointer; transition:all 0.15s; border:1px solid transparent; margin-bottom:0.25rem; }
-.sub-item:hover { background:rgba(255,255,255,0.03); border-color:var(--border); }
-.sub-item.active { background:rgba(0,229,255,0.07); border-color:rgba(0,229,255,0.18); }
-.sub-name { font-family:'Syne',sans-serif; font-size:0.82rem; font-weight:700; margin-bottom:2px; }
-.sub-meta { font-size:0.68rem; color:var(--dim); margin-bottom:2px; }
-.sub-badge { display:inline-block; background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-b); border-radius:10px; padding:1px 8px; font-size:0.58rem; font-family:'Syne',sans-serif; font-weight:600; margin-top:3px; }
-.sidebar-footer { padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; gap:0.5rem; }
-.sidebar-footer-btn { flex:1; font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; background:none; border:1px solid var(--border); color:var(--dim); padding:7px; border-radius:5px; cursor:pointer; transition:all 0.2s; text-align:center; }
-.sidebar-footer-btn:hover { color:var(--text); border-color:var(--border2); }
-
-/* MAIN PANEL */
-.main-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; min-width:0; }
-.main-hdr { padding:1.3rem 2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; position:sticky; top:0; background:var(--bg); z-index:10; backdrop-filter:blur(12px); }
-.main-title { font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:800; }
-.main-sub { font-size:0.72rem; color:var(--dim); margin-top:2px; }
-.stats-bar { display:flex; gap:0.6rem; }
-.stat-pill { background:var(--bg2); border:1px solid var(--border); border-radius:7px; padding:0.4rem 1rem; text-align:center; min-width:60px; }
-.stat-pill .sv { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; color:var(--accent); }
-.stat-pill .sl { font-size:0.58rem; color:var(--dim); text-transform:uppercase; letter-spacing:0.08em; }
-.main-body { flex:1; padding:1.8rem 2rem 3rem; }
-
-/* EMPTY STATE */
-.empty-state { text-align:center; padding:5rem 2rem; color:var(--dimmer); }
-.empty-state .ei { font-size:3rem; margin-bottom:1rem; opacity:0.25; }
-.empty-state strong { display:block; font-family:'Syne',sans-serif; font-size:1rem; color:var(--dim); margin-bottom:0.4rem; }
-.empty-state p { font-size:0.82rem; line-height:1.6; }
-
-/* DETAIL CARDS */
-.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.4rem; }
-.detail-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:1.2rem; }
-.dc-title { font-family:'Syne',sans-serif; font-size:0.62rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--dim); margin-bottom:0.8rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); }
-.dc-row { display:flex; flex-direction:column; gap:0.45rem; }
-.dc-field { display:flex; gap:0.5rem; font-size:0.8rem; }
-.dc-field .dfl { color:var(--dim); min-width:95px; flex-shrink:0; font-size:0.75rem; }
-.dc-field .dfv { color:var(--text); word-break:break-word; line-height:1.5; }
-
-/* SELECTIONS CHIPS */
-.sel-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:0.5rem; margin-bottom:1.4rem; }
-.sel-chip { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:0.7rem 1rem; }
-.sel-chip .sc-cat { font-size:0.58rem; color:var(--dim); letter-spacing:0.1em; text-transform:uppercase; font-family:'Syne',sans-serif; margin-bottom:2px; }
-.sel-chip .sc-val { font-family:'Syne',sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
-
-/* CODE BLOCKS */
-.code-section-title {
-  font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:700;
-  letter-spacing:0.15em; text-transform:uppercase; color:var(--dim);
-  margin-bottom:0.75rem; margin-top:1.5rem;
-  display:flex; align-items:center; gap:0.75rem;
+.eyebrow {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #58d5e3;
+  margin-bottom: 1rem;
 }
-.code-section-title::after { content:''; flex:1; height:1px; background:var(--border); }
-.code-block-wrap { background:#0a0a0a; border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:0.85rem; }
-.code-block-hdr { display:flex; align-items:center; justify-content:space-between; padding:0.55rem 1rem; background:var(--bg3); border-bottom:1px solid var(--border); }
-.code-block-label { font-family:'Syne',sans-serif; font-size:0.68rem; font-weight:600; color:var(--dim); letter-spacing:0.06em; }
-.copy-btn { font-family:'Syne',sans-serif; font-size:0.63rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-b); padding:4px 10px; border-radius:4px; cursor:pointer; transition:all 0.2s; }
-.copy-btn:hover { background:rgba(0,229,255,0.2); }
-.copy-btn.copied { color:#4ade80; border-color:rgba(74,222,128,0.3); background:rgba(74,222,128,0.08); }
-.code-block-body { padding:1rem; overflow-x:auto; max-height:300px; overflow-y:auto; }
-.code-block-body pre { font-family:'JetBrains Mono',monospace; font-size:0.74rem; line-height:1.75; color:#c9d1d9; white-space:pre; }
-
-/* STATUS BUTTONS */
-.status-bar { display:flex; gap:0.5rem; margin-bottom:1.4rem; flex-wrap:wrap; }
-.status-btn { font-family:'Syne',sans-serif; font-size:0.63rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; border-radius:5px; cursor:pointer; transition:all 0.2s; border:1px solid var(--border); background:var(--bg3); color:var(--dim); }
-.status-btn:hover { color:var(--text); border-color:var(--border2); }
-.status-btn.active-status { background:var(--accent); color:#000; border-color:var(--accent); }
-
-/* ANALYTICS */
-.analytics-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:1.2rem; margin-top:1.4rem; }
-.analytics-stats { display:flex; gap:2rem; flex-wrap:wrap; margin-top:0.75rem; }
-.an-stat .av { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; color:var(--accent); }
-.an-stat .al { font-size:0.62rem; color:var(--dim); text-transform:uppercase; letter-spacing:0.1em; margin-top:2px; }
-
-/* MOOD BOARD */
-.mood-grid { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem; }
-.mood-thumb { width:85px; height:85px; object-fit:cover; border-radius:7px; border:1px solid var(--border); cursor:pointer; transition:transform 0.2s; }
-.mood-thumb:hover { transform:scale(1.05); }
-
-/* TOAST */
-.admin-toast { position:fixed; bottom:2rem; right:2rem; background:var(--bg2); border:1px solid var(--border); color:var(--text); font-family:'Syne',sans-serif; font-size:0.78rem; font-weight:600; padding:11px 22px; border-radius:8px; z-index:2000; opacity:0; transition:all 0.3s; pointer-events:none; }
-.admin-toast.show { opacity:1; }
-.admin-toast.success { border-color:var(--accent); color:var(--accent); }
-.admin-toast.error { border-color:#ff3366; color:#ff3366; }
-
-/* SCROLLBAR */
-::-webkit-scrollbar { width:5px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:var(--border2); border-radius:10px; }
+h1 {
+  margin: 0 0 0.8rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  letter-spacing: 0.05em;
+  line-height: 0.92;
+}
+p {
+  margin: 0 0 1rem;
+  color: rgba(237,242,247,0.72);
+  line-height: 1.7;
+}
+.note {
+  margin-top: 1.5rem;
+  padding: 1rem 1.1rem;
+  border-radius: 10px;
+  background: rgba(88,213,227,0.08);
+  border: 1px solid rgba(88,213,227,0.18);
+}
+a {
+  color: #58d5e3;
+  text-decoration: none;
+  font-weight: 700;
+}
+a:hover { opacity: 0.85; }
 </style>
 </head>
 <body>
-
-<div class="admin-toast" id="admin-toast"></div>
-
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">CM <span>STUDIO</span></div>
-    <div class="login-tagline">Admin Panel</div>
-    <div class="login-field">
-      <label class="login-label">Password</label>
-      <input class="login-input" type="password" id="login-pw" placeholder="Enter admin password">
+  <main class="panel">
+    <div class="eyebrow">Admin retired</div>
+    <h1>Secure Admin Needed</h1>
+    <p>This static project no longer ships a browser-side admin panel. The previous version exposed credentials and lead data directly in client code, so it has been intentionally removed.</p>
+    <p>The public brief builder now prepares a local export instead of sending data to a public database from the browser.</p>
+    <div class="note">
+      <p>Next step: rebuild admin behind real authentication and a protected server-side API before putting lead data back online.</p>
+      <p><a href="index.html">Return to the brief builder</a></p>
     </div>
-    <button class="login-btn" onclick="doLogin()">Login →</button>
-    <div class="login-err" id="login-err">Incorrect password. Try again.</div>
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div class="admin" id="admin">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-hdr">
-      <div class="sidebar-logo">CM <span>STUDIO</span></div>
-      <div class="sidebar-tagline">Admin Panel</div>
-    </div>
-    <div class="sidebar-search">
-      <input type="text" id="search-input" placeholder="Search submissions..." oninput="filterSubmissions(this.value)">
-    </div>
-    <div class="sidebar-list" id="sidebar-list">
-      <div class="sidebar-section">Submissions</div>
-      <div style="text-align:center;padding:2rem;color:var(--dim);font-size:0.8rem;">Loading...</div>
-    </div>
-    <div class="sidebar-footer">
-      <button class="sidebar-footer-btn" onclick="loadSubmissions()">↻ Refresh</button>
-      <button class="sidebar-footer-btn" onclick="logout()">Logout</button>
-    </div>
-  </div>
-
-  <!-- MAIN -->
-  <div class="main-panel">
-    <div class="main-hdr">
-      <div>
-        <div class="main-title" id="main-title">CM Studio Admin</div>
-        <div class="main-sub" id="main-sub">Select a submission from the sidebar</div>
-      </div>
-      <div class="stats-bar" id="stats-bar"></div>
-    </div>
-    <div class="main-body" id="main-body">
-      <div class="empty-state">
-        <div class="ei">✦</div>
-        <strong>No submission selected</strong>
-        <p>Select a client submission from the sidebar to view their brief, selections and generated code.</p>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// ── CREDENTIALS ──
-const SUPABASE_URL = 'https://keqizgtvunwdabwvgrik.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_omG3I_QFY_hpIhCcugVlmA_H2HqvTkm';
-const ADMIN_PASSWORD = 'designroom2025';
-
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let submissions = [];
-let filteredSubmissions = [];
-let activeId = null;
-
-// ── LOGIN ──
-document.getElementById('login-pw').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
-
-function doLogin() {
-  const pw = document.getElementById('login-pw').value;
-  if (pw === ADMIN_PASSWORD) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin').classList.add('visible');
-    loadSubmissions();
-  } else {
-    document.getElementById('login-err').style.display = 'block';
-  }
-}
-
-function logout() {
-  document.getElementById('admin').classList.remove('visible');
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('login-pw').value = '';
-  document.getElementById('login-err').style.display = 'none';
-}
-
-// ── LOAD DATA ──
-async function loadSubmissions() {
-  try {
-    const { data, error } = await db
-      .from('submissions')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    submissions = data || [];
-    filteredSubmissions = submissions;
-    renderSidebar();
-    renderStats();
-  } catch (e) {
-    console.error(e);
-    showToast('Failed to load submissions', 'error');
-  }
-}
-
-function filterSubmissions(query) {
-  const q = query.toLowerCase().trim();
-  filteredSubmissions = !q ? submissions : submissions.filter(s =>
-    (s.client_name || '').toLowerCase().includes(q) ||
-    (s.client_email || '').toLowerCase().includes(q) ||
-    (s.questionnaire?.business_name || '').toLowerCase().includes(q)
-  );
-  renderSidebar();
-}
-
-// ── STATS ──
-function renderStats() {
-  const now = new Date();
-  const today = submissions.filter(s => new Date(s.created_at).toDateString() === now.toDateString()).length;
-  const week  = submissions.filter(s => (now - new Date(s.created_at)) < 7 * 24 * 60 * 60 * 1000).length;
-  document.getElementById('stats-bar').innerHTML = `
-    <div class="stat-pill"><div class="sv">${submissions.length}</div><div class="sl">Total</div></div>
-    <div class="stat-pill"><div class="sv">${week}</div><div class="sl">Week</div></div>
-    <div class="stat-pill"><div class="sv">${today}</div><div class="sl">Today</div></div>
-  `;
-}
-
-// ── SIDEBAR ──
-function renderSidebar() {
-  const el = document.getElementById('sidebar-list');
-  if (!filteredSubmissions.length) {
-    el.innerHTML = '<div class="sidebar-section">Submissions</div><div style="text-align:center;padding:2rem;color:var(--dim);font-size:0.8rem;">' + (submissions.length ? 'No matches found' : 'No submissions yet') + '</div>';
-    return;
-  }
-  const statusColors = { new:'#00e5ff', inprogress:'#f59e0b', quoted:'#a855f7', complete:'#4ade80' };
-  el.innerHTML = '<div class="sidebar-section">Submissions — ' + filteredSubmissions.length + '</div>' +
-    filteredSubmissions.map(s => {
-      const d = new Date(s.created_at);
-      const selCount = Object.keys(s.selections || {}).length;
-      const status = s.status || 'new';
-      return `<div class="sub-item ${s.id === activeId ? 'active' : ''}" onclick="viewSubmission('${s.id}')">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-          <div class="sub-name">${s.client_name || 'Unknown'}</div>
-          <div style="width:7px;height:7px;border-radius:50%;background:${statusColors[status]||'#00e5ff'};flex-shrink:0;"></div>
-        </div>
-        <div class="sub-meta">${s.client_email || ''}</div>
-        <div class="sub-meta">${d.toLocaleDateString('en-IE',{day:'numeric',month:'short',year:'numeric'})} · ${d.toLocaleTimeString('en-IE',{hour:'2-digit',minute:'2-digit'})}</div>
-        <span class="sub-badge">${selCount} selection${selCount!==1?'s':''}</span>
-      </div>`;
-    }).join('');
-}
-
-// ── VIEW SUBMISSION ──
-function viewSubmission(id) {
-  activeId = id;
-  renderSidebar();
-  const s = submissions.find(x => x.id === id);
-  if (!s) return;
-
-  const d = new Date(s.created_at);
-  document.getElementById('main-title').textContent = s.client_name || 'Submission';
-  document.getElementById('main-sub').textContent = `${s.client_email} · Submitted ${d.toLocaleString('en-IE')}`;
-
-  const q = s.questionnaire || {};
-  const sel = s.selections || {};
-  const status = s.status || 'new';
-  const statusLabels = { new:'New', inprogress:'In Progress', quoted:'Quoted', complete:'Complete' };
-
-  document.getElementById('main-body').innerHTML = `
-
-    <!-- STATUS BAR -->
-    <div class="status-bar">
-      ${['new','inprogress','quoted','complete'].map(st => `
-        <button class="status-btn ${status===st?'active-status':''}" onclick="updateStatus('${id}','${st}')">
-          ${statusLabels[st]}
-        </button>`).join('')}
-    </div>
-
-    <!-- DETAIL GRID -->
-    <div class="detail-grid">
-      <div class="detail-card">
-        <div class="dc-title">Client Details</div>
-        <div class="dc-row">
-          ${field('Name', s.client_name)}
-          ${field('Email', s.client_email)}
-          ${field('Business', q.business_name)}
-          ${field('Phone', q.phone)}
-          ${field('Location', q.location)}
-          ${field('What they do', q.what_they_do)}
-        </div>
-      </div>
-      <div class="detail-card">
-        <div class="dc-title">Technical</div>
-        <div class="dc-row">
-          ${field('Domain', q.has_domain)}
-          ${field('Domain name', q.domain_name)}
-          ${field('Existing site', q.existing_site)}
-          ${field('Existing URL', q.existing_url)}
-          ${field('Logo', q.has_logo)}
-          ${field('Photos', q.has_photos)}
-        </div>
-      </div>
-      <div class="detail-card">
-        <div class="dc-title">Pages & Features</div>
-        <div class="dc-row">
-          ${field('Pages needed', Array.isArray(q.pages_needed) ? q.pages_needed.join(', ') : q.pages_needed)}
-          ${field('Features', Array.isArray(q.features_needed) ? q.features_needed.join(', ') : q.features_needed)}
-        </div>
-      </div>
-      <div class="detail-card">
-        <div class="dc-title">Style & Branding</div>
-        <div class="dc-row">
-          ${field('Tagline', q.tagline)}
-          ${field('Brand colours', q.brand_colours)}
-          ${field('Inspiration', q.inspiration_sites)}
-          ${field("Don't wants", q.dont_wants)}
-          ${field('Extra notes', q.extra_notes)}
-        </div>
-      </div>
-    </div>
-
-    ${q.services ? `
-    <div class="detail-card" style="margin-bottom:1.4rem;">
-      <div class="dc-title">Services Listed</div>
-      <div style="font-size:0.82rem;line-height:1.9;white-space:pre-line;margin-top:0.5rem;color:var(--text2);">${q.services}</div>
-    </div>` : ''}
-
-    ${q.homepage_content ? `
-    <div class="detail-card" style="margin-bottom:1.4rem;">
-      <div class="dc-title">Homepage Content Notes</div>
-      <div style="font-size:0.82rem;line-height:1.7;white-space:pre-line;margin-top:0.5rem;color:var(--text2);">${q.homepage_content}</div>
-    </div>` : ''}
-
-    ${q.social_links ? `
-    <div class="detail-card" style="margin-bottom:1.4rem;">
-      <div class="dc-title">Social Media Links</div>
-      <div style="font-size:0.82rem;line-height:1.9;white-space:pre-line;margin-top:0.5rem;color:var(--text2);">${q.social_links}</div>
-    </div>` : ''}
-
-    ${q.mood_board_urls && q.mood_board_urls.length ? `
-    <div class="detail-card" style="margin-bottom:1.4rem;">
-      <div class="dc-title">Mood Board Images (${q.mood_board_urls.length})</div>
-      <div class="mood-grid">
-        ${q.mood_board_urls.map(url => `<a href="${url}" target="_blank"><img class="mood-thumb" src="${url}" alt="Mood board"></a>`).join('')}
-      </div>
-    </div>` : ''}
-
-    <!-- SELECTIONS -->
-    <div class="code-section-title">Style Selections</div>
-    <div class="sel-grid">
-      ${Object.entries(sel).map(([k,v]) => `
-        <div class="sel-chip">
-          <div class="sc-cat">${k}</div>
-          <div class="sc-val">${v}</div>
-        </div>`).join('')}
-    </div>
-
-    <!-- CODE BLOCKS -->
-    <div class="code-section-title">Generated Code — Copy & Paste Ready</div>
-    ${generateAllCodeBlocks(sel)}
-
-    <!-- ANALYTICS -->
-    <div class="analytics-card">
-      <div class="dc-title">Submission Summary</div>
-      <div class="analytics-stats">
-        <div class="an-stat"><div class="av">${Object.keys(sel).length}</div><div class="al">Selections Made</div></div>
-        <div class="an-stat"><div class="av">${(q.pages_needed||[]).length}</div><div class="al">Pages Requested</div></div>
-        <div class="an-stat"><div class="av">${(q.features_needed||[]).length}</div><div class="al">Features Wanted</div></div>
-        <div class="an-stat"><div class="av">${(q.mood_board_urls||[]).length}</div><div class="al">Mood Images</div></div>
-        <div class="an-stat"><div class="av">${d.toLocaleDateString('en-IE',{day:'numeric',month:'short'})}</div><div class="al">Submitted</div></div>
-      </div>
-    </div>
-  `;
-}
-
-function field(label, val) {
-  if (!val) return '';
-  return `<div class="dc-field"><span class="dfl">${label}</span><span class="dfv">${val}</span></div>`;
-}
-
-// ── STATUS UPDATE ──
-async function updateStatus(id, status) {
-  try {
-    const { error } = await db.from('submissions').update({ status }).eq('id', id);
-    if (error) throw error;
-    const s = submissions.find(x => x.id === id);
-    if (s) s.status = status;
-    renderSidebar();
-    viewSubmission(id);
-    showToast('Status updated ✦', 'success');
-  } catch(e) {
-    showToast('Failed to update status', 'error');
-  }
-}
-
-// ── TOAST ──
-function showToast(msg, type = '') {
-  const t = document.getElementById('admin-toast');
-  t.textContent = msg;
-  t.className = 'admin-toast show ' + type;
-  setTimeout(() => { t.className = 'admin-toast'; }, 3000);
-}
-
-// ══════════════════════════════════════
-// CODE GENERATORS
-// ══════════════════════════════════════
-function generateAllCodeBlocks(sel) {
-  const blocks = [];
-  if (sel['Colour Scheme'])   blocks.push(codeBlock('Colour Scheme — ' + sel['Colour Scheme'],   getColourCode(sel['Colour Scheme'])));
-  if (sel['Background'])      blocks.push(codeBlock('Background — ' + sel['Background'],          getBackgroundCode(sel['Background'])));
-  if (sel['Navbar'])          blocks.push(codeBlock('Navbar — ' + sel['Navbar'],                  getNavbarCode(sel['Navbar'])));
-  if (sel['Hero Section'])    blocks.push(codeBlock('Hero Section — ' + sel['Hero Section'],      getHeroCode(sel['Hero Section'])));
-  if (sel['Card Style'])      blocks.push(codeBlock('Card Style — ' + sel['Card Style'],          getCardCode(sel['Card Style'])));
-  if (sel['Footer'])          blocks.push(codeBlock('Footer — ' + sel['Footer'],                  getFooterCode(sel['Footer'])));
-  if (sel['Contact Form'])    blocks.push(codeBlock('Contact Form — ' + sel['Contact Form'],      getFormCode(sel['Contact Form'])));
-  if (sel['Scroll Animation'])blocks.push(codeBlock('Scroll Animation — ' + sel['Scroll Animation'], getAnimCode(sel['Scroll Animation'])));
-  return blocks.length ? blocks.join('') : '<div style="color:var(--dim);font-size:0.85rem;padding:1rem 0;">No style selections were made by this client.</div>';
-}
-
-function codeBlock(label, code) {
-  const id = 'cb_' + Math.random().toString(36).substr(2,9);
-  return `<div class="code-block-wrap">
-    <div class="code-block-hdr">
-      <span class="code-block-label">${label}</span>
-      <button class="copy-btn" id="${id}" onclick="copyCode('${id}')">Copy</button>
-    </div>
-    <div class="code-block-body"><pre id="pre_${id}">${escHtml(code)}</pre></div>
-  </div>`;
-}
-
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-async function copyCode(id) {
-  const pre = document.getElementById('pre_' + id);
-  if (!pre) return;
-  await navigator.clipboard.writeText(pre.textContent);
-  const btn = document.getElementById(id);
-  btn.textContent = '✓ Copied';
-  btn.classList.add('copied');
-  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
-}
-
-// ── CODE GENERATORS (same as submit.js) ──
-function getColourCode(scheme) {
-  const map = {
-    'Charcoal + Cyan':      {bg:'#0a0a0a',nav:'#141414',accent:'#00e5ff',text:'#f0f0f0',border:'rgba(255,255,255,0.07)'},
-    'Navy + Gold':          {bg:'#09101e',nav:'#111828',accent:'#d4a843',text:'#eef0f4',border:'rgba(255,255,255,0.08)'},
-    'Black + White':        {bg:'#ffffff',nav:'#f5f5f5',accent:'#000000',text:'#111111',border:'rgba(0,0,0,0.1)'},
-    'Dark + Red':           {bg:'#0d0505',nav:'#160808',accent:'#e63333',text:'#f5f2f2',border:'rgba(255,255,255,0.07)'},
-    'Slate + Emerald':      {bg:'#0e141a',nav:'#16202a',accent:'#10b981',text:'#e8edf2',border:'rgba(255,255,255,0.07)'},
-    'Dark Forest':          {bg:'#080d08',nav:'#101810',accent:'#4ade80',text:'#e8f0e8',border:'rgba(255,255,255,0.07)'},
-    'Deep Purple + Violet': {bg:'#120820',nav:'#1a1030',accent:'#a855f7',text:'#f0eaff',border:'rgba(255,255,255,0.08)'},
-    'Copper + Orange':      {bg:'#0f0a06',nav:'#1a1008',accent:'#e8943a',text:'#f5efe8',border:'rgba(255,255,255,0.07)'},
-    'Midnight + Pink':      {bg:'#08080a',nav:'#121218',accent:'#ff3366',text:'#ffffff',border:'rgba(255,255,255,0.07)'},
-    'Ocean Dark + Teal':    {bg:'#060c10',nav:'#0e1820',accent:'#00bcd4',text:'#e8f4ff',border:'rgba(255,255,255,0.07)'},
-  };
-  const c = map[scheme] || map['Charcoal + Cyan'];
-  return `:root {\n  --bg: ${c.bg};\n  --bg-nav: ${c.nav};\n  --accent: ${c.accent};\n  --text: ${c.text};\n  --border: ${c.border};\n}\n\nbody {\n  background: var(--bg);\n  color: var(--text);\n  font-family: 'DM Sans', sans-serif;\n}\n\n.btn-primary { background: var(--accent); color: ${c.bg}; }\na { color: var(--accent); }`;
-}
-
-function getBackgroundCode(bg) {
-  const map = {
-    'Dark Grid': `body {\n  background-color: var(--bg);\n  background-image:\n    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),\n    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);\n  background-size: 28px 28px;\n}`,
-    'Gradient Flow': `body {\n  background: linear-gradient(-45deg, #0a0015, #001a2e, #0d1f00, #1a0010);\n  background-size: 400% 400%;\n  animation: gradFlow 6s ease infinite;\n}\n@keyframes gradFlow {\n  0%   { background-position: 0% 50%; }\n  50%  { background-position: 100% 50%; }\n  100% { background-position: 0% 50%; }\n}`,
-    'Mesh Gradient': `body {\n  background:\n    radial-gradient(ellipse at 20% 50%, rgba(100,30,200,0.28) 0%, transparent 50%),\n    radial-gradient(ellipse at 80% 20%, rgba(0,80,200,0.28) 0%, transparent 50%),\n    radial-gradient(ellipse at 60% 80%, rgba(200,0,60,0.18) 0%, transparent 50%),\n    var(--bg);\n  animation: meshPulse 8s ease-in-out infinite alternate;\n}\n@keyframes meshPulse {\n  0%   { filter: hue-rotate(0deg); }\n  100% { filter: hue-rotate(25deg); }\n}`,
-    'Aurora': `body { background: #030310; position: relative; }\nbody::before {\n  content: '';\n  position: fixed; inset: 0;\n  background:\n    radial-gradient(ellipse at 30% 60%, rgba(0,200,150,0.2) 0%, transparent 55%),\n    radial-gradient(ellipse at 70% 30%, rgba(100,0,200,0.2) 0%, transparent 55%);\n  animation: auroraPulse 6s ease-in-out infinite alternate;\n  pointer-events: none; z-index: -1;\n}\n@keyframes auroraPulse {\n  0%   { opacity: 0.7; }\n  100% { opacity: 1; }\n}`,
-    'Scanlines': `body { background: #050505; }\nbody::before {\n  content: '';\n  position: fixed; inset: 0;\n  background: repeating-linear-gradient(\n    0deg, transparent, transparent 2px,\n    rgba(0,255,100,0.012) 2px, rgba(0,255,100,0.012) 4px\n  );\n  pointer-events: none; z-index: 9999;\n}`,
-    'Clean White': `body {\n  background: #ffffff;\n  color: #111111;\n}`,
-    'Soft Paper': `body {\n  background-color: #faf8f5;\n  /* Add subtle noise texture */\n}`,
-    'Light Gradient': `body {\n  background: linear-gradient(135deg, #f0f4ff 0%, #faf0ff 50%, #f0fff4 100%);\n  animation: lightGrad 8s ease infinite alternate;\n}\n@keyframes lightGrad {\n  0%   { filter: hue-rotate(0deg); }\n  100% { filter: hue-rotate(30deg); }\n}`,
-  };
-  return map[bg] || `/* ${bg} — see main showroom for full canvas implementation code */`;
-}
-
-function getNavbarCode(nav) {
-  return `<!-- ${nav} Navbar -->\n<nav class="navbar">\n  <div class="nav-logo">YOUR<span>BRAND</span></div>\n  <div class="nav-links">\n    <a href="#">Home</a>\n    <a href="#services">Services</a>\n    <a href="#about">About</a>\n    <a href="#contact">Contact</a>\n  </div>\n</nav>\n\n<style>\n.navbar {\n  position: sticky; top: 0; z-index: 100;\n  display: flex; align-items: center;\n  justify-content: space-between;\n  padding: 1rem 2rem;\n  background: var(--bg-nav);\n  border-bottom: 1px solid var(--border);\n  backdrop-filter: blur(20px);\n}\n.nav-logo {\n  font-family: 'Bebas Neue', sans-serif;\n  font-size: 1.5rem; letter-spacing: 0.08em;\n}\n.nav-logo span { color: var(--accent); }\n.nav-links { display: flex; gap: 2rem; }\n.nav-links a {\n  font-size: 0.8rem; color: var(--text);\n  opacity: 0.6; text-decoration: none;\n  letter-spacing: 0.06em; text-transform: uppercase;\n  transition: all 0.2s;\n}\n.nav-links a:hover { opacity: 1; color: var(--accent); }\n</style>`;
-}
-
-function getHeroCode(hero) {
-  return `<!-- ${hero} Hero Section -->\n<section class="hero">\n  <p class="hero-eyebrow">Professional Services · Ireland</p>\n  <h1>YOUR <span>BRAND</span> NAME</h1>\n  <div class="hero-line"></div>\n  <p class="hero-sub">Professional services for modern businesses across Ireland.</p>\n  <div class="hero-actions">\n    <a href="#contact" class="btn-primary">Get in Touch</a>\n    <a href="#services" class="btn-ghost">Our Services</a>\n  </div>\n</section>\n\n<style>\n.hero {\n  min-height: 100vh;\n  display: flex; flex-direction: column;\n  align-items: center; justify-content: center;\n  text-align: center; padding: 2rem;\n}\n.hero-eyebrow {\n  font-size: 0.72rem; color: var(--accent);\n  letter-spacing: 0.28em; text-transform: uppercase;\n  margin-bottom: 1.2rem;\n}\nh1 {\n  font-family: 'Bebas Neue', sans-serif;\n  font-size: clamp(3rem, 8vw, 7rem);\n  letter-spacing: 0.06em; line-height: 0.9;\n  margin-bottom: 1.2rem;\n}\nh1 span { color: var(--accent); }\n.hero-line { width: 48px; height: 2px; background: var(--accent); margin: 0 auto 1.5rem; }\n.hero-sub { font-size: 1.1rem; opacity: 0.55; max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.7; }\n.hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }\n.btn-primary { background: var(--accent); color: #000; padding: 14px 34px; border-radius: 5px; font-size: 0.84rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }\n.btn-ghost { border: 1px solid var(--accent); color: var(--accent); padding: 13px 30px; border-radius: 5px; font-size: 0.84rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }\n</style>`;
-}
-
-function getCardCode(card) {
-  return `<!-- ${card} Service Cards -->\n<div class="services-grid">\n  <div class="service-card">\n    <div class="card-icon"></div>\n    <h3>Service Name</h3>\n    <p>Brief description of what this service includes.</p>\n  </div>\n  <!-- Repeat for each service -->\n</div>\n\n<style>\n.services-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\n  gap: 1.2rem;\n  padding: 4rem 2rem;\n  max-width: 960px; margin: 0 auto;\n}\n.service-card {\n  background: var(--bg-nav);\n  border: 1px solid var(--border);\n  border-radius: 12px; padding: 1.8rem;\n  transition: border-color 0.2s, transform 0.2s;\n}\n.service-card:hover {\n  border-color: var(--accent);\n  transform: translateY(-4px);\n}\n.card-icon {\n  width: 40px; height: 40px; border-radius: 8px;\n  background: rgba(0,229,255,0.15);\n  border: 1px solid rgba(0,229,255,0.3);\n  margin-bottom: 1rem;\n}\n.service-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--accent); }\n.service-card p { font-size: 0.85rem; opacity: 0.5; line-height: 1.6; }\n</style>`;
-}
-
-function getFooterCode(footer) {
-  return `<!-- ${footer} Footer -->\n<footer class="site-footer">\n  <div class="footer-inner">\n    <div class="footer-brand">\n      <div class="footer-logo">YOUR<span>BRAND</span></div>\n      <p>Professional services across Ireland.</p>\n    </div>\n    <div class="footer-col">\n      <span class="footer-heading">Quick Links</span>\n      <a href="#">Home</a>\n      <a href="#services">Services</a>\n      <a href="#about">About</a>\n      <a href="#contact">Contact</a>\n    </div>\n    <div class="footer-col">\n      <span class="footer-heading">Contact</span>\n      <a href="tel:+353870000000">+353 87 000 0000</a>\n      <a href="mailto:hello@yourbrand.ie">hello@yourbrand.ie</a>\n    </div>\n  </div>\n  <div class="footer-bottom">\n    <p>© 2025 Your Brand Ltd. All rights reserved.</p>\n  </div>\n</footer>\n\n<style>\n.site-footer { background: var(--bg-nav); border-top: 1px solid var(--border); padding: 3rem 2rem 1.5rem; }\n.footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem; max-width: 960px; margin: 0 auto 2rem; }\n.footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.5rem; }\n.footer-heading { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.8rem; }\n.footer-col { display: flex; flex-direction: column; gap: 0.4rem; }\n.footer-col a { font-size: 0.82rem; opacity: 0.4; text-decoration: none; }\n.footer-col a:hover { opacity: 0.8; color: var(--accent); }\n.footer-bottom { border-top: 1px solid var(--border); padding-top: 1.2rem; font-size: 0.72rem; opacity: 0.3; max-width: 960px; margin: 0 auto; }\n</style>`;
-}
-
-function getFormCode(form) {
-  return `<!-- ${form} Contact Form (via Formspree) -->\n<form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="contact-form">\n  <div class="form-row">\n    <div class="form-field">\n      <label>First Name</label>\n      <input type="text" name="first_name" placeholder="John" required>\n    </div>\n    <div class="form-field">\n      <label>Last Name</label>\n      <input type="text" name="last_name" placeholder="Smith" required>\n    </div>\n  </div>\n  <div class="form-field">\n    <label>Email Address</label>\n    <input type="email" name="email" placeholder="john@example.com" required>\n  </div>\n  <div class="form-field">\n    <label>Phone Number</label>\n    <input type="tel" name="phone" placeholder="+353 87 000 0000">\n  </div>\n  <div class="form-field">\n    <label>Message</label>\n    <textarea name="message" rows="5" placeholder="Tell us about your project..." required></textarea>\n  </div>\n  <button type="submit">Send Message</button>\n</form>\n\n<style>\n.contact-form { display: flex; flex-direction: column; gap: 1.2rem; max-width: 600px; }\n.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }\n.form-field { display: flex; flex-direction: column; gap: 0.4rem; }\n.form-field label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; }\n.form-field input, .form-field textarea { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 6px; font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.2s; }\n.form-field input:focus, .form-field textarea:focus { border-color: var(--accent); }\nbutton[type="submit"] { background: var(--accent); color: #000; padding: 14px; border: none; border-radius: 6px; font-size: 0.84rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; }\n</style>`;
-}
-
-function getAnimCode(anim) {
-  return `/* ${anim} Scroll Animation */\n\n/* Add class="anim-el" to elements you want animated */\n\n<style>\n.anim-el {\n  opacity: 0;\n  transform: translateY(30px);\n  transition: opacity 0.7s ease, transform 0.7s ease;\n}\n.anim-el.visible {\n  opacity: 1;\n  transform: translateY(0);\n}\n/* Stagger delays for grid items */\n.anim-el:nth-child(2) { transition-delay: 0.1s; }\n.anim-el:nth-child(3) { transition-delay: 0.2s; }\n.anim-el:nth-child(4) { transition-delay: 0.3s; }\n</style>\n\n<script>\nconst observer = new IntersectionObserver((entries) => {\n  entries.forEach(entry => {\n    if (entry.isIntersecting) {\n      entry.target.classList.add('visible');\n      observer.unobserve(entry.target);\n    }\n  });\n}, { threshold: 0.15 });\n\ndocument.querySelectorAll('.anim-el').forEach(el => observer.observe(el));\n<\/script>`;
-}
-</script>
+  </main>
 </body>
 </html>
