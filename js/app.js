@@ -110,10 +110,11 @@ function injectStyles() {
 function addCardPreviewButtons() {
   document.querySelectorAll('.preview-card').forEach(card => {
     if (card._previewBtnAdded) return;
+    if (card.querySelector('.preview-top-btn')) { card._previewBtnAdded = true; return; }
     card._previewBtnAdded = true;
-    const btn = document.createElement('button');
-    btn.className = 'card-preview-btn';
-    btn.innerHTML = '⤢ Preview';
+    const btn = document.createElement('div');
+    btn.className = 'preview-top-btn';
+    btn.innerHTML = 'Preview ↗';
     btn.addEventListener('click', e => { e.stopPropagation(); openModal(card); });
     card.appendChild(btn);
   });
@@ -431,10 +432,12 @@ function buildModalContent(card) {
   const cat = card.dataset.category, label = card.dataset.label;
   const activeSwEl = card.querySelector('.cs-swatch.active');
   const color = activeSwEl?.dataset?.color || activeSwEl?.style?.background || '#00e5ff';
+  const activeBgEl = card.querySelector('.bg-swatch.active');
+  const bgColor = activeBgEl?.title && activeBgEl?.style?.background ? activeBgEl.style.background : null;
 
   if (cat === 'Background') {
     wrap.style.overflow = 'hidden';
-    wrap.appendChild(buildFullscreenBg(label, color));
+    wrap.appendChild(buildFullscreenBg(label, color, bgColor));
   } else if (cat === 'Scroll Animation') {
     wrap.style.overflow = 'auto';
     wrap.innerHTML = buildScrollAnimDemo(label);
@@ -445,15 +448,15 @@ function buildModalContent(card) {
   return wrap;
 }
 
-function buildFullscreenBg(label, color) {
+function buildFullscreenBg(label, color, bgColor) {
   const wrap = document.createElement('div');
   wrap.style.cssText = 'width:100%;height:100%;position:absolute;inset:0;';
   const mkC = () => { const c=document.createElement('canvas'); c.style.cssText='position:absolute;inset:0;width:100%;height:100%'; wrap.appendChild(c); return c; };
   const map = {
-    'Particle Field':  ()=>{ wrap.style.background='#050510'; const c=mkC(); c.dataset.color=color; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;initSingleParticleCanvas(c);},80); },
-    'Starfield':       ()=>{ wrap.style.background='#020208'; const c=mkC(); c.dataset.color=color; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;initSingleStarCanvas(c);},80); },
-    'Matrix Rain':     ()=>{ wrap.style.background='#000500'; const c=mkC(); c.dataset.color=color; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;initSingleMatrixCanvas(c);},80); },
-    'CCTV Tracker':    ()=>{ wrap.style.background='#080808'; const c=mkC(); c.dataset.color=color; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;initSingleCCTVCanvas(c);},80); },
+    'Particle Field':  ()=>{ const bg=bgColor||'#050510'; wrap.style.background=bg; const c=mkC(); c.dataset.color=color; c.dataset.bgColor=bg; c._currentBgColor=bg; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;initSingleParticleCanvas(c);},80); },
+    'Starfield':       ()=>{ const bg=bgColor||'#020208'; wrap.style.background=bg; const c=mkC(); c.dataset.color=color; c.dataset.bgColor=bg; c._currentBgColor=bg; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;initSingleStarCanvas(c);},80); },
+    'Matrix Rain':     ()=>{ const bg=bgColor||'#000500'; wrap.style.background=bg; const c=mkC(); c.dataset.color=color; c.dataset.bgColor=bg; c._currentBgColor=bg; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;initSingleMatrixCanvas(c);},80); },
+    'CCTV Tracker':    ()=>{ const bg=bgColor||'#080808'; wrap.style.background=bg; const c=mkC(); c.dataset.color=color; c.dataset.bgColor=bg; c._currentBgColor=bg; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;initSingleCCTVCanvas(c);},80); },
     'Gradient Flow':   ()=>{ wrap.style.cssText+='background:linear-gradient(-45deg,#0a0015,#001a2e,#0d1f00,#1a0010);background-size:400% 400%;animation:gradFlow 6s ease infinite;'; },
     'Dark Grid':       ()=>{ wrap.style.cssText+='background-color:#060612;background-image:linear-gradient(rgba(0,229,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.06) 1px,transparent 1px);background-size:28px 28px;'; },
     'Mesh Gradient':   ()=>{ wrap.style.cssText+='background:radial-gradient(ellipse at 20% 50%,rgba(100,30,200,0.28) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(0,80,200,0.28) 0%,transparent 50%),#080808;animation:meshPulse 8s ease-in-out infinite alternate;'; },

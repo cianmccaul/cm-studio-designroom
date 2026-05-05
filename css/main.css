@@ -350,17 +350,21 @@ main { padding: 2rem 2rem 6rem; max-width: 1440px; margin: 0 auto; }
 }
 @keyframes gradFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 .bg-dark-grid {
+  --grid-color: rgba(0,229,255,0.06);
   background-color: #060612;
   background-image:
-    linear-gradient(rgba(0,229,255,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,229,255,0.06) 1px, transparent 1px);
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
   background-size: 28px 28px;
 }
 .bg-mesh {
+  --m1: rgb(100,30,200);
+  --m2: rgb(0,80,200);
+  --m3: rgb(200,0,60);
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(100,30,200,0.28) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(0,80,200,0.28) 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 80%, rgba(200,0,60,0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--m1) 28%, transparent) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, color-mix(in srgb, var(--m2) 28%, transparent) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, color-mix(in srgb, var(--m3) 18%, transparent) 0%, transparent 50%),
     #080808;
   animation: meshPulse 8s ease-in-out infinite alternate;
 }
@@ -375,14 +379,14 @@ main { padding: 2rem 2rem 6rem; max-width: 1440px; margin: 0 auto; }
   animation: auroraPulse 6s ease-in-out infinite alternate;
 }
 @keyframes auroraPulse { 0%{opacity:0.7;transform:scale(1)} 100%{opacity:1;transform:scale(1.04)} }
-.bg-scan { background: #050505; position: relative; }
+.bg-scan { --scan-color: rgb(0,255,100); background: #050505; position: relative; }
 .bg-scan::before {
   content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,100,0.012) 2px, rgba(0,255,100,0.012) 4px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, color-mix(in srgb, var(--scan-color) 1.2%, transparent) 2px, color-mix(in srgb, var(--scan-color) 1.2%, transparent) 4px);
 }
 .bg-scan::after {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 50% 40%, rgba(0,255,100,0.07) 0%, transparent 65%);
+  background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--scan-color) 7%, transparent) 0%, transparent 65%);
 }
 .bg-noise { background: #0c0c0c; position: relative; }
 .bg-noise::before {
@@ -390,10 +394,11 @@ main { padding: 2rem 2rem 6rem; max-width: 1440px; margin: 0 auto; }
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
 }
 .bg-circuit {
+  --circuit-color: rgb(0,200,80);
   background: #050a05;
   background-image:
-    linear-gradient(rgba(0,200,80,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,200,80,0.04) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--circuit-color) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--circuit-color) 4%, transparent) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 .bg-blobs { background: #08080f; position: relative; overflow: hidden; }
@@ -519,6 +524,36 @@ body.light-mode .form-preview-bg { background: #e8e8ec; }
 .sg-item:nth-child(1){animation-delay:0s}.sg-item:nth-child(2){animation-delay:0.15s}.sg-item:nth-child(3){animation-delay:0.3s}.sg-item:nth-child(4){animation-delay:0.45s}
 @keyframes sgIn{0%{opacity:0;transform:translateY(10px)}30%,75%{opacity:1;transform:translateY(0)}95%,100%{opacity:0}}
 .sg-icon { width: 18px; height: 18px; border-radius: 4px; background: rgba(0,229,255,0.2); margin-bottom: 5px; }
+
+/* ── PREVIEW TOP BUTTON ── */
+.preview-top-btn {
+  position: absolute; bottom: 44px; left: 8px; z-index: 10;
+  font-family: 'Syne', sans-serif; font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.18); border-radius: 4px;
+  padding: 4px 9px; cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  pointer-events: all;
+  opacity: 0;
+}
+.preview-card:hover .preview-top-btn { opacity: 1; }
+.preview-top-btn:hover { background: rgba(0,229,255,0.18); border-color: var(--accent); color: var(--accent); }
+body.light-mode .preview-top-btn { background: rgba(255,255,255,0.75); color: #111; border-color: rgba(0,0,0,0.18); }
+body.light-mode .preview-top-btn:hover { background: rgba(0,0,0,0.08); }
+
+/* ── SCROLL ANIMATION EXTRA KEYFRAMES ── */
+@keyframes wipeReveal{0%{clip-path:inset(0 0 0 0)}45%,90%{clip-path:inset(0 100% 0 0)}100%{clip-path:inset(0 100% 0 0)}}
+@keyframes progressGrow{0%{width:0%}80%{width:95%}100%{width:95%}}
+@keyframes textReveal{0%{clip-path:inset(0 100% 0 0)}35%,85%{clip-path:inset(0 0% 0 0)}100%{clip-path:inset(0 0% 0 0)}}
+@keyframes lineGrow{0%{width:0}40%,90%{width:100%}100%{width:100%}}
+@keyframes horizontalScroll{0%{transform:translateX(0)}50%{transform:translateX(-140px)}100%{transform:translateX(0)}}
+@keyframes staggerPulse{0%{opacity:0;transform:scale(0.8)}30%,75%{opacity:1;transform:scale(1)}95%,100%{opacity:0}}
+@keyframes parallaxMove{0%{transform:translate(-5%,-5%)}50%{transform:translate(5%,5%)}100%{transform:translate(-5%,-5%)}}
+@keyframes stickyScroll{0%{transform:translateY(0)}60%{transform:translateY(-60px)}100%{transform:translateY(0)}}
+@keyframes morphRotate{0%{transform:rotate(0deg) scale(1)}50%{transform:rotate(180deg) scale(1.1)}100%{transform:rotate(360deg) scale(1)}}
+@keyframes textScramble{0%,100%{opacity:1;letter-spacing:0.08em}50%{opacity:0.4;letter-spacing:0.25em}}
 .sg-t { font-family: 'Syne', sans-serif; font-size: 0.62rem; font-weight: 700; }
 .sg-d { font-size: 0.54rem; color: rgba(255,255,255,0.3); line-height: 1.4; margin-top: 2px; }
 .rv-line { height: 2px; background: rgba(255,255,255,0.1); width: 0; border-radius: 2px; animation: rvLine 2.5s ease infinite; }

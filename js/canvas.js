@@ -28,9 +28,56 @@ function swapBackgroundColor(e, swatch, canvasClass, bgColor) {
   if (canvas) {
     canvas.dataset.bgColor = bgColor;
     canvas._currentBgColor = bgColor;
-    // Force redraw
     if (canvas._drawFn) canvas._drawFn();
   }
+}
+
+// ── CSS BACKGROUND SWAPS (non-canvas backgrounds) ──
+function swapMesh(e, swatch, r1, r2, r3) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.card-swatches:first-of-type .cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-mesh');
+  if (pw) pw.style.setProperty('--m1', `rgb(${r1})`);
+  if (pw) pw.style.setProperty('--m2', `rgb(${r2})`);
+  if (pw) pw.style.setProperty('--m3', `rgb(${r3})`);
+}
+
+function swapScan(e, swatch, rgb) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-scan');
+  if (pw) pw.style.setProperty('--scan-color', `rgb(${rgb})`);
+}
+
+function swapCircuit(e, swatch, rgb) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-circuit');
+  if (pw) pw.style.setProperty('--circuit-color', `rgb(${rgb})`);
+}
+
+function swapGrid(e, swatch, rgba) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-dark-grid');
+  if (pw) pw.style.setProperty('--grid-color', rgba);
+}
+
+function swapGradFlow(e, swatch, c1, c2) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-grad-flow');
+  if (pw) pw.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
 }
 
 // ── INIT ALL CANVASES ──
@@ -457,10 +504,12 @@ function buildFullscreenCanvas(type, color) {
   wrap.style.cssText = 'width:100%;height:100%;position:relative;overflow:hidden;';
 
   if (type === 'particles') {
-    wrap.style.background = '#050510';
+    const bgColor = arguments[2] || '#050510';
+    wrap.style.background = bgColor;
     const canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%';
     canvas.dataset.color = color || '#00e5ff';
+    canvas.dataset.bgColor = bgColor;
     canvas.className = 'c-particles';
     wrap.appendChild(canvas);
     setTimeout(() => {
@@ -515,6 +564,7 @@ function buildFullscreenCanvas(type, color) {
 function initSingleParticleCanvas(canvas) {
   const ctx = canvas.getContext('2d');
   canvas._currentColor = canvas.dataset.color || '#00e5ff';
+  canvas._currentBgColor = canvas._currentBgColor || canvas.dataset.bgColor || '#050510';
   const pts = Array.from({ length: 80 }, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
@@ -524,7 +574,7 @@ function initSingleParticleCanvas(canvas) {
   }));
   function draw() {
     const color = canvas._currentColor || '#00e5ff';
-    ctx.fillStyle = '#050510';
+    ctx.fillStyle = canvas._currentBgColor || '#050510';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     pts.forEach(p => {
       p.x += p.vx; p.y += p.vy;
