@@ -199,7 +199,7 @@
     <div class="preview-grid" id="backgrounds-grid">
       <div class="preview-card" data-category="Background" data-label="Particle Field" onclick="toggleSelect(this)">
         <div class="popular-badge">Popular</div>
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-particles"><canvas class="c-particles" data-color="#00e5ff"></canvas></div>
         <div class="card-foot"><span class="cl">Particle Field</span><span class="ct">Animated</span></div>
         <div class="card-swatches">
@@ -226,7 +226,7 @@
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Starfield" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-stars"><canvas class="c-stars" data-color="#ffffff"></canvas></div>
         <div class="card-foot"><span class="cl">Starfield</span><span class="ct">Animated</span></div>
         <div class="card-swatches">
@@ -253,7 +253,7 @@
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Matrix Rain" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-matrix"><canvas class="c-matrix" data-color="#00e5ff"></canvas></div>
         <div class="card-foot"><span class="cl">Matrix Rain</span><span class="ct">Animated</span></div>
         <div class="card-swatches">
@@ -280,7 +280,7 @@
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="CCTV Tracker" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-cctv"><canvas class="c-cctv" data-color="#00e5ff"></canvas></div>
         <div class="card-foot"><span class="cl">CCTV Tracker</span><span class="ct">Interactive</span></div>
         <div class="card-swatches">
@@ -307,7 +307,7 @@
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Gradient Flow" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-grad-flow"></div>
         <div class="card-foot"><span class="cl">Gradient Flow</span><span class="ct">Animated</span></div>
         <div class="card-swatches">
@@ -319,7 +319,7 @@
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Dark Grid" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-dark-grid"></div>
         <div class="card-foot"><span class="cl">Dark Grid</span><span class="ct">Static</span></div>
         <div class="card-swatches">
@@ -334,7 +334,7 @@
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Mesh Gradient" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-mesh"></div>
         <div class="card-foot"><span class="cl">Mesh Gradient</span><span class="ct">Animated</span></div>
         <div class="card-swatches">
@@ -343,10 +343,13 @@
           <div class="cs-swatch" style="background:linear-gradient(135deg,#10b981,#00bcd4)" onclick="swapMesh(event,this,'0,180,130','0,150,200','0,100,80')"></div>
           <div class="cs-swatch" style="background:linear-gradient(135deg,#ff3366,#a855f7)" onclick="swapMesh(event,this,'200,0,100','150,0,200','200,50,100')"></div>
           <div class="cs-swatch" style="background:linear-gradient(135deg,#d4a843,#e8943a)" onclick="swapMesh(event,this,'200,150,0','200,100,0','180,120,0')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#00e5ff,#f43f5e)" onclick="swapMesh(event,this,'0,229,255','244,63,94','200,0,100')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#22c55e,#3b82f6)" onclick="swapMesh(event,this,'34,197,94','59,130,246','100,0,200')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#f97316,#ec4899)" onclick="swapMesh(event,this,'249,115,22','236,72,153','200,50,0')"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Aurora" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-aurora"></div>
         <div class="card-foot"><span class="cl">Aurora</span><span class="ct">Animated</span></div>
         <div class="card-swatches">
@@ -355,10 +358,13 @@
           <div class="cs-swatch" style="background:linear-gradient(135deg,#00e5ff,#0050c8)"></div>
           <div class="cs-swatch" style="background:linear-gradient(135deg,#4ade80,#0050c8)"></div>
           <div class="cs-swatch" style="background:linear-gradient(135deg,#d4a843,#e8943a)"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#22c55e,#0ea5e9)"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#f43f5e,#a855f7)"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#eab308,#ec4899)"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Scanlines" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-scan"></div>
         <div class="card-foot"><span class="cl">Scanlines</span><span class="ct">Cinematic</span></div>
         <div class="card-swatches">
@@ -370,10 +376,12 @@
           <div class="cs-swatch" style="background:#d946ef" onclick="swapScan(event,this,'217,70,239')"></div>
           <div class="cs-swatch" style="background:#14b8a6" onclick="swapScan(event,this,'20,184,166')"></div>
           <div class="cs-swatch" style="background:#eab308" onclick="swapScan(event,this,'234,179,8')"></div>
+          <div class="cs-swatch" style="background:#ec4899" onclick="swapScan(event,this,'236,72,153')"></div>
+          <div class="cs-swatch" style="background:#8b5cf6" onclick="swapScan(event,this,'139,92,246')"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Noise Texture" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-noise"></div>
         <div class="card-foot"><span class="cl">Noise Texture</span><span class="ct">Static</span></div>
         <div class="card-swatches">
@@ -381,11 +389,14 @@
           <div class="cs-swatch" style="background:#0c0508"></div>
           <div class="cs-swatch" style="background:#050c08"></div>
           <div class="cs-swatch" style="background:#08050c"></div>
+          <div class="cs-swatch" style="background:#1a0a1a"></div>
+          <div class="cs-swatch" style="background:#0a0a1a"></div>
+          <div class="cs-swatch" style="background:#0a1a0a"></div>
           <div class="cs-swatch" style="background:#faf8f5;border:1px solid #ddd"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Circuit Board" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-circuit"></div>
         <div class="card-foot"><span class="cl">Circuit Board</span><span class="ct">Static</span></div>
         <div class="card-swatches">
@@ -397,12 +408,12 @@
           <div class="cs-swatch" style="background:#3b82f6" onclick="swapCircuit(event,this,'59,130,246')"></div>
           <div class="cs-swatch" style="background:#eab308" onclick="swapCircuit(event,this,'234,179,8')"></div>
           <div class="cs-swatch" style="background:#ec4899" onclick="swapCircuit(event,this,'236,72,153')"></div>
-          <div class="cs-swatch" style="background:#ff3366" onclick="swapCircuit(event,this,'255,51,102')"></div>
-          <div class="cs-swatch" style="background:#f59e0b" onclick="swapCircuit(event,this,'245,158,11')"></div>
+          <div class="cs-swatch" style="background:#14b8a6" onclick="swapCircuit(event,this,'20,184,166')"></div>
+          <div class="cs-swatch" style="background:#8b5cf6" onclick="swapCircuit(event,this,'139,92,246')"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Floating Blobs" onclick="toggleSelect(this)">
-        <button class="card-expand-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">⤢ Preview</button>
+        <div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div>
         <div class="pw bg-blobs" data-blobs="true"></div>
         <div class="card-foot"><span class="cl">Floating Blobs</span><span class="ct">Animated</span></div>
         <div class="card-swatches">
@@ -410,6 +421,10 @@
           <div class="cs-swatch" style="background:linear-gradient(135deg,#ff3366,#e8943a)"></div>
           <div class="cs-swatch" style="background:linear-gradient(135deg,#10b981,#00bcd4)"></div>
           <div class="cs-swatch" style="background:linear-gradient(135deg,#d4a843,#ff3366)"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#22c55e,#8b5cf6)"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#f43f5e,#3b82f6)"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#eab308,#ec4899)"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#14b8a6,#f97316)"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Clean White" onclick="toggleSelect(this)">
