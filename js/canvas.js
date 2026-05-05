@@ -264,26 +264,17 @@ function swapDogOverlay(e, swatch, overlay) {
   if (pw) pw.style.setProperty('--img-overlay', overlay);
 }
 
-function swapMarble(e, swatch, cls, bg) {
-  e.stopPropagation();
-  const card = swatch.closest('.preview-card');
-  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
-  swatch.classList.add('active');
-  const pw = card.querySelector('.' + cls);
-  if (!pw) return;
-  pw.style.setProperty('--marble-bg', bg);
-  pw.classList.remove('marble-dark');
-}
+const MARBLE_VARIANTS = ['mv-white-gold','mv-black-gold','mv-green-vein','mv-blue-vein','mv-black-white'];
 
-function swapMarbleDark(e, swatch, cls, bg) {
+function swapMarbleVariant(e, swatch, variant) {
   e.stopPropagation();
   const card = swatch.closest('.preview-card');
   card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
   swatch.classList.add('active');
-  const pw = card.querySelector('.' + cls);
+  const pw = card.querySelector('.bg-marble');
   if (!pw) return;
-  pw.style.setProperty('--marble-bg', bg);
-  pw.classList.add('marble-dark');
+  MARBLE_VARIANTS.forEach(v => pw.classList.remove(v));
+  if (variant) pw.classList.add(variant);
 }
 
 function swapImgOverlayDirect(e, swatch, selector, overlay) {

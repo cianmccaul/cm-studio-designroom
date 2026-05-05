@@ -495,30 +495,15 @@ main { padding: 2rem 2rem 6rem; max-width: 1440px; margin: 0 auto; }
   position: relative;
   overflow: hidden;
 }
+@keyframes marbleShift { 0%{transform:rotate(0deg) scale(1)} 100%{transform:rotate(3deg) scale(1.05)} }
 .bg-marble::before {
   content: ''; position: absolute; inset: -30%;
-  background:
-    repeating-linear-gradient(
-      28deg,
-      transparent 0px, transparent 18px,
-      rgba(180,160,140,0.18) 18px, rgba(180,160,140,0.18) 19px,
-      transparent 19px, transparent 38px,
-      rgba(160,140,120,0.12) 38px, rgba(160,140,120,0.12) 39px
-    ),
-    repeating-linear-gradient(
-      110deg,
-      transparent 0px, transparent 24px,
-      rgba(200,185,165,0.14) 24px, rgba(200,185,165,0.14) 25px,
-      transparent 25px, transparent 52px,
-      rgba(170,155,140,0.10) 52px, rgba(170,155,140,0.10) 53px
-    ),
-    repeating-linear-gradient(
-      72deg,
-      transparent 0px, transparent 40px,
-      rgba(140,120,100,0.09) 40px, rgba(140,120,100,0.09) 41px
-    );
   width: 200%; height: 200%;
   animation: marbleShift 18s ease-in-out infinite alternate;
+  background:
+    repeating-linear-gradient(28deg, transparent 0px, transparent 18px, rgba(180,160,140,0.22) 18px, rgba(180,160,140,0.22) 19.5px, transparent 19.5px, transparent 38px, rgba(160,140,120,0.14) 38px, rgba(160,140,120,0.14) 39px),
+    repeating-linear-gradient(110deg, transparent 0px, transparent 24px, rgba(200,185,165,0.18) 24px, rgba(200,185,165,0.18) 25.5px, transparent 25.5px, transparent 52px, rgba(170,155,140,0.12) 52px, rgba(170,155,140,0.12) 53px),
+    repeating-linear-gradient(72deg, transparent 0px, transparent 40px, rgba(140,120,100,0.12) 40px, rgba(140,120,100,0.12) 41px);
 }
 .bg-marble::after {
   content: ''; position: absolute; inset: 0;
@@ -526,28 +511,48 @@ main { padding: 2rem 2rem 6rem; max-width: 1440px; margin: 0 auto; }
   transition: background 0.4s;
   pointer-events: none;
 }
-@keyframes marbleShift { 0%{transform:rotate(0deg) scale(1)} 100%{transform:rotate(3deg) scale(1.05)} }
-.bg-marble.marble-dark::before {
+/* ── Marble variants ── */
+.bg-marble.mv-white-gold::before {
   background:
-    repeating-linear-gradient(
-      28deg,
-      transparent 0px, transparent 18px,
-      rgba(255,255,255,0.06) 18px, rgba(255,255,255,0.06) 19px,
-      transparent 19px, transparent 38px,
-      rgba(255,255,255,0.04) 38px, rgba(255,255,255,0.04) 39px
-    ),
-    repeating-linear-gradient(
-      110deg,
-      transparent 0px, transparent 24px,
-      rgba(255,255,255,0.05) 24px, rgba(255,255,255,0.05) 25px,
-      transparent 25px, transparent 52px,
-      rgba(255,255,255,0.03) 52px, rgba(255,255,255,0.03) 53px
-    ),
-    repeating-linear-gradient(
-      72deg,
-      transparent 0px, transparent 40px,
-      rgba(255,255,255,0.04) 40px, rgba(255,255,255,0.04) 41px
-    );
+    repeating-linear-gradient(28deg, transparent 0px, transparent 16px, rgba(212,168,67,0.28) 16px, rgba(212,168,67,0.28) 17.5px, transparent 17.5px, transparent 36px, rgba(212,168,67,0.16) 36px, rgba(212,168,67,0.16) 37px),
+    repeating-linear-gradient(112deg, transparent 0px, transparent 22px, rgba(212,168,67,0.20) 22px, rgba(212,168,67,0.20) 23.5px, transparent 23.5px, transparent 50px, rgba(212,168,67,0.12) 50px, rgba(212,168,67,0.12) 51px),
+    repeating-linear-gradient(68deg, transparent 0px, transparent 38px, rgba(212,168,67,0.14) 38px, rgba(212,168,67,0.14) 39px);
+}
+.bg-marble.mv-black-gold {
+  --marble-bg: #0e0c08;
+}
+.bg-marble.mv-black-gold::before {
+  background:
+    repeating-linear-gradient(28deg, transparent 0px, transparent 16px, rgba(212,168,67,0.35) 16px, rgba(212,168,67,0.35) 17.5px, transparent 17.5px, transparent 36px, rgba(212,168,67,0.18) 36px, rgba(212,168,67,0.18) 37px),
+    repeating-linear-gradient(112deg, transparent 0px, transparent 22px, rgba(212,168,67,0.25) 22px, rgba(212,168,67,0.25) 23.5px, transparent 23.5px, transparent 50px, rgba(212,168,67,0.14) 50px, rgba(212,168,67,0.14) 51px),
+    repeating-linear-gradient(68deg, transparent 0px, transparent 38px, rgba(180,140,40,0.18) 38px, rgba(180,140,40,0.18) 39px);
+}
+.bg-marble.mv-green-vein {
+  --marble-bg: #f2f5f0;
+}
+.bg-marble.mv-green-vein::before {
+  background:
+    repeating-linear-gradient(32deg, transparent 0px, transparent 20px, rgba(40,120,60,0.22) 20px, rgba(40,120,60,0.22) 21.5px, transparent 21.5px, transparent 44px, rgba(60,140,80,0.14) 44px, rgba(60,140,80,0.14) 45px),
+    repeating-linear-gradient(105deg, transparent 0px, transparent 26px, rgba(30,100,50,0.16) 26px, rgba(30,100,50,0.16) 27.5px, transparent 27.5px, transparent 56px, rgba(50,120,70,0.10) 56px, rgba(50,120,70,0.10) 57px),
+    repeating-linear-gradient(70deg, transparent 0px, transparent 42px, rgba(40,110,55,0.12) 42px, rgba(40,110,55,0.12) 43px);
+}
+.bg-marble.mv-blue-vein {
+  --marble-bg: #f0f2f8;
+}
+.bg-marble.mv-blue-vein::before {
+  background:
+    repeating-linear-gradient(30deg, transparent 0px, transparent 18px, rgba(40,80,180,0.22) 18px, rgba(40,80,180,0.22) 19.5px, transparent 19.5px, transparent 40px, rgba(60,100,200,0.14) 40px, rgba(60,100,200,0.14) 41px),
+    repeating-linear-gradient(108deg, transparent 0px, transparent 24px, rgba(30,70,160,0.16) 24px, rgba(30,70,160,0.16) 25.5px, transparent 25.5px, transparent 52px, rgba(50,90,180,0.10) 52px, rgba(50,90,180,0.10) 53px),
+    repeating-linear-gradient(74deg, transparent 0px, transparent 38px, rgba(40,80,170,0.12) 38px, rgba(40,80,170,0.12) 39px);
+}
+.bg-marble.mv-black-white {
+  --marble-bg: #111111;
+}
+.bg-marble.mv-black-white::before {
+  background:
+    repeating-linear-gradient(28deg, transparent 0px, transparent 16px, rgba(255,255,255,0.10) 16px, rgba(255,255,255,0.10) 17.5px, transparent 17.5px, transparent 36px, rgba(255,255,255,0.06) 36px, rgba(255,255,255,0.06) 37px),
+    repeating-linear-gradient(112deg, transparent 0px, transparent 22px, rgba(255,255,255,0.08) 22px, rgba(255,255,255,0.08) 23.5px, transparent 23.5px, transparent 50px, rgba(255,255,255,0.05) 50px, rgba(255,255,255,0.05) 51px),
+    repeating-linear-gradient(68deg, transparent 0px, transparent 38px, rgba(255,255,255,0.06) 38px, rgba(255,255,255,0.06) 39px);
 }
 .bg-diagonal {
   background: #080808;

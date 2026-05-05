@@ -25,7 +25,9 @@ const schemeMap = {
   'Charcoal + Cyan':'cyan','Navy + Gold':'gold','Black + White':'mono',
   'Dark + Red':'red','Slate + Emerald':'emerald','Dark Forest':'forest',
   'Deep Purple + Violet':'violet','Copper + Orange':'copper',
-  'Midnight + Pink':'pink','Ocean Dark + Teal':'teal'
+  'Midnight + Pink':'pink','Ocean Dark + Teal':'teal',
+  'Rose + Blush':'rose','Steel + Ice':'steel','Amber + Dark':'amber',
+  'Blood + Iron':'blood','Sage + Linen':'sage'
 };
 
 const schemeColors = {
@@ -38,7 +40,12 @@ const schemeColors = {
   'Deep Purple + Violet':{bg:'#120820',nav:'#1a1030',accent:'#a855f7',text:'#f0eaff',btn:'#a855f7',btnText:'#fff'},
   'Copper + Orange':     {bg:'#0f0a06',nav:'#1a1008',accent:'#e8943a',text:'#f5efe8',btn:'#e8943a',btnText:'#000'},
   'Midnight + Pink':     {bg:'#08080a',nav:'#121218',accent:'#ff3366',text:'#ffffff',btn:'#ff3366',btnText:'#fff'},
-  'Ocean Dark + Teal':   {bg:'#060c10',nav:'#0e1820',accent:'#00bcd4',text:'#e8f4ff',btn:'#00bcd4',btnText:'#000'}
+  'Ocean Dark + Teal':   {bg:'#060c10',nav:'#0e1820',accent:'#00bcd4',text:'#e8f4ff',btn:'#00bcd4',btnText:'#000'},
+  'Rose + Blush':        {bg:'#120608',nav:'#1e0a10',accent:'#f472b6',text:'#fff0f4',btn:'#f472b6',btnText:'#000'},
+  'Steel + Ice':         {bg:'#0a0e12',nav:'#141a20',accent:'#94a3b8',text:'#e8edf4',btn:'#94a3b8',btnText:'#000'},
+  'Amber + Dark':        {bg:'#0a0800',nav:'#181200',accent:'#fbbf24',text:'#fdf8ec',btn:'#fbbf24',btnText:'#000'},
+  'Blood + Iron':        {bg:'#0a0000',nav:'#150000',accent:'#dc2626',text:'#fff5f5',btn:'#dc2626',btnText:'#fff'},
+  'Sage + Linen':        {bg:'#f8f6f0',nav:'#eeeae0',accent:'#5a7a5a',text:'#2a2a2a',btn:'#5a7a5a',btnText:'#fff'}
 };
 
 // ══════════════════════════════════════
@@ -653,6 +660,9 @@ function buildColorsGrid() {
     ['Slate + Emerald','Fresh','emerald'],['Dark Forest','Natural','forest'],
     ['Deep Purple + Violet','Creative','violet'],['Copper + Orange','Warm','copper'],
     ['Midnight + Pink','Vibrant','pink'],['Ocean Dark + Teal','Cool','teal'],
+    ['Rose + Blush','Romantic','rose'],['Steel + Ice','Industrial','steel'],
+    ['Amber + Dark','Luxe Warm','amber'],['Blood + Iron','Intense','blood'],
+    ['Sage + Linen','Natural Light','sage'],
   ];
   el.innerHTML = schemes.map(([label,tag,cls]) => `
     <div class="preview-card cs-${cls}" data-category="Colour Scheme" data-label="${label}" onclick="toggleSelect(this)">
@@ -663,7 +673,55 @@ function buildColorsGrid() {
         </div>
       </div>
       <div class="card-foot"><span class="cl">${label}</span><span class="ct">${tag}</span></div>
-    </div>`).join('');
+    </div>`).join('') + `
+    <div class="preview-card cs-custom" data-category="Colour Scheme" data-label="Custom" onclick="event.stopPropagation()">
+      <div class="pw cs-custom" style="background:#0a0a0a;display:flex;align-items:center;justify-content:center;">
+        <div class="custom-scheme-picker" onclick="event.stopPropagation()">
+          <div class="csp-row"><label>Accent</label><input type="color" id="csp-accent" value="#00e5ff" oninput="previewCustomScheme()"></div>
+          <div class="csp-row"><label>Background</label><input type="color" id="csp-bg" value="#0a0a0a" oninput="previewCustomScheme()"></div>
+          <div class="csp-row"><label>Text</label><input type="color" id="csp-text" value="#f0f0f0" oninput="previewCustomScheme()"></div>
+          <button class="csp-apply" onclick="applyCustomScheme()">Apply</button>
+        </div>
+      </div>
+      <div class="card-foot"><span class="cl">Custom</span><span class="ct">Your Colours</span></div>
+    </div>`;
+}
+
+function previewCustomScheme() {
+  const accent = document.getElementById('csp-accent').value;
+  const bg = document.getElementById('csp-bg').value;
+  const pw = document.querySelector('.cs-custom .pw');
+  if (pw) pw.style.background = bg;
+}
+
+function applyCustomScheme() {
+  const accent = document.getElementById('csp-accent').value;
+  const bg = document.getElementById('csp-bg').value;
+  const text = document.getElementById('csp-text').value;
+  const r = parseInt(accent.slice(1,3),16), g = parseInt(accent.slice(3,5),16), b = parseInt(accent.slice(5,7),16);
+  const brightness = (r*299+g*587+b*114)/1000;
+  const btnText = brightness > 128 ? '#000' : '#fff';
+  const nav = shadeColor(bg, 8);
+  schemeColors['Custom'] = {bg, nav, accent, text, btn: accent, btnText};
+  schemeMap['Custom'] = 'custom';
+  currentScheme = 'Custom';
+  const card = document.querySelector('.preview-card.cs-custom');
+  if (card) {
+    document.querySelectorAll('.preview-card[data-category="Colour Scheme"]').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selections['Colour Scheme'] = 'Custom';
+  }
+  const sb = document.getElementById('scheme-btn'); if (sb) sb.style.display = '';
+  if (schemeTransformActive) applySchemeTransform();
+  updateCart(); updateNudge();
+}
+
+function shadeColor(hex, percent) {
+  const num = parseInt(hex.slice(1), 16);
+  const r = Math.min(255, (num >> 16) + percent);
+  const g = Math.min(255, ((num >> 8) & 0xff) + percent);
+  const b = Math.min(255, (num & 0xff) + percent);
+  return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
 }
 
 function buildCardsGrid() {
