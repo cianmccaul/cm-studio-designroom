@@ -46,6 +46,7 @@ function collectQuestionnaireData() {
 
 function buildBriefPayload() {
   return {
+    id: `brief-${Date.now()}`,
     generated_at: new Date().toISOString(),
     selections: { ...selections },
     questionnaire: collectQuestionnaireData()
@@ -100,8 +101,8 @@ function buildBriefMarkdown(payload) {
   ].join('\n');
 }
 
-function downloadBriefFile(filename, contents) {
-  const blob = new Blob([contents], { type: 'text/markdown;charset=utf-8' });
+function downloadBriefFile(filename, contents, mimeType = 'text/markdown;charset=utf-8') {
+  const blob = new Blob([contents], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -184,9 +185,22 @@ function renderBriefActions(payload, markdown) {
   emailBtn.textContent = 'Open Email Draft';
   emailBtn.addEventListener('click', () => openEmailDraft(payload, markdown));
 
+  const exportBtn = document.createElement('button');
+  exportBtn.type = 'button';
+  exportBtn.className = 'q-action-btn';
+  exportBtn.textContent = 'Export Admin JSON';
+  exportBtn.addEventListener('click', () => {
+    const safeName = (payload.questionnaire.business_name || payload.questionnaire.client_name || payload.id)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    downloadBriefFile(`${safeName || 'website-brief'}.json`, JSON.stringify(payload, null, 2), 'application/json;charset=utf-8');
+  });
+
   actions.appendChild(downloadBtn);
   actions.appendChild(copyBtn);
   actions.appendChild(emailBtn);
+  actions.appendChild(exportBtn);
 }
 
 async function submitBrief() {
@@ -201,6 +215,9 @@ async function submitBrief() {
 
   try {
     localStorage.setItem('cm_studio_last_brief', JSON.stringify(payload));
+    const history = JSON.parse(localStorage.getItem('cm_studio_briefs') || '[]');
+    history.unshift(payload);
+    localStorage.setItem('cm_studio_briefs', JSON.stringify(history.slice(0, 25)));
     renderBriefActions(payload, markdown);
 
     document.querySelectorAll('.q-step').forEach(step => step.classList.remove('active'));
