@@ -387,3 +387,174 @@ body.admin-scheme-copper { --accent: #e8943a; --accent-rgb: 232,148,58; }
 body.admin-scheme-pink { --accent: #ff3366; --accent-rgb: 255,51,102; }
 body.admin-scheme-teal { --accent: #00bcd4; --accent-rgb: 0,188,212; }
 body.admin-scheme-mono { --accent: #000000; --accent-rgb: 0,0,0; }
+
+/* ══════════════════════════════════════
+   SCHEME: ROSE + BLUSH
+══════════════════════════════════════ */
+body.scheme-rose {
+  --bg: #120608;
+  --bg2: #1e0a10;
+  --bg3: #2a1018;
+  --bg4: #361620;
+  --accent: #f472b6;
+  --accent-dim: rgba(244,114,182,0.12);
+  --accent-b: rgba(244,114,182,0.3);
+  --accent-rgb: 244,114,182;
+  --text: #fff0f4;
+  --text2: #cc88aa;
+  --dim: #885566;
+  --dimmer: #3a1828;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --card-bg: #1e0a10;
+  --input-bg: rgba(255,255,255,0.05);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: STEEL + ICE
+══════════════════════════════════════ */
+body.scheme-steel {
+  --bg: #0a0e12;
+  --bg2: #141a20;
+  --bg3: #1e2630;
+  --bg4: #283240;
+  --accent: #94a3b8;
+  --accent-dim: rgba(148,163,184,0.12);
+  --accent-b: rgba(148,163,184,0.3);
+  --accent-rgb: 148,163,184;
+  --text: #e8edf4;
+  --text2: #7a8fa8;
+  --dim: #4a5f78;
+  --dimmer: #1e2e40;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --card-bg: #141a20;
+  --input-bg: rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: AMBER + DARK
+══════════════════════════════════════ */
+body.scheme-amber {
+  --bg: #0a0800;
+  --bg2: #181200;
+  --bg3: #241c00;
+  --bg4: #302600;
+  --accent: #fbbf24;
+  --accent-dim: rgba(251,191,36,0.12);
+  --accent-b: rgba(251,191,36,0.3);
+  --accent-rgb: 251,191,36;
+  --text: #fdf8ec;
+  --text2: #bbaa66;
+  --dim: #887733;
+  --dimmer: #3a3000;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --card-bg: #181200;
+  --input-bg: rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: BLOOD + IRON
+══════════════════════════════════════ */
+body.scheme-blood {
+  --bg: #0a0000;
+  --bg2: #150000;
+  --bg3: #200000;
+  --bg4: #2a0000;
+  --accent: #dc2626;
+  --accent-dim: rgba(220,38,38,0.12);
+  --accent-b: rgba(220,38,38,0.3);
+  --accent-rgb: 220,38,38;
+  --text: #fff5f5;
+  --text2: #bb6666;
+  --dim: #773333;
+  --dimmer: #330000;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --card-bg: #150000;
+  --input-bg: rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════
+   SCHEME: SAGE + LINEN
+══════════════════════════════════════ */
+body.scheme-sage {
+  --bg: #f8f6f0;
+  --bg2: #eeeae0;
+  --bg3: #e4e0d4;
+  --bg4: #dad6c8;
+  --accent: #5a7a5a;
+  --accent-dim: rgba(90,122,90,0.12);
+  --accent-b: rgba(90,122,90,0.3);
+  --accent-rgb: 90,122,90;
+  --text: #2a2a2a;
+  --text2: #6a7a6a;
+  --dim: #8a9a8a;
+  --dimmer: #c8d0c8;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.15);
+  --card-bg: #eeeae0;
+  --input-bg: rgba(0,0,0,0.04);
+}
+
+/* ══════════════════════════════════════
+   PREVIEW CARDS — NEW SCHEMES
+   Hardcoded so they always display
+   correctly regardless of active scheme
+══════════════════════════════════════ */
+
+/* Rose + Blush */
+.cs-rose .cs-demo { background: #120608; }
+.cs-rose .cd-nav { background: #1e0a10; }
+.cs-rose .cd-t { background: #fff0f4; }
+.cs-rose .cd-s { background: #6a2240; }
+.cs-rose .cd-b { background: #f472b6; }
+.cs-rose .csw:nth-child(1) { background: #120608; }
+.cs-rose .csw:nth-child(2) { background: #1e0a10; }
+.cs-rose .csw:nth-child(3) { background: #f472b6; }
+.cs-rose .csw:nth-child(4) { background: #fff0f4; }
+
+/* Steel + Ice */
+.cs-steel .cs-demo { background: #0a0e12; }
+.cs-steel .cd-nav { background: #141a20; }
+.cs-steel .cd-t { background: #e8edf4; }
+.cs-steel .cd-s { background: #3a4a5a; }
+.cs-steel .cd-b { background: #94a3b8; }
+.cs-steel .csw:nth-child(1) { background: #0a0e12; }
+.cs-steel .csw:nth-child(2) { background: #141a20; }
+.cs-steel .csw:nth-child(3) { background: #94a3b8; }
+.cs-steel .csw:nth-child(4) { background: #e8edf4; }
+
+/* Amber + Dark */
+.cs-amber .cs-demo { background: #0a0800; }
+.cs-amber .cd-nav { background: #181200; }
+.cs-amber .cd-t { background: #fdf8ec; }
+.cs-amber .cd-s { background: #5a4a00; }
+.cs-amber .cd-b { background: #fbbf24; }
+.cs-amber .csw:nth-child(1) { background: #0a0800; }
+.cs-amber .csw:nth-child(2) { background: #181200; }
+.cs-amber .csw:nth-child(3) { background: #fbbf24; }
+.cs-amber .csw:nth-child(4) { background: #fdf8ec; }
+
+/* Blood + Iron */
+.cs-blood .cs-demo { background: #0a0000; }
+.cs-blood .cd-nav { background: #150000; }
+.cs-blood .cd-t { background: #fff5f5; }
+.cs-blood .cd-s { background: #4a1010; }
+.cs-blood .cd-b { background: #dc2626; }
+.cs-blood .csw:nth-child(1) { background: #0a0000; }
+.cs-blood .csw:nth-child(2) { background: #150000; }
+.cs-blood .csw:nth-child(3) { background: #dc2626; }
+.cs-blood .csw:nth-child(4) { background: #fff5f5; }
+
+/* Sage + Linen */
+.cs-sage .cs-demo { background: #f8f6f0; }
+.cs-sage .cd-nav { background: #e8e4d8; }
+.cs-sage .cd-t { background: #2a2a2a; }
+.cs-sage .cd-s { background: #8a9a8a; }
+.cs-sage .cd-b { background: #5a7a5a; }
+.cs-sage .csw:nth-child(1) { background: #f8f6f0; }
+.cs-sage .csw:nth-child(2) { background: #eeeae0; }
+.cs-sage .csw:nth-child(3) { background: #5a7a5a; }
+.cs-sage .csw:nth-child(4) { background: #2a2a2a; }
