@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -9,10 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
-<link rel="stylesheet" href="css/intro.css">
 <link rel="stylesheet" href="css/themes.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
 <div id="intro-screen">
@@ -24,7 +22,24 @@
     <div class="intro-sub">Web Design &amp; Development</div>
     <div class="intro-line"></div>
     <div class="intro-tagline">We build websites people remember.</div>
-    <div class="intro-hint">Move through the tabs. Pick what speaks to you. We'll build the rest.</div>
+    <div class="intro-steps">
+      <div class="intro-step">
+        <div class="is-num">01</div>
+        <div class="is-label">Browse</div>
+        <div class="is-desc">Explore backgrounds, navbars, heroes and more</div>
+      </div>
+      <div class="intro-step">
+        <div class="is-num">02</div>
+        <div class="is-label">Select</div>
+        <div class="is-desc">Click anything you like — mix and match freely</div>
+      </div>
+      <div class="intro-step">
+        <div class="is-num">03</div>
+        <div class="is-label">Submit</div>
+        <div class="is-desc">Send your brief and we'll be in touch within 48hrs</div>
+      </div>
+    </div>
+    <button class="intro-get-started">Get Started ✦</button>
   </div>
 </div>
 <!-- Welcome overlay removed — replaced by cinematic intro -->
@@ -44,7 +59,6 @@
 </div>
 <div class="q-overlay" id="q-overlay">
   <div class="q-box">
-    
     <div class="q-header"><div class="q-title" id="q-title">Your Details</div><span class="q-ind" id="q-ind">Step 1 of 5</span></div>
     <div class="q-progress"><div class="q-progress-fill" id="q-progress-fill" style="width:20%"></div></div>
     <div class="q-body" id="q-body">
@@ -183,14 +197,14 @@
     <button class="tab-btn active" data-tab="backgrounds">Backgrounds</button>
     <button class="tab-btn" data-tab="navbars">Navbars</button>
     <button class="tab-btn" data-tab="heroes">Heroes</button>
-    <button class="tab-btn" data-tab="colors">Palette</button>
+    <button class="tab-btn" data-tab="colors">Colour Schemes</button>
     <button class="tab-btn" data-tab="cards">Cards</button>
     <button class="tab-btn" data-tab="footers">Footers</button>
     <button class="tab-btn" data-tab="forms">Contact Forms</button>
     <button class="tab-btn" data-tab="animations">Scroll Animations</button>
     <button class="tab-btn special" data-tab="generate">✦ Live Preview</button>
   </nav>
-  <div class="nudge-line">
+  <div class="progress-nudge">
     <div class="nudge-dots" id="nudge-dots"></div>
     <span class="nudge-msg" id="nudge-msg">Start by picking a background</span>
     <span class="nudge-action" onclick="toggleCart()">View selections →</span>
@@ -394,34 +408,19 @@
   </div>
   <div class="tab-panel" id="tab-navbars"><div class="sec-hdr"><div class="sec-title">Navbars</div><div class="sec-desc">How visitors find their way. The architectural backbone of every great site.</div></div><div class="preview-grid" id="navbars-grid"></div></div>
   <div class="tab-panel" id="tab-heroes"><div class="sec-hdr"><div class="sec-title">Hero Sections</div><div class="sec-desc">The first thing people read. You have three seconds. Make them count.</div></div><div class="preview-grid" id="heroes-grid"></div></div>
-  <div class="tab-panel" id="tab-colors"><div class="sec-hdr"><div class="sec-title">Palette</div><div class="sec-desc">Choose the color system that best matches the trust level and energy of the brand.</div></div><div class="preview-grid" id="colors-grid"></div></div>
+  <div class="tab-panel" id="tab-colors"><div class="sec-hdr"><div class="sec-title">Colour Schemes</div><div class="sec-desc">Hover any card to flip it and see the palette's personality. Click to apply it across the whole showroom.</div></div><div class="preview-grid" id="colors-grid"></div></div>
   <div class="tab-panel" id="tab-cards"><div class="sec-hdr"><div class="sec-title">Cards & Containers</div><div class="sec-desc">How your services and content are packaged and presented to visitors.</div></div><div class="preview-grid" id="cards-grid"></div></div>
   <div class="tab-panel" id="tab-footers"><div class="sec-hdr"><div class="sec-title">Footers</div><div class="sec-desc">The last thing they see. Make it useful, trustworthy and unmistakably yours.</div></div><div class="preview-grid" id="footers-grid"></div></div>
   <div class="tab-panel" id="tab-forms"><div class="sec-hdr"><div class="sec-title">Contact Forms</div><div class="sec-desc">How customers reach you. Every form connects directly to your email inbox.</div></div><div class="preview-grid" id="forms-grid"></div></div>
   <div class="tab-panel" id="tab-animations"><div class="sec-hdr"><div class="sec-title">Scroll Animations</div><div class="sec-desc">How content appears as visitors scroll. Click fullscreen on any card for a live demo.</div></div><div class="preview-grid" id="animations-grid"></div></div>
   <div class="tab-panel" id="tab-generate"><div class="sec-hdr"><div class="sec-title">Live Preview</div><div class="sec-desc">Your selections assembled into a working mockup. Updates as you choose.</div></div><div id="preview-container"></div></div>
 </main>
-<footer class="site-footer"><p><strong>CM Studio</strong> · Website brief builder · Ireland</p></footer>
+<footer class="site-footer"><p>Built by <a href="mailto:cian.mccaul2@mail.dcu.ie">Cian McCaul</a> · <strong>CM Studio</strong> · Web Design &amp; Development · Ireland</p></footer>
 </div><!-- end #main-app -->
+<script src="js/intro.js"></script>
 <script src="js/cursor.js"></script>
 <script src="js/canvas.js"></script>
 <script src="js/app.js"></script>
 <script src="js/submit.js"></script>
-<script>
-/* Inline intro - replaces broken /js/intro.js. Smart-quote-resistant. */
-(function(){
-  var M=900,c,x,a,m=false,s=false,P=85,Q=90,V=0.4,p=[];
-  function boot(){bc();bs();ip();al();sr();}
-  function bc(){var sc=document.getElementById("intro-screen");if(!sc)return;c=document.createElement("canvas");c.id="intro-canvas";c.style.cssText="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;";sc.prepend(c);x=c.getContext("2d");rs();window.addEventListener("resize",rs);var k=sc.querySelector(".intro-content");if(k)k.style.position="relative";}
-  function rs(){if(!c)return;c.width=window.innerWidth;c.height=window.innerHeight;}
-  function bs(){var sc=document.getElementById("intro-screen");if(!sc)return;var w=document.createElement("div");w.id="intro-steps";w.style.cssText="display:flex;gap:0.8rem;justify-content:center;padding:1.5rem 1.5rem 0;z-index:2;pointer-events:none;width:100%;max-width:600px;flex-wrap:wrap;";var d=[{n:"01",l:"Browse",g:"Explore backgrounds, navbars, heroes and more"},{n:"02",l:"Select",g:"Click anything you like - mix and match freely"},{n:"03",l:"Submit",g:"Send your brief and we will be in touch within 48hrs"}];for(var i=0;i<d.length;i++){var t=d[i],e=document.createElement("div");e.style.cssText="background:rgba(10,10,20,0.7);border:1px solid rgba(0,229,255,0.15);border-radius:12px;padding:1.2rem 1rem;text-align:center;min-width:140px;max-width:180px;flex:1;opacity:0;transform:translateY(30px);transition:opacity 0.6s ease "+(i*0.15)+"s,transform 0.6s ease "+(i*0.15)+"s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);";e.innerHTML='<div style="font-family:Bebas Neue,sans-serif;font-size:2rem;color:#00e5ff;line-height:1;margin-bottom:0.3rem;">'+t.n+'</div><div style="font-family:Syne,sans-serif;font-size:0.78rem;font-weight:700;margin-bottom:0.3rem;">'+t.l+'</div><div style="font-size:0.66rem;color:rgba(255,255,255,0.4);line-height:1.5;">'+t.g+'</div>';w.appendChild(e);}var b=document.createElement("button");b.id="intro-start-btn";b.type="button";b.textContent="Get Started";b.style.cssText="font-family:Syne,sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#00e5ff;color:#000;border:none;padding:13px 36px;border-radius:6px;cursor:pointer;opacity:0;transition:opacity 0.6s ease,transform 0.4s ease;z-index:10;pointer-events:none;white-space:nowrap;margin-top:1.5rem;display:inline-block;";b.addEventListener("click",function(ev){ev.preventDefault();if(!s){s=true;bm();}});var ic=sc.querySelector(".intro-content");if(ic){ic.appendChild(w);ic.appendChild(b);}else{sc.appendChild(w);sc.appendChild(b);}}
-  function ip(){p=[];for(var i=0;i<P;i++)p.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-0.5)*V,vy:(Math.random()-0.5)*V,r:Math.random()*1.6+0.5,o:Math.random()*0.6+0.4});}
-  function dp(){var w=c.width,h=c.height;x.clearRect(0,0,w,h);x.fillStyle="#000";x.fillRect(0,0,w,h);for(var i=0;i<p.length;i++){var q=p[i];q.x+=q.vx;q.y+=q.vy;if(q.x<0||q.x>w)q.vx*=-1;if(q.y<0||q.y>h)q.vy*=-1;x.beginPath();x.arc(q.x,q.y,q.r,0,Math.PI*2);x.fillStyle="#00e5ff";x.globalAlpha=q.o;x.fill();x.globalAlpha=1;}for(var i=0;i<p.length;i++)for(var j=i+1;j<p.length;j++){var aa=p[i],bb=p[j],dx=aa.x-bb.x,dy=aa.y-bb.y,dd=Math.sqrt(dx*dx+dy*dy);if(dd<Q){x.beginPath();x.moveTo(aa.x,aa.y);x.lineTo(bb.x,bb.y);x.strokeStyle="#00e5ff";x.globalAlpha=0.1*(1-dd/Q);x.lineWidth=0.6;x.stroke();x.globalAlpha=1;}}}
-  function al(){if(!m){dp();a=requestAnimationFrame(al);}}
-  function sr(){var sh=function(sl,dl){setTimeout(function(){var el=document.querySelector(sl);if(el)el.classList.add("visible");},dl);};sh(".intro-mark-img",150);sh(".intro-logo",350);sh(".intro-sub",700);sh(".intro-line",1050);sh(".intro-tagline",1500);sh(".intro-hint",2100);setTimeout(function(){var st=document.getElementById("intro-steps");if(st){var ch=st.querySelectorAll("div");for(var i=0;i<ch.length;i++){if(ch[i].parentNode===st){ch[i].style.opacity="1";ch[i].style.transform="translateY(0)";}}}},2700);setTimeout(function(){var b=document.getElementById("intro-start-btn");if(b){b.style.opacity="1";b.style.transform="translateY(0)";b.style.pointerEvents="all";if(!document.getElementById("btn-pulse-style")){var ss=document.createElement("style");ss.id="btn-pulse-style";ss.textContent="@keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,0.45)}60%{box-shadow:0 0 0 14px rgba(0,229,255,0)}}";document.head.appendChild(ss);}b.style.animation="btnPulse 2s ease-in-out infinite";}},3400);setTimeout(function(){if(!s){s=true;bm();}},10000);}
-  function bm(){m=true;cancelAnimationFrame(a);var sc=document.getElementById("intro-screen"),mn=document.getElementById("main-app");if(!sc)return;if(mn){mn.style.opacity="0";mn.style.display="block";}dp();c.style.transition="opacity "+M+"ms ease,transform "+M+"ms ease";c.style.opacity="0";c.style.transform="scale(1.04)";var ct=sc.querySelector(".intro-content");if(ct){ct.style.transition="opacity "+(M*0.6)+"ms ease,transform "+(M*0.6)+"ms ease";ct.style.opacity="0";ct.style.transform="translateY(-16px)";}var st=document.getElementById("intro-steps"),bt=document.getElementById("intro-start-btn");if(st){st.style.transition="opacity "+(M*0.5)+"ms ease";st.style.opacity="0";}if(bt){bt.style.transition="opacity "+(M*0.4)+"ms ease";bt.style.opacity="0";}setTimeout(function(){if(sc)sc.style.display="none";if(mn){mn.style.transition="opacity "+(M*0.5)+"ms ease";mn.style.opacity="1";}if(typeof initCursorReactive==="function")initCursorReactive();if(typeof initAllCanvases==="function")initAllCanvases();if(typeof initNudge==="function")initNudge();},M+50);}
-  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",boot);}else{boot();}
-})();
-</script>
 </body>
 </html>

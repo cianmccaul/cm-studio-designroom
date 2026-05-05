@@ -51,7 +51,6 @@ window.addEventListener('DOMContentLoaded', () => {
   initNudge();
   checkSavedProgress();
   injectStyles();
-  enhanceInteractiveCards();
   setTimeout(addCardPreviewButtons, 200);
 });
 
@@ -118,26 +117,6 @@ function addCardPreviewButtons() {
   });
 }
 
-function enhanceInteractiveCards() {
-  document.querySelectorAll('.preview-card').forEach(card => {
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-pressed', card.classList.contains('selected') ? 'true' : 'false');
-    if (card._keyboardReady) return;
-    card._keyboardReady = true;
-    card.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        toggleSelect(card);
-      }
-      if (event.key.toLowerCase() === 'p') {
-        event.preventDefault();
-        openModal(card);
-      }
-    });
-  });
-}
-
 // ══════════════════════════════════════
 // TABS
 // ══════════════════════════════════════
@@ -151,7 +130,6 @@ function initTabs() {
       if (panel) panel.classList.add('active');
       if (btn.dataset.tab === 'generate') buildPreviewPanel();
       updateNudge();
-      enhanceInteractiveCards();
       setTimeout(addCardPreviewButtons, 60);
     });
   });
@@ -213,16 +191,12 @@ function toggleSelect(card) {
       if (schemeTransformActive) applySchemeTransform();
     }
   }
-  card.setAttribute('aria-pressed', card.classList.contains('selected') ? 'true' : 'false');
   updateCart(); updateNudge(); updatePreviewLive();
 }
 
 function removeItem(cat) {
   delete selections[cat];
-  document.querySelectorAll(`.preview-card[data-category="${cat}"]`).forEach(c => {
-    c.classList.remove('selected');
-    c.setAttribute('aria-pressed', 'false');
-  });
+  document.querySelectorAll(`.preview-card[data-category="${cat}"]`).forEach(c => c.classList.remove('selected'));
   if (cat === 'Colour Scheme') {
     currentScheme = null;
     const sb = document.getElementById('scheme-btn'); if (sb) sb.style.display = 'none';
@@ -232,10 +206,7 @@ function removeItem(cat) {
 }
 
 function clearAll() {
-  document.querySelectorAll('.preview-card.selected').forEach(c => {
-    c.classList.remove('selected');
-    c.setAttribute('aria-pressed', 'false');
-  });
+  document.querySelectorAll('.preview-card.selected').forEach(c => c.classList.remove('selected'));
   Object.keys(selections).forEach(k => delete selections[k]);
   currentScheme = null; schemeTransformActive = false; applySchemeTransform();
   const sb = document.getElementById('scheme-btn'); if (sb) sb.style.display = 'none';
@@ -615,7 +586,7 @@ function buildColorsGrid() {
     ['Midnight + Pink','Vibrant','pink'],['Ocean Dark + Teal','Cool','teal'],
   ];
   el.innerHTML = schemes.map(([label,tag,cls]) => `
-    <div class="preview-card cs-${cls}" data-category="Colour Scheme" data-label="${label}" onclick="toggleSelect(this)">
+    <div class="preview-card cs-${cls}" data-category="Colour Scheme" data-label="${label}" onclick="toggleSelect(this);handleSchemeClick('${label}')">
       <div class="pw cs-${cls}">
         <div class="cs-preview-wrap">
           <div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div>
@@ -624,6 +595,12 @@ function buildColorsGrid() {
       </div>
       <div class="card-foot"><span class="cl">${label}</span><span class="ct">${tag}</span></div>
     </div>`).join('');
+}
+
+function handleSchemeClick(label) {
+  currentScheme = label;
+  const sb = document.getElementById('scheme-btn'); if(sb) sb.style.display='';
+  if (schemeTransformActive) applySchemeTransform();
 }
 
 function buildCardsGrid() {
@@ -872,54 +849,3 @@ function showToast(msg, type='') {
 }
 
 function injectAnimKeyframes() { /* keyframes already injected in injectStyles */ }
-
-window.addEventListener('keydown', event => {
-  if (event.key !== 'Escape') return;
-  if (document.getElementById('modal-overlay')?.classList.contains('open')) closeModal();
-  if (document.getElementById('q-overlay')?.classList.contains('open')) closeQuestionnaire();
-  if (cartOpen) toggleCart();
-});
-
-function updateNudge() {
-  document.querySelectorAll('.nudge-dot').forEach((d, i) => d.classList.toggle('filled', !!selections[NUDGE_CATS[i]]));
-  const msg = document.getElementById('nudge-msg');
-  if (!msg) return;
-  const n = Object.keys(selections).length;
-  const msgs = [
-    'Pick a visual direction first',
-    `${n} decision made - keep shaping it`,
-    `${n} decisions in - the brief is taking shape`,
-    `Halfway there - ${8 - n} to go`,
-    `${n} choices locked - keep going`,
-    `Strong direction so far - ${8 - n} left`,
-    'Almost complete - review the final details next',
-    'One more choice and the brief is ready',
-    'All set - review and export the brief'
-  ];
-  msg.textContent = msgs[Math.min(n, 8)];
-}
-
-function buildPreviewPanel() {
-  const container = document.getElementById('preview-container');
-  if (!container) return;
-  const keys = Object.keys(selections);
-  const chips = keys.map(k => `<div class="gen-chip"><span class="gc">${k}:</span>${selections[k]}</div>`).join('');
-  if (!keys.length) {
-    container.innerHTML = `<div class="gen-empty"><div class="gen-icon">✦</div><div class="gen-title">Live Preview</div><div class="gen-sub">Make selections from the tabs above, then come back here to see a rough assembled concept.</div></div>`;
-    return;
-  }
-  container.innerHTML = `<div class="gen-empty" style="text-align:center;padding:1.5rem 0;"><div class="gen-chips">${chips}</div><button class="gen-btn" onclick="generatePreview()">Build Preview</button><div class="gen-hint">${keys.length} selection${keys.length>1?'s':''} ready</div></div><div id="gen-preview-wrap" style="display:none;"></div>`;
-}
-
-function showQStep(n) {
-  document.querySelectorAll('.q-step').forEach(step => step.classList.remove('active'));
-  document.getElementById('step-' + n)?.classList.add('active');
-  const titles = ['Your Details', 'Pages & Features', 'Your Content', 'Style & Branding', 'Almost Done!'];
-  document.getElementById('q-title').textContent = titles[n - 1] || '';
-  document.getElementById('q-ind').textContent = `Step ${n} of ${Q_TOTAL}`;
-  document.getElementById('q-progress-fill').style.width = ((n / Q_TOTAL) * 100) + '%';
-  const back = document.getElementById('q-back');
-  if (back) back.style.visibility = n > 1 ? 'visible' : 'hidden';
-  const next = document.getElementById('q-next');
-  if (next) next.textContent = n === Q_TOTAL ? 'Prepare Brief ✦' : 'Next →';
-}

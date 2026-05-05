@@ -3,631 +3,552 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CM Studio Admin</title>
+<title>CM Studio — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <style>
-*, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; }
-body {
-  background: #0b0d10;
-  color: #eef2f7;
-  font-family: 'DM Sans', sans-serif;
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:#080808; --bg2:#111; --bg3:#1a1a1a; --bg4:#222;
+  --accent:#00e5ff; --accent-dim:rgba(0,229,255,0.1); --accent-b:rgba(0,229,255,0.25);
+  --text:#f0f0f0; --text2:#999; --dim:#666; --dimmer:#333;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.14);
+  --shadow:rgba(0,0,0,0.5);
 }
-.admin-shell {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 320px 1fr;
+html, body { height:100%; background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow:hidden; }
+
+/* ── LOGIN ── */
+#login-screen {
+  position:fixed; inset:0; background:var(--bg);
+  display:flex; align-items:center; justify-content:center; z-index:1000;
 }
-.sidebar {
-  border-right: 1px solid rgba(255,255,255,0.08);
-  background: #12161c;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
+.login-box { width:100%; max-width:380px; padding:2.5rem; }
+.login-logo { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.1em; margin-bottom:0.2rem; }
+.login-logo span { color:var(--accent); }
+.login-tagline { font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--dim); margin-bottom:2.5rem; }
+.login-field { margin-bottom:1rem; }
+.login-label { font-family:'Syne',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); display:block; margin-bottom:0.4rem; }
+.login-input { width:100%; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.9rem; padding:11px 14px; border-radius:6px; outline:none; transition:border-color 0.2s; }
+.login-input:focus { border-color:var(--accent); }
+.login-btn { width:100%; font-family:'Syne',sans-serif; font-size:0.8rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; background:var(--accent); color:#000; border:none; padding:12px; border-radius:6px; cursor:pointer; margin-top:0.5rem; transition:opacity 0.2s; }
+.login-btn:hover { opacity:0.85; }
+.login-err { font-size:0.78rem; color:#ff3366; margin-top:0.5rem; display:none; font-family:'Syne',sans-serif; }
+
+/* ── ADMIN LAYOUT ── */
+.admin { display:none; height:100vh; overflow:hidden; }
+.admin.visible { display:flex; }
+
+/* SIDEBAR */
+.sidebar { width:270px; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; }
+.sidebar-hdr { padding:1.4rem 1.5rem; border-bottom:1px solid var(--border); }
+.sidebar-logo { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:0.1em; }
+.sidebar-logo span { color:var(--accent); }
+.sidebar-tagline { font-family:'Syne',sans-serif; font-size:0.6rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--dim); margin-top:2px; }
+.sidebar-search { padding:0.75rem 1rem; border-bottom:1px solid var(--border); }
+.sidebar-search input { width:100%; background:var(--bg3); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.8rem; padding:7px 10px; border-radius:6px; outline:none; }
+.sidebar-search input:focus { border-color:var(--accent); }
+.sidebar-list { flex:1; overflow-y:auto; padding:0.75rem; }
+.sidebar-section { font-family:'Syne',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--dimmer); padding:0.4rem 0.5rem; margin-bottom:0.25rem; }
+.sub-item { padding:0.75rem 0.9rem; border-radius:7px; cursor:pointer; transition:all 0.15s; border:1px solid transparent; margin-bottom:0.25rem; }
+.sub-item:hover { background:rgba(255,255,255,0.03); border-color:var(--border); }
+.sub-item.active { background:rgba(0,229,255,0.07); border-color:rgba(0,229,255,0.18); }
+.sub-name { font-family:'Syne',sans-serif; font-size:0.82rem; font-weight:700; margin-bottom:2px; }
+.sub-meta { font-size:0.68rem; color:var(--dim); margin-bottom:2px; }
+.sub-badge { display:inline-block; background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-b); border-radius:10px; padding:1px 8px; font-size:0.58rem; font-family:'Syne',sans-serif; font-weight:600; margin-top:3px; }
+.sidebar-footer { padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; gap:0.5rem; }
+.sidebar-footer-btn { flex:1; font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; background:none; border:1px solid var(--border); color:var(--dim); padding:7px; border-radius:5px; cursor:pointer; transition:all 0.2s; text-align:center; }
+.sidebar-footer-btn:hover { color:var(--text); border-color:var(--border2); }
+
+/* MAIN PANEL */
+.main-panel { flex:1; overflow-y:auto; display:flex; flex-direction:column; min-width:0; }
+.main-hdr { padding:1.3rem 2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; position:sticky; top:0; background:var(--bg); z-index:10; backdrop-filter:blur(12px); }
+.main-title { font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:800; }
+.main-sub { font-size:0.72rem; color:var(--dim); margin-top:2px; }
+.stats-bar { display:flex; gap:0.6rem; }
+.stat-pill { background:var(--bg2); border:1px solid var(--border); border-radius:7px; padding:0.4rem 1rem; text-align:center; min-width:60px; }
+.stat-pill .sv { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; color:var(--accent); }
+.stat-pill .sl { font-size:0.58rem; color:var(--dim); text-transform:uppercase; letter-spacing:0.08em; }
+.main-body { flex:1; padding:1.8rem 2rem 3rem; }
+
+/* EMPTY STATE */
+.empty-state { text-align:center; padding:5rem 2rem; color:var(--dimmer); }
+.empty-state .ei { font-size:3rem; margin-bottom:1rem; opacity:0.25; }
+.empty-state strong { display:block; font-family:'Syne',sans-serif; font-size:1rem; color:var(--dim); margin-bottom:0.4rem; }
+.empty-state p { font-size:0.82rem; line-height:1.6; }
+
+/* DETAIL CARDS */
+.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.4rem; }
+.detail-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:1.2rem; }
+.dc-title { font-family:'Syne',sans-serif; font-size:0.62rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--dim); margin-bottom:0.8rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); }
+.dc-row { display:flex; flex-direction:column; gap:0.45rem; }
+.dc-field { display:flex; gap:0.5rem; font-size:0.8rem; }
+.dc-field .dfl { color:var(--dim); min-width:95px; flex-shrink:0; font-size:0.75rem; }
+.dc-field .dfv { color:var(--text); word-break:break-word; line-height:1.5; }
+
+/* SELECTIONS CHIPS */
+.sel-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:0.5rem; margin-bottom:1.4rem; }
+.sel-chip { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:0.7rem 1rem; }
+.sel-chip .sc-cat { font-size:0.58rem; color:var(--dim); letter-spacing:0.1em; text-transform:uppercase; font-family:'Syne',sans-serif; margin-bottom:2px; }
+.sel-chip .sc-val { font-family:'Syne',sans-serif; font-size:0.82rem; font-weight:700; color:var(--accent); }
+
+/* CODE BLOCKS */
+.code-section-title {
+  font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:700;
+  letter-spacing:0.15em; text-transform:uppercase; color:var(--dim);
+  margin-bottom:0.75rem; margin-top:1.5rem;
+  display:flex; align-items:center; gap:0.75rem;
 }
-.sidebar-header,
-.sidebar-footer {
-  padding: 1.2rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.sidebar-footer {
-  border-bottom: 0;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  margin-top: auto;
-}
-.eyebrow {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #58d5e3;
-  margin-bottom: 0.6rem;
-}
-.logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.9rem;
-  letter-spacing: 0.08em;
-  line-height: 1;
-}
-.logo span { color: #58d5e3; }
-.sidebar-copy {
-  margin: 0.6rem 0 0;
-  font-size: 0.84rem;
-  color: rgba(238,242,247,0.68);
-  line-height: 1.6;
-}
-.sidebar-tools {
-  padding: 1rem 1.25rem;
-  display: grid;
-  gap: 0.75rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.search,
-.textarea,
-.file-input {
-  width: 100%;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: #0f1318;
-  color: #eef2f7;
-  font: inherit;
-}
-.search,
-.file-input {
-  padding: 0.72rem 0.9rem;
-}
-.textarea {
-  min-height: 120px;
-  resize: vertical;
-  padding: 0.85rem 0.9rem;
-  line-height: 1.5;
-}
-.btn-row {
-  display: flex;
-  gap: 0.65rem;
-  flex-wrap: wrap;
-}
-.btn {
-  appearance: none;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: #161c23;
-  color: #eef2f7;
-  border-radius: 8px;
-  padding: 0.7rem 0.95rem;
-  font-family: 'Syne', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-.btn.primary {
-  background: #58d5e3;
-  border-color: #58d5e3;
-  color: #051015;
-}
-.btn:hover { opacity: 0.9; }
-.brief-list {
-  overflow-y: auto;
-  padding: 0.75rem;
-  display: grid;
-  gap: 0.55rem;
-}
-.brief-item {
-  border: 1px solid rgba(255,255,255,0.08);
-  background: #0f1318;
-  border-radius: 10px;
-  padding: 0.85rem 0.9rem;
-  cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-.brief-item:hover,
-.brief-item.active {
-  border-color: rgba(88,213,227,0.5);
-  background: rgba(88,213,227,0.08);
-}
-.brief-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.84rem;
-  font-weight: 700;
-  margin-bottom: 0.2rem;
-}
-.brief-meta {
-  font-size: 0.73rem;
-  color: rgba(238,242,247,0.6);
-  line-height: 1.5;
-}
-.main {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-.main-header {
-  padding: 1.3rem 1.6rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-}
-.main-title {
-  margin: 0;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2rem, 5vw, 3rem);
-  letter-spacing: 0.05em;
-  line-height: 0.95;
-}
-.main-sub {
-  margin: 0.4rem 0 0;
-  font-size: 0.88rem;
-  color: rgba(238,242,247,0.64);
-}
-.stats {
-  display: flex;
-  gap: 0.7rem;
-  flex-wrap: wrap;
-}
-.stat {
-  min-width: 92px;
-  padding: 0.7rem 0.85rem;
-  border-radius: 10px;
-  background: #12161c;
-  border: 1px solid rgba(255,255,255,0.08);
-}
-.stat strong {
-  display: block;
-  font-family: 'Syne', sans-serif;
-  font-size: 1rem;
-  color: #58d5e3;
-}
-.stat span {
-  display: block;
-  margin-top: 0.2rem;
-  font-size: 0.68rem;
-  color: rgba(238,242,247,0.56);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.main-body {
-  padding: 1.4rem 1.6rem 2.2rem;
-  display: grid;
-  gap: 1rem;
-}
-.empty {
-  margin: auto;
-  max-width: 560px;
-  text-align: center;
-  padding: 3rem 1rem;
-  color: rgba(238,242,247,0.68);
-}
-.empty h2 {
-  margin: 0 0 0.8rem;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.2rem;
-  letter-spacing: 0.05em;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-.card {
-  border: 1px solid rgba(255,255,255,0.08);
-  background: #12161c;
-  border-radius: 12px;
-  padding: 1rem;
-}
-.card h3 {
-  margin: 0 0 0.8rem;
-  font-family: 'Syne', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(238,242,247,0.62);
-}
-.detail-list,
-.selection-list {
-  display: grid;
-  gap: 0.65rem;
-}
-.detail {
-  display: grid;
-  gap: 0.18rem;
-}
-.detail span:first-child {
-  font-size: 0.66rem;
-  color: rgba(238,242,247,0.54);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.detail span:last-child,
-.detail div:last-child {
-  color: #eef2f7;
-  line-height: 1.55;
-  font-size: 0.86rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.selection-list {
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-}
-.selection-pill {
-  border: 1px solid rgba(255,255,255,0.08);
-  background: #0f1318;
-  border-radius: 10px;
-  padding: 0.8rem 0.9rem;
-}
-.selection-pill strong {
-  display: block;
-  font-size: 0.64rem;
-  color: rgba(238,242,247,0.56);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.28rem;
-}
-.selection-pill span {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #58d5e3;
-}
-.code {
-  background: #0d1116;
-  border-radius: 10px;
-  padding: 1rem;
-  overflow-x: auto;
-  border: 1px solid rgba(255,255,255,0.06);
-}
-.code pre {
-  margin: 0;
-  font: 0.78rem/1.65 ui-monospace, SFMono-Regular, Consolas, monospace;
-  color: #d9e1ea;
-  white-space: pre-wrap;
-}
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.75rem;
-  color: rgba(238,242,247,0.64);
-}
-.status::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #58d5e3;
-}
-.muted {
-  color: rgba(238,242,247,0.58);
-}
-@media (max-width: 960px) {
-  .admin-shell { grid-template-columns: 1fr; }
-  .sidebar { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .grid { grid-template-columns: 1fr; }
-}
+.code-section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+.code-block-wrap { background:#0a0a0a; border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:0.85rem; }
+.code-block-hdr { display:flex; align-items:center; justify-content:space-between; padding:0.55rem 1rem; background:var(--bg3); border-bottom:1px solid var(--border); }
+.code-block-label { font-family:'Syne',sans-serif; font-size:0.68rem; font-weight:600; color:var(--dim); letter-spacing:0.06em; }
+.copy-btn { font-family:'Syne',sans-serif; font-size:0.63rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-b); padding:4px 10px; border-radius:4px; cursor:pointer; transition:all 0.2s; }
+.copy-btn:hover { background:rgba(0,229,255,0.2); }
+.copy-btn.copied { color:#4ade80; border-color:rgba(74,222,128,0.3); background:rgba(74,222,128,0.08); }
+.code-block-body { padding:1rem; overflow-x:auto; max-height:300px; overflow-y:auto; }
+.code-block-body pre { font-family:'JetBrains Mono',monospace; font-size:0.74rem; line-height:1.75; color:#c9d1d9; white-space:pre; }
+
+/* STATUS BUTTONS */
+.status-bar { display:flex; gap:0.5rem; margin-bottom:1.4rem; flex-wrap:wrap; }
+.status-btn { font-family:'Syne',sans-serif; font-size:0.63rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; border-radius:5px; cursor:pointer; transition:all 0.2s; border:1px solid var(--border); background:var(--bg3); color:var(--dim); }
+.status-btn:hover { color:var(--text); border-color:var(--border2); }
+.status-btn.active-status { background:var(--accent); color:#000; border-color:var(--accent); }
+
+/* ANALYTICS */
+.analytics-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:1.2rem; margin-top:1.4rem; }
+.analytics-stats { display:flex; gap:2rem; flex-wrap:wrap; margin-top:0.75rem; }
+.an-stat .av { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; color:var(--accent); }
+.an-stat .al { font-size:0.62rem; color:var(--dim); text-transform:uppercase; letter-spacing:0.1em; margin-top:2px; }
+
+/* MOOD BOARD */
+.mood-grid { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem; }
+.mood-thumb { width:85px; height:85px; object-fit:cover; border-radius:7px; border:1px solid var(--border); cursor:pointer; transition:transform 0.2s; }
+.mood-thumb:hover { transform:scale(1.05); }
+
+/* TOAST */
+.admin-toast { position:fixed; bottom:2rem; right:2rem; background:var(--bg2); border:1px solid var(--border); color:var(--text); font-family:'Syne',sans-serif; font-size:0.78rem; font-weight:600; padding:11px 22px; border-radius:8px; z-index:2000; opacity:0; transition:all 0.3s; pointer-events:none; }
+.admin-toast.show { opacity:1; }
+.admin-toast.success { border-color:var(--accent); color:var(--accent); }
+.admin-toast.error { border-color:#ff3366; color:#ff3366; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:10px; }
 </style>
 </head>
 <body>
-  <div class="admin-shell">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="eyebrow">Local admin</div>
-        <div class="logo">CM <span>Studio</span></div>
-        <p class="sidebar-copy">This portal reads safe local brief data from the browser and imported JSON exports. No remote database is used here.</p>
-      </div>
-      <div class="sidebar-tools">
-        <input class="search" id="search" type="search" placeholder="Search briefs by client, business or email">
-        <textarea class="textarea" id="import-json" placeholder="Paste a brief JSON export here if you want to import it manually."></textarea>
-        <div class="btn-row">
-          <button class="btn primary" id="import-paste">Import Pasted JSON</button>
-          <button class="btn" id="clear-store">Clear Local Briefs</button>
-        </div>
-        <input class="file-input" id="import-file" type="file" accept=".json,application/json">
-      </div>
-      <div class="brief-list" id="brief-list"></div>
-      <div class="sidebar-footer">
-        <div class="btn-row">
-          <button class="btn" id="refresh">Refresh</button>
-          <a class="btn" href="index.html">Back to builder</a>
-        </div>
-      </div>
-    </aside>
-    <main class="main">
-      <div class="main-header">
-        <div>
-          <h1 class="main-title" id="main-title">Local Brief Inbox</h1>
-          <p class="main-sub" id="main-sub">Review the most recent locally saved brief or import an exported JSON file.</p>
-        </div>
-        <div class="stats" id="stats"></div>
-      </div>
-      <div class="main-body" id="main-body">
-        <div class="empty">
-          <h2>No brief selected</h2>
-          <p>Prepare a brief in the public builder, then come back here to review it. You can also import any JSON export from the builder into this local admin.</p>
-        </div>
-      </div>
-    </main>
+
+<div class="admin-toast" id="admin-toast"></div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">CM <span>STUDIO</span></div>
+    <div class="login-tagline">Admin Panel</div>
+    <div class="login-field">
+      <label class="login-label">Password</label>
+      <input class="login-input" type="password" id="login-pw" placeholder="Enter admin password">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Login →</button>
+    <div class="login-err" id="login-err">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin" id="admin">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-hdr">
+      <div class="sidebar-logo">CM <span>STUDIO</span></div>
+      <div class="sidebar-tagline">Admin Panel</div>
+    </div>
+    <div class="sidebar-search">
+      <input type="text" id="search-input" placeholder="Search submissions..." oninput="filterSubmissions(this.value)">
+    </div>
+    <div class="sidebar-list" id="sidebar-list">
+      <div class="sidebar-section">Submissions</div>
+      <div style="text-align:center;padding:2rem;color:var(--dim);font-size:0.8rem;">Loading...</div>
+    </div>
+    <div class="sidebar-footer">
+      <button class="sidebar-footer-btn" onclick="loadSubmissions()">↻ Refresh</button>
+      <button class="sidebar-footer-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
 
+  <!-- MAIN -->
+  <div class="main-panel">
+    <div class="main-hdr">
+      <div>
+        <div class="main-title" id="main-title">CM Studio Admin</div>
+        <div class="main-sub" id="main-sub">Select a submission from the sidebar</div>
+      </div>
+      <div class="stats-bar" id="stats-bar"></div>
+    </div>
+    <div class="main-body" id="main-body">
+      <div class="empty-state">
+        <div class="ei">✦</div>
+        <strong>No submission selected</strong>
+        <p>Select a client submission from the sidebar to view their brief, selections and generated code.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const STORAGE_KEY = 'cm_studio_briefs';
-const LAST_KEY = 'cm_studio_last_brief';
-let briefs = [];
-let filteredBriefs = [];
+// ── CREDENTIALS ──
+const SUPABASE_URL = 'https://keqizgtvunwdabwvgrik.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_omG3I_QFY_hpIhCcugVlmA_H2HqvTkm';
+const ADMIN_PASSWORD = 'designroom2025';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let submissions = [];
+let filteredSubmissions = [];
 let activeId = null;
 
-function safeText(value) {
-  return value ? String(value) : 'Not provided';
+// ── LOGIN ──
+document.getElementById('login-pw').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function doLogin() {
+  const pw = document.getElementById('login-pw').value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin').classList.add('visible');
+    loadSubmissions();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+  }
 }
 
-function loadBriefs() {
-  const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  const latest = JSON.parse(localStorage.getItem(LAST_KEY) || 'null');
-  const byId = new Map();
-  history.forEach(item => {
-    if (item && item.id) byId.set(item.id, item);
-  });
-  if (latest && latest.id && !byId.has(latest.id)) byId.set(latest.id, latest);
-  briefs = Array.from(byId.values()).sort((a, b) => new Date(b.generated_at) - new Date(a.generated_at));
-  filteredBriefs = briefs.slice();
-  if (!activeId && briefs.length) activeId = briefs[0].id;
-  if (activeId && !briefs.find(brief => brief.id === activeId)) activeId = briefs[0]?.id || null;
-  renderStats();
-  renderBriefList();
-  renderActiveBrief();
+function logout() {
+  document.getElementById('admin').classList.remove('visible');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-pw').value = '';
+  document.getElementById('login-err').style.display = 'none';
 }
 
+// ── LOAD DATA ──
+async function loadSubmissions() {
+  try {
+    const { data, error } = await db
+      .from('submissions')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    submissions = data || [];
+    filteredSubmissions = submissions;
+    renderSidebar();
+    renderStats();
+  } catch (e) {
+    console.error(e);
+    showToast('Failed to load submissions', 'error');
+  }
+}
+
+function filterSubmissions(query) {
+  const q = query.toLowerCase().trim();
+  filteredSubmissions = !q ? submissions : submissions.filter(s =>
+    (s.client_name || '').toLowerCase().includes(q) ||
+    (s.client_email || '').toLowerCase().includes(q) ||
+    (s.questionnaire?.business_name || '').toLowerCase().includes(q)
+  );
+  renderSidebar();
+}
+
+// ── STATS ──
 function renderStats() {
-  const total = briefs.length;
-  const withSelections = briefs.filter(brief => Object.keys(brief.selections || {}).length).length;
-  const withBusiness = briefs.filter(brief => brief.questionnaire?.business_name).length;
-  document.getElementById('stats').innerHTML = `
-    <div class="stat"><strong>${total}</strong><span>Total briefs</span></div>
-    <div class="stat"><strong>${withSelections}</strong><span>With selections</span></div>
-    <div class="stat"><strong>${withBusiness}</strong><span>Named businesses</span></div>
+  const now = new Date();
+  const today = submissions.filter(s => new Date(s.created_at).toDateString() === now.toDateString()).length;
+  const week  = submissions.filter(s => (now - new Date(s.created_at)) < 7 * 24 * 60 * 60 * 1000).length;
+  document.getElementById('stats-bar').innerHTML = `
+    <div class="stat-pill"><div class="sv">${submissions.length}</div><div class="sl">Total</div></div>
+    <div class="stat-pill"><div class="sv">${week}</div><div class="sl">Week</div></div>
+    <div class="stat-pill"><div class="sv">${today}</div><div class="sl">Today</div></div>
   `;
 }
 
-function renderBriefList() {
-  const root = document.getElementById('brief-list');
-  if (!filteredBriefs.length) {
-    root.innerHTML = `<div class="brief-item"><div class="brief-title">No matching briefs</div><div class="brief-meta">Prepare a new one in the builder or import a JSON export.</div></div>`;
+// ── SIDEBAR ──
+function renderSidebar() {
+  const el = document.getElementById('sidebar-list');
+  if (!filteredSubmissions.length) {
+    el.innerHTML = '<div class="sidebar-section">Submissions</div><div style="text-align:center;padding:2rem;color:var(--dim);font-size:0.8rem;">' + (submissions.length ? 'No matches found' : 'No submissions yet') + '</div>';
     return;
   }
-  root.innerHTML = filteredBriefs.map(brief => {
-    const q = brief.questionnaire || {};
-    const title = q.business_name || q.client_name || 'Untitled brief';
-    const email = q.client_email || 'No email';
-    const selectionCount = Object.keys(brief.selections || {}).length;
-    const activeClass = brief.id === activeId ? 'active' : '';
-    return `
-      <article class="brief-item ${activeClass}" data-id="${brief.id}">
-        <div class="brief-title">${escapeHtml(title)}</div>
-        <div class="brief-meta">${escapeHtml(email)}</div>
-        <div class="brief-meta">${formatDate(brief.generated_at)} · ${selectionCount} selections</div>
-      </article>
-    `;
-  }).join('');
-
-  root.querySelectorAll('.brief-item[data-id]').forEach(item => {
-    item.addEventListener('click', () => {
-      activeId = item.dataset.id;
-      renderBriefList();
-      renderActiveBrief();
-    });
-  });
+  const statusColors = { new:'#00e5ff', inprogress:'#f59e0b', quoted:'#a855f7', complete:'#4ade80' };
+  el.innerHTML = '<div class="sidebar-section">Submissions — ' + filteredSubmissions.length + '</div>' +
+    filteredSubmissions.map(s => {
+      const d = new Date(s.created_at);
+      const selCount = Object.keys(s.selections || {}).length;
+      const status = s.status || 'new';
+      return `<div class="sub-item ${s.id === activeId ? 'active' : ''}" onclick="viewSubmission('${s.id}')">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <div class="sub-name">${s.client_name || 'Unknown'}</div>
+          <div style="width:7px;height:7px;border-radius:50%;background:${statusColors[status]||'#00e5ff'};flex-shrink:0;"></div>
+        </div>
+        <div class="sub-meta">${s.client_email || ''}</div>
+        <div class="sub-meta">${d.toLocaleDateString('en-IE',{day:'numeric',month:'short',year:'numeric'})} · ${d.toLocaleTimeString('en-IE',{hour:'2-digit',minute:'2-digit'})}</div>
+        <span class="sub-badge">${selCount} selection${selCount!==1?'s':''}</span>
+      </div>`;
+    }).join('');
 }
 
-function renderActiveBrief() {
-  const brief = briefs.find(item => item.id === activeId);
-  const body = document.getElementById('main-body');
-  if (!brief) {
-    body.innerHTML = `<div class="empty"><h2>No brief selected</h2><p>Select a saved brief from the left or import one.</p></div>`;
-    return;
-  }
+// ── VIEW SUBMISSION ──
+function viewSubmission(id) {
+  activeId = id;
+  renderSidebar();
+  const s = submissions.find(x => x.id === id);
+  if (!s) return;
 
-  const q = brief.questionnaire || {};
-  const selections = Object.entries(brief.selections || {});
-  document.getElementById('main-title').textContent = q.business_name || q.client_name || 'Untitled brief';
-  document.getElementById('main-sub').textContent = `${safeText(q.client_email)} · Prepared ${formatDate(brief.generated_at)}`;
+  const d = new Date(s.created_at);
+  document.getElementById('main-title').textContent = s.client_name || 'Submission';
+  document.getElementById('main-sub').textContent = `${s.client_email} · Submitted ${d.toLocaleString('en-IE')}`;
 
-  body.innerHTML = `
-    <div class="status">Local brief only</div>
-    <section class="grid">
-      <article class="card">
-        <h3>Client details</h3>
-        <div class="detail-list">
-          ${detail('Client name', q.client_name)}
-          ${detail('Client email', q.client_email)}
-          ${detail('Business name', q.business_name)}
-          ${detail('Phone', q.phone)}
-          ${detail('Location', q.location)}
-          ${detail('What the business does', q.what_they_do)}
+  const q = s.questionnaire || {};
+  const sel = s.selections || {};
+  const status = s.status || 'new';
+  const statusLabels = { new:'New', inprogress:'In Progress', quoted:'Quoted', complete:'Complete' };
+
+  document.getElementById('main-body').innerHTML = `
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+      ${['new','inprogress','quoted','complete'].map(st => `
+        <button class="status-btn ${status===st?'active-status':''}" onclick="updateStatus('${id}','${st}')">
+          ${statusLabels[st]}
+        </button>`).join('')}
+    </div>
+
+    <!-- DETAIL GRID -->
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="dc-title">Client Details</div>
+        <div class="dc-row">
+          ${field('Name', s.client_name)}
+          ${field('Email', s.client_email)}
+          ${field('Business', q.business_name)}
+          ${field('Phone', q.phone)}
+          ${field('Location', q.location)}
+          ${field('What they do', q.what_they_do)}
         </div>
-      </article>
-      <article class="card">
-        <h3>Technical scope</h3>
-        <div class="detail-list">
-          ${detail('Pages needed', joinList(q.pages_needed))}
-          ${detail('Features needed', joinList(q.features_needed))}
-          ${detail('Domain status', q.has_domain)}
-          ${detail('Domain name', q.domain_name)}
-          ${detail('Existing site', q.existing_site)}
-          ${detail('Existing URL', q.existing_url)}
-        </div>
-      </article>
-    </section>
-    <article class="card">
-      <h3>Visual selections</h3>
-      <div class="selection-list">
-        ${selections.length ? selections.map(([key, value]) => `<div class="selection-pill"><strong>${escapeHtml(key)}</strong><span>${escapeHtml(value)}</span></div>`).join('') : `<p class="muted">No visual selections recorded.</p>`}
       </div>
-    </article>
-    <section class="grid">
-      <article class="card">
-        <h3>Content notes</h3>
-        <div class="detail-list">
-          ${detail('Tagline', q.tagline)}
-          ${detail('Services', q.services)}
-          ${detail('Homepage notes', q.homepage_content)}
-          ${detail('Social links', q.social_links)}
-          ${detail('Extra notes', q.extra_notes)}
+      <div class="detail-card">
+        <div class="dc-title">Technical</div>
+        <div class="dc-row">
+          ${field('Domain', q.has_domain)}
+          ${field('Domain name', q.domain_name)}
+          ${field('Existing site', q.existing_site)}
+          ${field('Existing URL', q.existing_url)}
+          ${field('Logo', q.has_logo)}
+          ${field('Photos', q.has_photos)}
         </div>
-      </article>
-      <article class="card">
-        <h3>Brand direction</h3>
-        <div class="detail-list">
-          ${detail('Logo', q.has_logo)}
-          ${detail('Photos', q.has_photos)}
-          ${detail('Brand colours', q.brand_colours)}
-          ${detail('Inspiration sites', q.inspiration_sites)}
-          ${detail('Avoid', q.dont_wants)}
-          ${detail('Mood board files', joinFileNames(q.mood_board_files))}
-        </div>
-      </article>
-    </section>
-    <article class="card">
-      <h3>Raw JSON</h3>
-      <div class="btn-row" style="margin-bottom: 0.8rem;">
-        <button class="btn primary" id="download-json">Download JSON</button>
-        <button class="btn" id="copy-json">Copy JSON</button>
       </div>
-      <div class="code"><pre>${escapeHtml(JSON.stringify(brief, null, 2))}</pre></div>
-    </article>
-  `;
+      <div class="detail-card">
+        <div class="dc-title">Pages & Features</div>
+        <div class="dc-row">
+          ${field('Pages needed', Array.isArray(q.pages_needed) ? q.pages_needed.join(', ') : q.pages_needed)}
+          ${field('Features', Array.isArray(q.features_needed) ? q.features_needed.join(', ') : q.features_needed)}
+        </div>
+      </div>
+      <div class="detail-card">
+        <div class="dc-title">Style & Branding</div>
+        <div class="dc-row">
+          ${field('Tagline', q.tagline)}
+          ${field('Brand colours', q.brand_colours)}
+          ${field('Inspiration', q.inspiration_sites)}
+          ${field("Don't wants", q.dont_wants)}
+          ${field('Extra notes', q.extra_notes)}
+        </div>
+      </div>
+    </div>
 
-  document.getElementById('download-json').addEventListener('click', () => {
-    downloadJson(brief);
-  });
-  document.getElementById('copy-json').addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(JSON.stringify(brief, null, 2));
-      alert('JSON copied to clipboard.');
-    } catch (error) {
-      alert('Clipboard copy is not available in this browser context.');
-    }
-  });
-}
+    ${q.services ? `
+    <div class="detail-card" style="margin-bottom:1.4rem;">
+      <div class="dc-title">Services Listed</div>
+      <div style="font-size:0.82rem;line-height:1.9;white-space:pre-line;margin-top:0.5rem;color:var(--text2);">${q.services}</div>
+    </div>` : ''}
 
-function detail(label, value) {
-  return `
-    <div class="detail">
-      <span>${escapeHtml(label)}</span>
-      <span>${escapeHtml(value || 'Not provided')}</span>
+    ${q.homepage_content ? `
+    <div class="detail-card" style="margin-bottom:1.4rem;">
+      <div class="dc-title">Homepage Content Notes</div>
+      <div style="font-size:0.82rem;line-height:1.7;white-space:pre-line;margin-top:0.5rem;color:var(--text2);">${q.homepage_content}</div>
+    </div>` : ''}
+
+    ${q.social_links ? `
+    <div class="detail-card" style="margin-bottom:1.4rem;">
+      <div class="dc-title">Social Media Links</div>
+      <div style="font-size:0.82rem;line-height:1.9;white-space:pre-line;margin-top:0.5rem;color:var(--text2);">${q.social_links}</div>
+    </div>` : ''}
+
+    ${q.mood_board_urls && q.mood_board_urls.length ? `
+    <div class="detail-card" style="margin-bottom:1.4rem;">
+      <div class="dc-title">Mood Board Images (${q.mood_board_urls.length})</div>
+      <div class="mood-grid">
+        ${q.mood_board_urls.map(url => `<a href="${url}" target="_blank"><img class="mood-thumb" src="${url}" alt="Mood board"></a>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- SELECTIONS -->
+    <div class="code-section-title">Style Selections</div>
+    <div class="sel-grid">
+      ${Object.entries(sel).map(([k,v]) => `
+        <div class="sel-chip">
+          <div class="sc-cat">${k}</div>
+          <div class="sc-val">${v}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- CODE BLOCKS -->
+    <div class="code-section-title">Generated Code — Copy & Paste Ready</div>
+    ${generateAllCodeBlocks(sel)}
+
+    <!-- ANALYTICS -->
+    <div class="analytics-card">
+      <div class="dc-title">Submission Summary</div>
+      <div class="analytics-stats">
+        <div class="an-stat"><div class="av">${Object.keys(sel).length}</div><div class="al">Selections Made</div></div>
+        <div class="an-stat"><div class="av">${(q.pages_needed||[]).length}</div><div class="al">Pages Requested</div></div>
+        <div class="an-stat"><div class="av">${(q.features_needed||[]).length}</div><div class="al">Features Wanted</div></div>
+        <div class="an-stat"><div class="av">${(q.mood_board_urls||[]).length}</div><div class="al">Mood Images</div></div>
+        <div class="an-stat"><div class="av">${d.toLocaleDateString('en-IE',{day:'numeric',month:'short'})}</div><div class="al">Submitted</div></div>
+      </div>
     </div>
   `;
 }
 
-function joinList(value) {
-  return Array.isArray(value) && value.length ? value.join(', ') : '';
+function field(label, val) {
+  if (!val) return '';
+  return `<div class="dc-field"><span class="dfl">${label}</span><span class="dfv">${val}</span></div>`;
 }
 
-function joinFileNames(value) {
-  return Array.isArray(value) && value.length ? value.map(file => file.name || file).join(', ') : '';
-}
-
-function formatDate(value) {
-  if (!value) return 'Unknown date';
-  const date = new Date(value);
-  return isNaN(date) ? 'Unknown date' : date.toLocaleString('en-IE', { dateStyle: 'medium', timeStyle: 'short' });
-}
-
-function escapeHtml(value) {
-  return String(value || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function downloadJson(brief) {
-  const safeName = (brief.questionnaire?.business_name || brief.questionnaire?.client_name || brief.id || 'website-brief')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-  const blob = new Blob([JSON.stringify(brief, null, 2)], { type: 'application/json;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `${safeName || 'website-brief'}.json`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
-}
-
-function importBrief(raw) {
-  const parsed = JSON.parse(raw);
-  if (!parsed || typeof parsed !== 'object') throw new Error('Invalid JSON');
-  if (!parsed.id) parsed.id = `brief-${Date.now()}`;
-  if (!parsed.generated_at) parsed.generated_at = new Date().toISOString();
-  if (!parsed.questionnaire) parsed.questionnaire = {};
-  if (!parsed.selections) parsed.selections = {};
-
-  const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  const filtered = existing.filter(item => item.id !== parsed.id);
-  filtered.unshift(parsed);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered.slice(0, 25)));
-  localStorage.setItem(LAST_KEY, JSON.stringify(parsed));
-  activeId = parsed.id;
-  loadBriefs();
-}
-
-document.getElementById('search').addEventListener('input', event => {
-  const query = event.target.value.trim().toLowerCase();
-  filteredBriefs = !query ? briefs.slice() : briefs.filter(brief => {
-    const q = brief.questionnaire || {};
-    return [q.client_name, q.client_email, q.business_name]
-      .filter(Boolean)
-      .some(value => String(value).toLowerCase().includes(query));
-  });
-  renderBriefList();
-});
-
-document.getElementById('refresh').addEventListener('click', loadBriefs);
-
-document.getElementById('clear-store').addEventListener('click', () => {
-  const confirmed = window.confirm('Clear all locally saved briefs from this browser?');
-  if (!confirmed) return;
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(LAST_KEY);
-  activeId = null;
-  loadBriefs();
-});
-
-document.getElementById('import-paste').addEventListener('click', () => {
-  const raw = document.getElementById('import-json').value.trim();
-  if (!raw) return;
+// ── STATUS UPDATE ──
+async function updateStatus(id, status) {
   try {
-    importBrief(raw);
-    document.getElementById('import-json').value = '';
-  } catch (error) {
-    alert('That JSON could not be imported.');
+    const { error } = await db.from('submissions').update({ status }).eq('id', id);
+    if (error) throw error;
+    const s = submissions.find(x => x.id === id);
+    if (s) s.status = status;
+    renderSidebar();
+    viewSubmission(id);
+    showToast('Status updated ✦', 'success');
+  } catch(e) {
+    showToast('Failed to update status', 'error');
   }
-});
+}
 
-document.getElementById('import-file').addEventListener('change', event => {
-  const file = event.target.files?.[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      importBrief(String(reader.result || ''));
-      event.target.value = '';
-    } catch (error) {
-      alert('That file could not be imported.');
-    }
+// ── TOAST ──
+function showToast(msg, type = '') {
+  const t = document.getElementById('admin-toast');
+  t.textContent = msg;
+  t.className = 'admin-toast show ' + type;
+  setTimeout(() => { t.className = 'admin-toast'; }, 3000);
+}
+
+// ══════════════════════════════════════
+// CODE GENERATORS
+// ══════════════════════════════════════
+function generateAllCodeBlocks(sel) {
+  const blocks = [];
+  if (sel['Colour Scheme'])   blocks.push(codeBlock('Colour Scheme — ' + sel['Colour Scheme'],   getColourCode(sel['Colour Scheme'])));
+  if (sel['Background'])      blocks.push(codeBlock('Background — ' + sel['Background'],          getBackgroundCode(sel['Background'])));
+  if (sel['Navbar'])          blocks.push(codeBlock('Navbar — ' + sel['Navbar'],                  getNavbarCode(sel['Navbar'])));
+  if (sel['Hero Section'])    blocks.push(codeBlock('Hero Section — ' + sel['Hero Section'],      getHeroCode(sel['Hero Section'])));
+  if (sel['Card Style'])      blocks.push(codeBlock('Card Style — ' + sel['Card Style'],          getCardCode(sel['Card Style'])));
+  if (sel['Footer'])          blocks.push(codeBlock('Footer — ' + sel['Footer'],                  getFooterCode(sel['Footer'])));
+  if (sel['Contact Form'])    blocks.push(codeBlock('Contact Form — ' + sel['Contact Form'],      getFormCode(sel['Contact Form'])));
+  if (sel['Scroll Animation'])blocks.push(codeBlock('Scroll Animation — ' + sel['Scroll Animation'], getAnimCode(sel['Scroll Animation'])));
+  return blocks.length ? blocks.join('') : '<div style="color:var(--dim);font-size:0.85rem;padding:1rem 0;">No style selections were made by this client.</div>';
+}
+
+function codeBlock(label, code) {
+  const id = 'cb_' + Math.random().toString(36).substr(2,9);
+  return `<div class="code-block-wrap">
+    <div class="code-block-hdr">
+      <span class="code-block-label">${label}</span>
+      <button class="copy-btn" id="${id}" onclick="copyCode('${id}')">Copy</button>
+    </div>
+    <div class="code-block-body"><pre id="pre_${id}">${escHtml(code)}</pre></div>
+  </div>`;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function copyCode(id) {
+  const pre = document.getElementById('pre_' + id);
+  if (!pre) return;
+  await navigator.clipboard.writeText(pre.textContent);
+  const btn = document.getElementById(id);
+  btn.textContent = '✓ Copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+}
+
+// ── CODE GENERATORS (same as submit.js) ──
+function getColourCode(scheme) {
+  const map = {
+    'Charcoal + Cyan':      {bg:'#0a0a0a',nav:'#141414',accent:'#00e5ff',text:'#f0f0f0',border:'rgba(255,255,255,0.07)'},
+    'Navy + Gold':          {bg:'#09101e',nav:'#111828',accent:'#d4a843',text:'#eef0f4',border:'rgba(255,255,255,0.08)'},
+    'Black + White':        {bg:'#ffffff',nav:'#f5f5f5',accent:'#000000',text:'#111111',border:'rgba(0,0,0,0.1)'},
+    'Dark + Red':           {bg:'#0d0505',nav:'#160808',accent:'#e63333',text:'#f5f2f2',border:'rgba(255,255,255,0.07)'},
+    'Slate + Emerald':      {bg:'#0e141a',nav:'#16202a',accent:'#10b981',text:'#e8edf2',border:'rgba(255,255,255,0.07)'},
+    'Dark Forest':          {bg:'#080d08',nav:'#101810',accent:'#4ade80',text:'#e8f0e8',border:'rgba(255,255,255,0.07)'},
+    'Deep Purple + Violet': {bg:'#120820',nav:'#1a1030',accent:'#a855f7',text:'#f0eaff',border:'rgba(255,255,255,0.08)'},
+    'Copper + Orange':      {bg:'#0f0a06',nav:'#1a1008',accent:'#e8943a',text:'#f5efe8',border:'rgba(255,255,255,0.07)'},
+    'Midnight + Pink':      {bg:'#08080a',nav:'#121218',accent:'#ff3366',text:'#ffffff',border:'rgba(255,255,255,0.07)'},
+    'Ocean Dark + Teal':    {bg:'#060c10',nav:'#0e1820',accent:'#00bcd4',text:'#e8f4ff',border:'rgba(255,255,255,0.07)'},
   };
-  reader.readAsText(file);
-});
+  const c = map[scheme] || map['Charcoal + Cyan'];
+  return `:root {\n  --bg: ${c.bg};\n  --bg-nav: ${c.nav};\n  --accent: ${c.accent};\n  --text: ${c.text};\n  --border: ${c.border};\n}\n\nbody {\n  background: var(--bg);\n  color: var(--text);\n  font-family: 'DM Sans', sans-serif;\n}\n\n.btn-primary { background: var(--accent); color: ${c.bg}; }\na { color: var(--accent); }`;
+}
 
-loadBriefs();
+function getBackgroundCode(bg) {
+  const map = {
+    'Dark Grid': `body {\n  background-color: var(--bg);\n  background-image:\n    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),\n    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);\n  background-size: 28px 28px;\n}`,
+    'Gradient Flow': `body {\n  background: linear-gradient(-45deg, #0a0015, #001a2e, #0d1f00, #1a0010);\n  background-size: 400% 400%;\n  animation: gradFlow 6s ease infinite;\n}\n@keyframes gradFlow {\n  0%   { background-position: 0% 50%; }\n  50%  { background-position: 100% 50%; }\n  100% { background-position: 0% 50%; }\n}`,
+    'Mesh Gradient': `body {\n  background:\n    radial-gradient(ellipse at 20% 50%, rgba(100,30,200,0.28) 0%, transparent 50%),\n    radial-gradient(ellipse at 80% 20%, rgba(0,80,200,0.28) 0%, transparent 50%),\n    radial-gradient(ellipse at 60% 80%, rgba(200,0,60,0.18) 0%, transparent 50%),\n    var(--bg);\n  animation: meshPulse 8s ease-in-out infinite alternate;\n}\n@keyframes meshPulse {\n  0%   { filter: hue-rotate(0deg); }\n  100% { filter: hue-rotate(25deg); }\n}`,
+    'Aurora': `body { background: #030310; position: relative; }\nbody::before {\n  content: '';\n  position: fixed; inset: 0;\n  background:\n    radial-gradient(ellipse at 30% 60%, rgba(0,200,150,0.2) 0%, transparent 55%),\n    radial-gradient(ellipse at 70% 30%, rgba(100,0,200,0.2) 0%, transparent 55%);\n  animation: auroraPulse 6s ease-in-out infinite alternate;\n  pointer-events: none; z-index: -1;\n}\n@keyframes auroraPulse {\n  0%   { opacity: 0.7; }\n  100% { opacity: 1; }\n}`,
+    'Scanlines': `body { background: #050505; }\nbody::before {\n  content: '';\n  position: fixed; inset: 0;\n  background: repeating-linear-gradient(\n    0deg, transparent, transparent 2px,\n    rgba(0,255,100,0.012) 2px, rgba(0,255,100,0.012) 4px\n  );\n  pointer-events: none; z-index: 9999;\n}`,
+    'Clean White': `body {\n  background: #ffffff;\n  color: #111111;\n}`,
+    'Soft Paper': `body {\n  background-color: #faf8f5;\n  /* Add subtle noise texture */\n}`,
+    'Light Gradient': `body {\n  background: linear-gradient(135deg, #f0f4ff 0%, #faf0ff 50%, #f0fff4 100%);\n  animation: lightGrad 8s ease infinite alternate;\n}\n@keyframes lightGrad {\n  0%   { filter: hue-rotate(0deg); }\n  100% { filter: hue-rotate(30deg); }\n}`,
+  };
+  return map[bg] || `/* ${bg} — see main showroom for full canvas implementation code */`;
+}
+
+function getNavbarCode(nav) {
+  return `<!-- ${nav} Navbar -->\n<nav class="navbar">\n  <div class="nav-logo">YOUR<span>BRAND</span></div>\n  <div class="nav-links">\n    <a href="#">Home</a>\n    <a href="#services">Services</a>\n    <a href="#about">About</a>\n    <a href="#contact">Contact</a>\n  </div>\n</nav>\n\n<style>\n.navbar {\n  position: sticky; top: 0; z-index: 100;\n  display: flex; align-items: center;\n  justify-content: space-between;\n  padding: 1rem 2rem;\n  background: var(--bg-nav);\n  border-bottom: 1px solid var(--border);\n  backdrop-filter: blur(20px);\n}\n.nav-logo {\n  font-family: 'Bebas Neue', sans-serif;\n  font-size: 1.5rem; letter-spacing: 0.08em;\n}\n.nav-logo span { color: var(--accent); }\n.nav-links { display: flex; gap: 2rem; }\n.nav-links a {\n  font-size: 0.8rem; color: var(--text);\n  opacity: 0.6; text-decoration: none;\n  letter-spacing: 0.06em; text-transform: uppercase;\n  transition: all 0.2s;\n}\n.nav-links a:hover { opacity: 1; color: var(--accent); }\n</style>`;
+}
+
+function getHeroCode(hero) {
+  return `<!-- ${hero} Hero Section -->\n<section class="hero">\n  <p class="hero-eyebrow">Professional Services · Ireland</p>\n  <h1>YOUR <span>BRAND</span> NAME</h1>\n  <div class="hero-line"></div>\n  <p class="hero-sub">Professional services for modern businesses across Ireland.</p>\n  <div class="hero-actions">\n    <a href="#contact" class="btn-primary">Get in Touch</a>\n    <a href="#services" class="btn-ghost">Our Services</a>\n  </div>\n</section>\n\n<style>\n.hero {\n  min-height: 100vh;\n  display: flex; flex-direction: column;\n  align-items: center; justify-content: center;\n  text-align: center; padding: 2rem;\n}\n.hero-eyebrow {\n  font-size: 0.72rem; color: var(--accent);\n  letter-spacing: 0.28em; text-transform: uppercase;\n  margin-bottom: 1.2rem;\n}\nh1 {\n  font-family: 'Bebas Neue', sans-serif;\n  font-size: clamp(3rem, 8vw, 7rem);\n  letter-spacing: 0.06em; line-height: 0.9;\n  margin-bottom: 1.2rem;\n}\nh1 span { color: var(--accent); }\n.hero-line { width: 48px; height: 2px; background: var(--accent); margin: 0 auto 1.5rem; }\n.hero-sub { font-size: 1.1rem; opacity: 0.55; max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.7; }\n.hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }\n.btn-primary { background: var(--accent); color: #000; padding: 14px 34px; border-radius: 5px; font-size: 0.84rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }\n.btn-ghost { border: 1px solid var(--accent); color: var(--accent); padding: 13px 30px; border-radius: 5px; font-size: 0.84rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }\n</style>`;
+}
+
+function getCardCode(card) {
+  return `<!-- ${card} Service Cards -->\n<div class="services-grid">\n  <div class="service-card">\n    <div class="card-icon"></div>\n    <h3>Service Name</h3>\n    <p>Brief description of what this service includes.</p>\n  </div>\n  <!-- Repeat for each service -->\n</div>\n\n<style>\n.services-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\n  gap: 1.2rem;\n  padding: 4rem 2rem;\n  max-width: 960px; margin: 0 auto;\n}\n.service-card {\n  background: var(--bg-nav);\n  border: 1px solid var(--border);\n  border-radius: 12px; padding: 1.8rem;\n  transition: border-color 0.2s, transform 0.2s;\n}\n.service-card:hover {\n  border-color: var(--accent);\n  transform: translateY(-4px);\n}\n.card-icon {\n  width: 40px; height: 40px; border-radius: 8px;\n  background: rgba(0,229,255,0.15);\n  border: 1px solid rgba(0,229,255,0.3);\n  margin-bottom: 1rem;\n}\n.service-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--accent); }\n.service-card p { font-size: 0.85rem; opacity: 0.5; line-height: 1.6; }\n</style>`;
+}
+
+function getFooterCode(footer) {
+  return `<!-- ${footer} Footer -->\n<footer class="site-footer">\n  <div class="footer-inner">\n    <div class="footer-brand">\n      <div class="footer-logo">YOUR<span>BRAND</span></div>\n      <p>Professional services across Ireland.</p>\n    </div>\n    <div class="footer-col">\n      <span class="footer-heading">Quick Links</span>\n      <a href="#">Home</a>\n      <a href="#services">Services</a>\n      <a href="#about">About</a>\n      <a href="#contact">Contact</a>\n    </div>\n    <div class="footer-col">\n      <span class="footer-heading">Contact</span>\n      <a href="tel:+353870000000">+353 87 000 0000</a>\n      <a href="mailto:hello@yourbrand.ie">hello@yourbrand.ie</a>\n    </div>\n  </div>\n  <div class="footer-bottom">\n    <p>© 2025 Your Brand Ltd. All rights reserved.</p>\n  </div>\n</footer>\n\n<style>\n.site-footer { background: var(--bg-nav); border-top: 1px solid var(--border); padding: 3rem 2rem 1.5rem; }\n.footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem; max-width: 960px; margin: 0 auto 2rem; }\n.footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.5rem; }\n.footer-heading { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.8rem; }\n.footer-col { display: flex; flex-direction: column; gap: 0.4rem; }\n.footer-col a { font-size: 0.82rem; opacity: 0.4; text-decoration: none; }\n.footer-col a:hover { opacity: 0.8; color: var(--accent); }\n.footer-bottom { border-top: 1px solid var(--border); padding-top: 1.2rem; font-size: 0.72rem; opacity: 0.3; max-width: 960px; margin: 0 auto; }\n</style>`;
+}
+
+function getFormCode(form) {
+  return `<!-- ${form} Contact Form (via Formspree) -->\n<form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="contact-form">\n  <div class="form-row">\n    <div class="form-field">\n      <label>First Name</label>\n      <input type="text" name="first_name" placeholder="John" required>\n    </div>\n    <div class="form-field">\n      <label>Last Name</label>\n      <input type="text" name="last_name" placeholder="Smith" required>\n    </div>\n  </div>\n  <div class="form-field">\n    <label>Email Address</label>\n    <input type="email" name="email" placeholder="john@example.com" required>\n  </div>\n  <div class="form-field">\n    <label>Phone Number</label>\n    <input type="tel" name="phone" placeholder="+353 87 000 0000">\n  </div>\n  <div class="form-field">\n    <label>Message</label>\n    <textarea name="message" rows="5" placeholder="Tell us about your project..." required></textarea>\n  </div>\n  <button type="submit">Send Message</button>\n</form>\n\n<style>\n.contact-form { display: flex; flex-direction: column; gap: 1.2rem; max-width: 600px; }\n.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }\n.form-field { display: flex; flex-direction: column; gap: 0.4rem; }\n.form-field label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; }\n.form-field input, .form-field textarea { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 6px; font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.2s; }\n.form-field input:focus, .form-field textarea:focus { border-color: var(--accent); }\nbutton[type="submit"] { background: var(--accent); color: #000; padding: 14px; border: none; border-radius: 6px; font-size: 0.84rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; }\n</style>`;
+}
+
+function getAnimCode(anim) {
+  return `/* ${anim} Scroll Animation */\n\n/* Add class="anim-el" to elements you want animated */\n\n<style>\n.anim-el {\n  opacity: 0;\n  transform: translateY(30px);\n  transition: opacity 0.7s ease, transform 0.7s ease;\n}\n.anim-el.visible {\n  opacity: 1;\n  transform: translateY(0);\n}\n/* Stagger delays for grid items */\n.anim-el:nth-child(2) { transition-delay: 0.1s; }\n.anim-el:nth-child(3) { transition-delay: 0.2s; }\n.anim-el:nth-child(4) { transition-delay: 0.3s; }\n</style>\n\n<script>\nconst observer = new IntersectionObserver((entries) => {\n  entries.forEach(entry => {\n    if (entry.isIntersecting) {\n      entry.target.classList.add('visible');\n      observer.unobserve(entry.target);\n    }\n  });\n}, { threshold: 0.15 });\n\ndocument.querySelectorAll('.anim-el').forEach(el => observer.observe(el));\n<\/script>`;
+}
 </script>
 </body>
 </html>
