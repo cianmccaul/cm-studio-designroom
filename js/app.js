@@ -586,7 +586,7 @@ function buildColorsGrid() {
     ['Midnight + Pink','Vibrant','pink'],['Ocean Dark + Teal','Cool','teal'],
   ];
   el.innerHTML = schemes.map(([label,tag,cls]) => `
-    <div class="preview-card cs-${cls}" data-category="Colour Scheme" data-label="${label}" onclick="toggleSelect(this);handleSchemeClick('${label}')">
+    <div class="preview-card cs-${cls}" data-category="Colour Scheme" data-label="${label}" onclick="toggleSelect(this)">
       <div class="pw cs-${cls}">
         <div class="cs-preview-wrap">
           <div class="cs-demo"><div class="cd-nav"></div><div class="cd-t"></div><div class="cd-s"></div><div class="cd-b"></div></div>
@@ -595,12 +595,6 @@ function buildColorsGrid() {
       </div>
       <div class="card-foot"><span class="cl">${label}</span><span class="ct">${tag}</span></div>
     </div>`).join('');
-}
-
-function handleSchemeClick(label) {
-  currentScheme = label;
-  const sb = document.getElementById('scheme-btn'); if(sb) sb.style.display='';
-  if (schemeTransformActive) applySchemeTransform();
 }
 
 function buildCardsGrid() {

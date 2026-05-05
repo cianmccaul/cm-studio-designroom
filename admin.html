@@ -205,7 +205,6 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
 // ── CREDENTIALS ──
 const SUPABASE_URL = 'https://keqizgtvunwdabwvgrik.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_omG3I_QFY_hpIhCcugVlmA_H2HqvTkm';
-const ADMIN_PASSWORD = 'designroom2025';
 
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -214,16 +213,52 @@ let submissions = [];
 let filteredSubmissions = [];
 let activeId = null;
 
+// ── AUTH UTILS ──
+async function hashPassword(pw) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(pw);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function setSession() {
+  sessionStorage.setItem('cm_admin_auth', 'authenticated_' + Date.now());
+}
+
+function checkSession() {
+  const auth = sessionStorage.getItem('cm_admin_auth');
+  if (!auth) return false;
+  const timestamp = parseInt(auth.split('_')[1]);
+  // Session expires after 8 hours
+  if (Date.now() - timestamp > 8 * 60 * 60 * 1000) {
+    sessionStorage.removeItem('cm_admin_auth');
+    return false;
+  }
+  return true;
+}
+
+function clearSession() {
+  sessionStorage.removeItem('cm_admin_auth');
+}
+
 // ── LOGIN ──
 document.getElementById('login-pw').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
 
-function doLogin() {
+async function doLogin() {
   const pw = document.getElementById('login-pw').value;
-  if (pw === ADMIN_PASSWORD) {
+  const hashedInput = await hashPassword(pw);
+  // SHA-256 hash of 'designroom2025' - pre-computed for client-side comparison
+  const correctHash = '81311143b7e4bef4f7e9f0fb68af5caa2d680135db41ac3284e0d8818a8e5bd4';
+  
+  if (hashedInput === correctHash) {
+    setSession();
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin').classList.add('visible');
+    document.getElementById('login-pw').value = '';
+    document.getElementById('login-err').style.display = 'none';
     loadSubmissions();
   } else {
     document.getElementById('login-err').style.display = 'block';
@@ -231,10 +266,18 @@ function doLogin() {
 }
 
 function logout() {
+  clearSession();
   document.getElementById('admin').classList.remove('visible');
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('login-pw').value = '';
   document.getElementById('login-err').style.display = 'none';
+}
+
+// Check for existing session on page load
+if (checkSession()) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin').classList.add('visible');
+  loadSubmissions();
 }
 
 // ── LOAD DATA ──
