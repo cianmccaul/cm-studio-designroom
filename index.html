@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,9 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/intro.css">
 <link rel="stylesheet" href="css/themes.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
 </head>
 <body>
 <div id="intro-screen">
@@ -22,6 +24,7 @@
     <div class="intro-sub">Web Design &amp; Development</div>
     <div class="intro-line"></div>
     <div class="intro-tagline">We build websites people remember.</div>
+    <div class="intro-hint">Move through the tabs. Pick what speaks to you. We'll build the rest.</div>
     <div class="intro-steps">
       <div class="intro-step">
         <div class="is-num">01</div>
@@ -204,7 +207,7 @@
     <button class="tab-btn" data-tab="animations">Scroll Animations</button>
     <button class="tab-btn special" data-tab="generate">✦ Live Preview</button>
   </nav>
-  <div class="progress-nudge">
+  <div class="nudge-line">
     <div class="nudge-dots" id="nudge-dots"></div>
     <span class="nudge-msg" id="nudge-msg">Start by picking a background</span>
     <span class="nudge-action" onclick="toggleCart()">View selections →</span>
