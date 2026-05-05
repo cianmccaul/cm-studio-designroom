@@ -52,6 +52,8 @@ window.addEventListener('DOMContentLoaded', () => {
   checkSavedProgress();
   injectStyles();
   setTimeout(addCardPreviewButtons, 200);
+  // Rebuild colors grid after a short delay to ensure it renders
+  setTimeout(() => { buildColorsGrid(); }, 100);
 });
 
 function injectStyles() {
@@ -129,6 +131,7 @@ function initTabs() {
       const panel = document.getElementById('tab-' + btn.dataset.tab);
       if (panel) panel.classList.add('active');
       if (btn.dataset.tab === 'generate') buildPreviewPanel();
+      if (btn.dataset.tab === 'colors') buildColorsGrid();
       updateNudge();
       setTimeout(addCardPreviewButtons, 60);
     });
