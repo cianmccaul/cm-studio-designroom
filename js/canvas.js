@@ -8,13 +8,28 @@
 function swapCanvasColor(e, swatch, canvasClass, color) {
   e.stopPropagation();
   const card = swatch.closest('.preview-card');
-  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.parentElement.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
   swatch.classList.add('active');
   const canvas = card.querySelector('.' + canvasClass);
   if (canvas) {
     canvas.dataset.color = color;
     // trigger redraw by updating the color ref
     canvas._currentColor = color;
+  }
+}
+
+// ── BACKGROUND COLOUR SWAP (for particle field, stars, etc) ──
+function swapBackgroundColor(e, swatch, canvasClass, bgColor) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  swatch.parentElement.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const canvas = card.querySelector('.' + canvasClass);
+  if (canvas) {
+    canvas.dataset.bgColor = bgColor;
+    canvas._currentBgColor = bgColor;
+    // Force redraw
+    if (canvas._drawFn) canvas._drawFn();
   }
 }
 
@@ -38,6 +53,7 @@ function initParticles() {
     canvas.height = parent.offsetHeight;
     const ctx = canvas.getContext('2d');
     canvas._currentColor = canvas.dataset.color || '#00e5ff';
+    canvas._currentBgColor = canvas.dataset.bgColor || '#050510';
 
     const pts = Array.from({ length: 45 }, () => ({
       x: Math.random() * canvas.width,
@@ -49,7 +65,7 @@ function initParticles() {
 
     function draw() {
       const color = canvas._currentColor || '#00e5ff';
-      const bg = canvas.closest('.bg-cctv') ? '#080808' : '#050510';
+      const bg = canvas._currentBgColor || '#050510';
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 

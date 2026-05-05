@@ -52,7 +52,7 @@
           <div class="q-field"><label class="q-label">Your Name *</label><input class="q-input" id="q-name" placeholder="John Smith"></div>
           <div class="q-field"><label class="q-label">Your Email *</label><input class="q-input" id="q-email" type="email" placeholder="john@example.com"></div>
         </div>
-        <div class="q-field"><label class="q-label">Business Name *</label><input class="q-input" id="q-biz" placeholder="e.g. Unique Fire Security Ltd."></div>
+        <div class="q-field"><label class="q-label">Business Name *</label><input class="q-input" id="q-biz" placeholder="Your Business Name"></div>
         <div class="q-field"><label class="q-label">What does your business do?</label><textarea class="q-textarea" id="q-what" placeholder="Brief description of your business and services..."></textarea></div>
         <div class="q-row">
           <div class="q-field"><label class="q-label">Phone Number</label><input class="q-input" id="q-phone" placeholder="+353 87 000 0000"></div>
@@ -126,7 +126,7 @@
         <div class="q-field"><label class="q-label">Do you have a domain name?</label>
           <select class="q-select" id="q-domain"><option value="">Select...</option><option>Yes — I own one already</option><option>No — I need one registered</option><option>Not sure</option></select>
         </div>
-        <div class="q-field" id="q-domain-field" style="display:none"><label class="q-label">Your Domain Name</label><input class="q-input" id="q-domain-name" placeholder="e.g. uniquefire.ie"></div>
+        <div class="q-field" id="q-domain-field" style="display:none"><label class="q-label">Your Domain Name</label><input class="q-input" id="q-domain-name" placeholder="yoursite.ie"></div>
         <div class="q-field"><label class="q-label">Do you have an existing website?</label>
           <select class="q-select" id="q-existing"><option value="">Select...</option><option>Yes — replace it completely</option><option>Yes — keep some content from it</option><option>No — this is brand new</option></select>
         </div>
@@ -211,6 +211,18 @@
           <div class="cs-swatch" style="background:#e11d48" onclick="swapCanvasColor(event,this,'c-particles','#e11d48')"></div>
           <div class="cs-swatch" style="background:#8b5cf6" onclick="swapCanvasColor(event,this,'c-particles','#8b5cf6')"></div>
           <div class="cs-swatch" style="background:#14b8a6" onclick="swapCanvasColor(event,this,'c-particles','#14b8a6')"></div>
+          <div class="cs-swatch" style="background:#ec4899" onclick="swapCanvasColor(event,this,'c-particles','#ec4899')"></div>
+          <div class="cs-swatch" style="background:#6366f1" onclick="swapCanvasColor(event,this,'c-particles','#6366f1')"></div>
+        </div>
+        <div class="card-swatches" style="margin-top:4px;border-top:1px solid rgba(255,255,255,0.05);padding-top:4px;">
+          <div class="bg-swatch active" style="background:#050510" title="Dark Space" onclick="swapBackgroundColor(event,this,'c-particles','#050510')"></div>
+          <div class="bg-swatch" style="background:#1a0a2e" title="Deep Purple" onclick="swapBackgroundColor(event,this,'c-particles','#1a0a2e')"></div>
+          <div class="bg-swatch" style="background:#0d1b2a" title="Midnight Blue" onclick="swapBackgroundColor(event,this,'c-particles','#0d1b2a')"></div>
+          <div class="bg-swatch" style="background:#0a1628" title="Navy" onclick="swapBackgroundColor(event,this,'c-particles','#0a1628')"></div>
+          <div class="bg-swatch" style="background:#0d2f1f" title="Forest" onclick="swapBackgroundColor(event,this,'c-particles','#0d2f1f')"></div>
+          <div class="bg-swatch" style="background:#2d1810" title="Warm Brown" onclick="swapBackgroundColor(event,this,'c-particles','#2d1810')"></div>
+          <div class="bg-swatch" style="background:#1a0a0a" title="Dark Red" onclick="swapBackgroundColor(event,this,'c-particles','#1a0a0a')"></div>
+          <div class="bg-swatch" style="background:#f0f0f0" title="Light" onclick="swapBackgroundColor(event,this,'c-particles','#f0f0f0')"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Starfield" onclick="toggleSelect(this)">
@@ -226,6 +238,18 @@
           <div class="cs-swatch" style="background:#38bdf8" onclick="swapCanvasColor(event,this,'c-stars','#38bdf8')"></div>
           <div class="cs-swatch" style="background:#fb923c" onclick="swapCanvasColor(event,this,'c-stars','#fb923c')"></div>
           <div class="cs-swatch" style="background:#a3e635" onclick="swapCanvasColor(event,this,'c-stars','#a3e635')"></div>
+          <div class="cs-swatch" style="background:#22d3ee" onclick="swapCanvasColor(event,this,'c-stars','#22d3ee')"></div>
+          <div class="cs-swatch" style="background:#f472b6" onclick="swapCanvasColor(event,this,'c-stars','#f472b6')"></div>
+        </div>
+        <div class="card-swatches" style="margin-top:4px;border-top:1px solid rgba(255,255,255,0.05);padding-top:4px;">
+          <div class="bg-swatch active" style="background:#080808" title="Deep Black" onclick="swapBackgroundColor(event,this,'c-stars','#080808')"></div>
+          <div class="bg-swatch" style="background:#0a0a1a" title="Dark Navy" onclick="swapBackgroundColor(event,this,'c-stars','#0a0a1a')"></div>
+          <div class="bg-swatch" style="background:#1a0a2e" title="Deep Purple" onclick="swapBackgroundColor(event,this,'c-stars','#1a0a2e')"></div>
+          <div class="bg-swatch" style="background:#1a0a1a" title="Dark Red" onclick="swapBackgroundColor(event,this,'c-stars','#1a0a1a')"></div>
+          <div class="bg-swatch" style="background:#0a1a0a" title="Dark Green" onclick="swapBackgroundColor(event,this,'c-stars','#0a1a0a')"></div>
+          <div class="bg-swatch" style="background:#0a0a0a" title="Pure Black" onclick="swapBackgroundColor(event,this,'c-stars','#0a0a0a')"></div>
+          <div class="bg-swatch" style="background:#0f172a" title="Slate" onclick="swapBackgroundColor(event,this,'c-stars','#0f172a')"></div>
+          <div class="bg-swatch" style="background:#1e1b4b" title="Indigo" onclick="swapBackgroundColor(event,this,'c-stars','#1e1b4b')"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Matrix Rain" onclick="toggleSelect(this)">
@@ -241,6 +265,18 @@
           <div class="cs-swatch" style="background:#3b82f6" onclick="swapCanvasColor(event,this,'c-matrix','#3b82f6')"></div>
           <div class="cs-swatch" style="background:#eab308" onclick="swapCanvasColor(event,this,'c-matrix','#eab308')"></div>
           <div class="cs-swatch" style="background:#ec4899" onclick="swapCanvasColor(event,this,'c-matrix','#ec4899')"></div>
+          <div class="cs-swatch" style="background:#8b5cf6" onclick="swapCanvasColor(event,this,'c-matrix','#8b5cf6')"></div>
+          <div class="cs-swatch" style="background:#14b8a6" onclick="swapCanvasColor(event,this,'c-matrix','#14b8a6')"></div>
+        </div>
+        <div class="card-swatches" style="margin-top:4px;border-top:1px solid rgba(255,255,255,0.05);padding-top:4px;">
+          <div class="bg-swatch active" style="background:#000000" title="Pure Black" onclick="swapBackgroundColor(event,this,'c-matrix','#000000')"></div>
+          <div class="bg-swatch" style="background:#0a0a0a" title="Soft Black" onclick="swapBackgroundColor(event,this,'c-matrix','#0a0a0a')"></div>
+          <div class="bg-swatch" style="background:#0a0a12" title="Dark Blue" onclick="swapBackgroundColor(event,this,'c-matrix','#0a0a12')"></div>
+          <div class="bg-swatch" style="background:#0a120a" title="Dark Green" onclick="swapBackgroundColor(event,this,'c-matrix','#0a120a')"></div>
+          <div class="bg-swatch" style="background:#120a0a" title="Dark Red" onclick="swapBackgroundColor(event,this,'c-matrix','#120a0a')"></div>
+          <div class="bg-swatch" style="background:#0a0f12" title="Deep Teal" onclick="swapBackgroundColor(event,this,'c-matrix','#0a0f12')"></div>
+          <div class="bg-swatch" style="background:#120a12" title="Deep Purple" onclick="swapBackgroundColor(event,this,'c-matrix','#120a12')"></div>
+          <div class="bg-swatch" style="background:#0f0a08" title="Dark Brown" onclick="swapBackgroundColor(event,this,'c-matrix','#0f0a08')"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="CCTV Tracker" onclick="toggleSelect(this)">
@@ -256,6 +292,18 @@
           <div class="cs-swatch" style="background:#06b6d4" onclick="swapCanvasColor(event,this,'c-cctv','#06b6d4')"></div>
           <div class="cs-swatch" style="background:#84cc16" onclick="swapCanvasColor(event,this,'c-cctv','#84cc16')"></div>
           <div class="cs-swatch" style="background:#f472b6" onclick="swapCanvasColor(event,this,'c-cctv','#f472b6')"></div>
+          <div class="cs-swatch" style="background:#ec4899" onclick="swapCanvasColor(event,this,'c-cctv','#ec4899')"></div>
+          <div class="cs-swatch" style="background:#6366f1" onclick="swapCanvasColor(event,this,'c-cctv','#6366f1')"></div>
+        </div>
+        <div class="card-swatches" style="margin-top:4px;border-top:1px solid rgba(255,255,255,0.05);padding-top:4px;">
+          <div class="bg-swatch active" style="background:#080808" title="Dark" onclick="swapBackgroundColor(event,this,'c-cctv','#080808')"></div>
+          <div class="bg-swatch" style="background:#1a0a0a" title="Dark Red" onclick="swapBackgroundColor(event,this,'c-cctv','#1a0a0a')"></div>
+          <div class="bg-swatch" style="background:#0a1a0a" title="Dark Green" onclick="swapBackgroundColor(event,this,'c-cctv','#0a1a0a')"></div>
+          <div class="bg-swatch" style="background:#0a0a1a" title="Dark Blue" onclick="swapBackgroundColor(event,this,'c-cctv','#0a0a1a')"></div>
+          <div class="bg-swatch" style="background:#1a1a0a" title="Dark Yellow" onclick="swapBackgroundColor(event,this,'c-cctv','#1a1a0a')"></div>
+          <div class="bg-swatch" style="background:#0a1a1a" title="Dark Teal" onclick="swapBackgroundColor(event,this,'c-cctv','#0a1a1a')"></div>
+          <div class="bg-swatch" style="background:#1a0a1a" title="Dark Purple" onclick="swapBackgroundColor(event,this,'c-cctv','#1a0a1a')"></div>
+          <div class="bg-swatch" style="background:#0f0a0f" title="Dark Grey" onclick="swapBackgroundColor(event,this,'c-cctv','#0f0a0f')"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Gradient Flow" onclick="toggleSelect(this)">
