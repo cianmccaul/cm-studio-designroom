@@ -1,226 +1,157 @@
 /* ═══════════════════════════════════════
    CM STUDIO — DESIGNROOM V4
    js/intro.js
-   Cinematic intro sequence
+   Cinematic intro: particles + logo +
+   three-step cards + Get Started button
 ═══════════════════════════════════════ */
 
 (function () {
+  const MORPH_DURATION = 900;
+  let introCanvas, introCtx, introAnimId, morphing = false, started = false;
+  const P_COUNT = 85, P_COLOR = '#00e5ff', P_CONNECT = 90, P_SPEED = 0.4;
 
-  // ── CONFIG ──
-  const INTRO_DURATION = 3200;   // ms before morph begins
-  const MORPH_DURATION = 900;    // ms for the morph transition
-
-  // ── STATE ──
-  let introCanvas, introCtx;
-  let introParticles = [];
-  let introAnimId;
-  let morphing = false;
-
-  // ── PARTICLE CONFIG ──
-  const P_COUNT   = 90;
-  const P_COLOR   = '#00e5ff';
-  const P_CONNECT = 90;   // px connection distance
-  const P_SPEED   = 0.45;
-
-  // ════════════════════════════════
-  // BOOT
-  // ════════════════════════════════
   function boot() {
-    buildIntroDOM();
-    initIntroParticles();
-    animateIntro();
+    buildIntroCanvas();
+    buildStepCards();
+    initParticles();
+    animateLoop();
     scheduleReveal();
   }
 
-  // ════════════════════════════════
-  // BUILD DOM
-  // ════════════════════════════════
-  function buildIntroDOM() {
-    const screen = document.getElementById('intro-screen');
-    if (!screen) return;
-
-    // Canvas fills the screen
+  function buildIntroCanvas() {
+    const screen = document.getElementById('intro-screen'); if(!screen) return;
     introCanvas = document.createElement('canvas');
     introCanvas.id = 'intro-canvas';
-    introCanvas.style.cssText = `
-      position:absolute;inset:0;width:100%;height:100%;
-      display:block;z-index:0;
-    `;
+    introCanvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;';
     screen.prepend(introCanvas);
     introCtx = introCanvas.getContext('2d');
-    resizeIntroCanvas();
-    window.addEventListener('resize', resizeIntroCanvas);
-
-    // Content sits above canvas
-    const content = screen.querySelector('.intro-content');
-    if (content) content.style.position = 'relative';
+    resize(); window.addEventListener('resize', resize);
+    const c = screen.querySelector('.intro-content'); if(c) c.style.position='relative';
   }
 
-  function resizeIntroCanvas() {
-    if (!introCanvas) return;
-    introCanvas.width  = window.innerWidth;
-    introCanvas.height = window.innerHeight;
+  function resize() { if(!introCanvas) return; introCanvas.width=window.innerWidth; introCanvas.height=window.innerHeight; }
+
+  function buildStepCards() {
+    const screen = document.getElementById('intro-screen'); if(!screen) return;
+
+    const stepsWrap = document.createElement('div');
+    stepsWrap.id = 'intro-steps';
+    stepsWrap.style.cssText = 'position:absolute;bottom:0;left:0;right:0;display:flex;gap:1rem;justify-content:center;padding:0 2rem 5rem;z-index:2;pointer-events:none;';
+
+    [
+      { num:'01', label:'Browse', desc:'Explore backgrounds, navbars, heroes and more' },
+      { num:'02', label:'Select', desc:'Click anything you like — mix and match freely' },
+      { num:'03', label:'Submit', desc:'Fill in your brief and we\'ll be in touch within 48hrs' },
+    ].forEach((s, i) => {
+      const card = document.createElement('div');
+      card.style.cssText = `background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:1.2rem 1rem;text-align:center;max-width:180px;flex:1;opacity:0;transform:translateY(30px);transition:opacity 0.6s ease ${i*0.15}s,transform 0.6s ease ${i*0.15}s;backdrop-filter:blur(12px);`;
+      card.innerHTML = `<div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#00e5ff;line-height:1;margin-bottom:0.3rem;">${s.num}</div><div style="font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:700;margin-bottom:0.3rem;">${s.label}</div><div style="font-size:0.66rem;color:rgba(255,255,255,0.4);line-height:1.5;">${s.desc}</div>`;
+      stepsWrap.appendChild(card);
+    });
+
+    const btn = document.createElement('button');
+    btn.id = 'intro-start-btn';
+    btn.textContent = 'Get Started →';
+    btn.style.cssText = 'position:absolute;bottom:1.8rem;left:50%;transform:translateX(-50%) translateY(10px);font-family:\'Syne\',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#00e5ff;color:#000;border:none;padding:13px 36px;border-radius:6px;cursor:pointer;opacity:0;transition:opacity 0.6s ease,transform 0.4s ease;z-index:10;pointer-events:none;white-space:nowrap;';
+    btn.addEventListener('click', () => { if (!started) { started = true; beginMorph(); } });
+
+    screen.appendChild(stepsWrap);
+    screen.appendChild(btn);
   }
 
-  // ════════════════════════════════
-  // PARTICLES
-  // ════════════════════════════════
-  function initIntroParticles() {
+  function initParticles() {
     introParticles = Array.from({ length: P_COUNT }, () => ({
-      x:  Math.random() * window.innerWidth,
-      y:  Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * P_SPEED,
-      vy: (Math.random() - 0.5) * P_SPEED,
-      r:  Math.random() * 1.6 + 0.5,
-      o:  Math.random() * 0.6 + 0.4,
+      x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+      vx:(Math.random()-0.5)*P_SPEED, vy:(Math.random()-0.5)*P_SPEED,
+      r:Math.random()*1.6+0.5, o:Math.random()*0.6+0.4,
     }));
   }
 
-  function drawIntroParticles() {
-    const w = introCanvas.width;
-    const h = introCanvas.height;
-    const ctx = introCtx;
+  let introParticles = [];
 
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, w, h);
-
-    // Update + draw particles
+  function drawParticles() {
+    const w=introCanvas.width, h=introCanvas.height, ctx=introCtx;
+    ctx.clearRect(0,0,w,h); ctx.fillStyle='#000'; ctx.fillRect(0,0,w,h);
     introParticles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < 0 || p.x > w) p.vx *= -1;
-      if (p.y < 0 || p.y > h) p.vy *= -1;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle   = P_COLOR;
-      ctx.globalAlpha = p.o;
-      ctx.fill();
-      ctx.globalAlpha = 1;
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>w) p.vx*=-1; if(p.y<0||p.y>h) p.vy*=-1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=P_COLOR; ctx.globalAlpha=p.o; ctx.fill(); ctx.globalAlpha=1;
     });
-
-    // Draw connections
-    for (let i = 0; i < introParticles.length; i++) {
-      for (let j = i + 1; j < introParticles.length; j++) {
-        const a  = introParticles[i];
-        const b  = introParticles[j];
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-        const d  = Math.sqrt(dx * dx + dy * dy);
-        if (d < P_CONNECT) {
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle  = P_COLOR;
-          ctx.globalAlpha  = 0.12 * (1 - d / P_CONNECT);
-          ctx.lineWidth    = 0.6;
-          ctx.stroke();
-          ctx.globalAlpha  = 1;
-        }
-      }
+    for(let i=0;i<introParticles.length;i++) for(let j=i+1;j<introParticles.length;j++) {
+      const a=introParticles[i],b=introParticles[j];
+      const dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<P_CONNECT){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=P_COLOR;ctx.globalAlpha=0.1*(1-d/P_CONNECT);ctx.lineWidth=0.6;ctx.stroke();ctx.globalAlpha=1;}
     }
   }
 
-  function animateIntro() {
-    if (!morphing) {
-      drawIntroParticles();
-      introAnimId = requestAnimationFrame(animateIntro);
-    }
-  }
+  function animateLoop() { if(!morphing){drawParticles();introAnimId=requestAnimationFrame(animateLoop);} }
 
-  // ════════════════════════════════
-  // REVEAL SEQUENCE
-  // ════════════════════════════════
   function scheduleReveal() {
-    // Step 1 — animate logo elements in
-    const logo    = document.querySelector('.intro-logo');
-    const sub     = document.querySelector('.intro-sub');
-    const line    = document.querySelector('.intro-line');
-    const tagline = document.querySelector('.intro-tagline');
-    const hint    = document.querySelector('.intro-hint');
+    const show = (sel, delay) => setTimeout(() => { const el=document.querySelector(sel); if(el) el.classList.add('visible'); }, delay);
+    show('.intro-mark-img', 150);
+    show('.intro-logo',     350);
+    show('.intro-sub',      700);
+    show('.intro-line',    1050);
+    show('.intro-tagline', 1500);
+    show('.intro-hint',    2100);
 
-    // Elements start invisible via CSS
-    // Stagger them in
-    if (logo)    setTimeout(() => logo.classList.add('visible'),    200);
-    if (sub)     setTimeout(() => sub.classList.add('visible'),     550);
-    if (line)    setTimeout(() => line.classList.add('visible'),    900);
-    if (tagline) setTimeout(() => tagline.classList.add('visible'), 1300);
-    if (hint)    setTimeout(() => hint.classList.add('visible'),    2000);
+    // Step cards rise up
+    setTimeout(() => {
+      const steps = document.getElementById('intro-steps');
+      if (steps) steps.querySelectorAll('div').forEach(c => { c.style.opacity='1'; c.style.transform='translateY(0)'; });
+    }, 2700);
 
-    // Step 2 — begin morph
-    setTimeout(beginMorph, INTRO_DURATION);
+    // Get Started button appears + pulses
+    setTimeout(() => {
+      const btn = document.getElementById('intro-start-btn');
+      if (btn) {
+        btn.style.opacity = '1';
+        btn.style.transform = 'translateX(-50%) translateY(0)';
+        btn.style.pointerEvents = 'all';
+        if (!document.getElementById('btn-pulse-style')) {
+          const s = document.createElement('style');
+          s.id = 'btn-pulse-style';
+          s.textContent = '@keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,0.45)}60%{box-shadow:0 0 0 14px rgba(0,229,255,0)}}';
+          document.head.appendChild(s);
+        }
+        btn.style.animation = 'btnPulse 2s ease-in-out infinite';
+      }
+    }, 3400);
+
+    // Auto-advance fallback at 10 seconds
+    setTimeout(() => { if (!started) { started = true; beginMorph(); } }, 10000);
   }
 
-  // ════════════════════════════════
-  // MORPH — intro dissolves into showroom
-  // ════════════════════════════════
   function beginMorph() {
-    morphing = true;
-    cancelAnimationFrame(introAnimId);
-
-    const screen  = document.getElementById('intro-screen');
-    const main    = document.getElementById('main-app');
-    const nudge   = document.getElementById('nudge-line');
-
+    morphing = true; cancelAnimationFrame(introAnimId);
+    const screen = document.getElementById('intro-screen');
+    const main   = document.getElementById('main-app');
     if (!screen) return;
+    if (main) { main.style.opacity='0'; main.style.display='block'; }
 
-    // 1. Reveal the main app underneath (invisible for now)
-    if (main) {
-      main.style.opacity  = '0';
-      main.style.display  = 'block';
-    }
+    drawParticles();
 
-    // 2. Freeze particle frame — do one last draw
-    drawIntroParticles();
-
-    // 3. Fade intro canvas upward while fading out
-    introCanvas.style.transition = `opacity ${MORPH_DURATION}ms ease, transform ${MORPH_DURATION}ms ease`;
+    introCanvas.style.transition = `opacity ${MORPH_DURATION}ms ease,transform ${MORPH_DURATION}ms ease`;
     introCanvas.style.opacity    = '0';
     introCanvas.style.transform  = 'scale(1.04)';
 
-    // 4. Fade intro content down
     const content = screen.querySelector('.intro-content');
-    if (content) {
-      content.style.transition = `opacity ${MORPH_DURATION * 0.6}ms ease, transform ${MORPH_DURATION * 0.6}ms ease`;
-      content.style.opacity    = '0';
-      content.style.transform  = 'translateY(-16px)';
-    }
+    if (content) { content.style.transition=`opacity ${MORPH_DURATION*0.6}ms ease,transform ${MORPH_DURATION*0.6}ms ease`; content.style.opacity='0'; content.style.transform='translateY(-16px)'; }
 
-    // 5. After morph — hide intro, show main, show nudge
+    const steps = document.getElementById('intro-steps');
+    const btn   = document.getElementById('intro-start-btn');
+    if (steps) { steps.style.transition=`opacity ${MORPH_DURATION*0.5}ms ease`; steps.style.opacity='0'; }
+    if (btn)   { btn.style.transition=`opacity ${MORPH_DURATION*0.4}ms ease`; btn.style.opacity='0'; }
+
     setTimeout(() => {
       if (screen) screen.style.display = 'none';
-      if (main) {
-        main.style.transition = `opacity ${MORPH_DURATION * 0.5}ms ease`;
-        main.style.opacity    = '1';
-      }
-      // Show subtle nudge line
-      if (nudge) {
-        nudge.style.opacity   = '1';
-        nudge.style.transform = 'translateY(0)';
-      }
-      // Init cursor reactive background
+      if (main) { main.style.transition=`opacity ${MORPH_DURATION*0.5}ms ease`; main.style.opacity='1'; }
       if (typeof initCursorReactive === 'function') initCursorReactive();
-      // Init main canvas animations
-      if (typeof initAllCanvases === 'function') initAllCanvases();
-      // Build all grids
-      if (typeof buildAllGrids === 'function') buildAllGrids();
-      // Init tabs
-      if (typeof initTabs === 'function') initTabs();
-      // Init questionnaire
-      if (typeof initQuestionnaire === 'function') initQuestionnaire();
-      // Init nudge
-      if (typeof initNudge === 'function') initNudge();
-      // Check saved progress
-      if (typeof checkSavedProgress === 'function') checkSavedProgress();
+      if (typeof initAllCanvases    === 'function') initAllCanvases();
+      if (typeof initNudge          === 'function') initNudge();
     }, MORPH_DURATION + 50);
   }
 
-  // ── KICK OFF ──
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
-
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', boot); } else { boot(); }
 })();
