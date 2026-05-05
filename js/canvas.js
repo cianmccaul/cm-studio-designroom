@@ -202,6 +202,79 @@ function swapLightGrad(e, swatch, cls, c1, c2) {
   if (pw) pw.style.background = `linear-gradient(135deg,${c1},${c2})`;
 }
 
+function swapBokeh(e, swatch, r1, r2, r3) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.card-swatches:first-of-type .cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-bokeh');
+  if (pw) {
+    pw.style.setProperty('--bk1', `rgba(${r1},0.55)`);
+    pw.style.setProperty('--bk2', `rgba(${r2},0.5)`);
+    pw.style.setProperty('--bk3', `rgba(${r3},0.4)`);
+  }
+}
+
+function swapBokehBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.setProperty('--bk-bg', bg);
+}
+
+function swapLiquidBlobs(e, swatch, r1, r2, r3) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.card-swatches:first-of-type .cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-liquid-blobs');
+  if (pw) {
+    pw.style.setProperty('--lb1', `rgba(${r1},0.55)`);
+    pw.style.setProperty('--lb2', `rgba(${r2},0.5)`);
+    pw.style.setProperty('--lb3', `rgba(${r3},0.45)`);
+  }
+}
+
+function swapLiquidBlobBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.background = bg;
+}
+
+function swapImgOverlay(e, swatch, cls, overlay) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.setProperty('--img-overlay', overlay);
+}
+
+function swapGeoWeb(e, swatch, rgb) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.card-swatches:first-of-type .cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const canvas = card.querySelector('.c-geo-web');
+  if (canvas) { canvas._color = `rgb(${rgb})`; }
+}
+
+function swapGeoWebBg(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const canvas = card.querySelector('.' + cls);
+  if (canvas) { canvas._bgColor = bg; }
+  const pw = card.querySelector('.bg-geo-web');
+  if (pw) pw.style.background = bg;
+}
+
 function swapDiagonalBg(e, swatch, cls, bg) {
   e.stopPropagation();
   const card = swatch.closest('.preview-card');
@@ -222,6 +295,107 @@ function initAllCanvases() {
   initCCTV();
   initGeometricShapes();
   initBlobs();
+  initGeoWeb();
+}
+
+// ══════════════════════════════════════
+// GEOMETRIC WEB
+// ══════════════════════════════════════
+function initGeoWeb() {
+  document.querySelectorAll('.c-geo-web').forEach(canvas => {
+    const parent = canvas.parentElement;
+    canvas.width = parent.offsetWidth || 240;
+    canvas.height = parent.offsetHeight || 185;
+    canvas._color = '#00e5ff';
+    canvas._bgColor = '#060612';
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const N = 28;
+    const pts = Array.from({length:N}, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4
+    }));
+    const DIST = 70;
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = canvas._bgColor;
+      ctx.fillRect(0, 0, W, H);
+      pts.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+      });
+      const col = canvas._color || '#00e5ff';
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if (d < DIST) {
+            ctx.beginPath();
+            ctx.strokeStyle = col.replace(')', `,${1 - d/DIST})`).replace('rgb(', 'rgba(');
+            ctx.lineWidth = 0.6;
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      pts.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = canvas._color || '#00e5ff';
+        ctx.fill();
+      });
+      canvas._geoRaf = requestAnimationFrame(draw);
+    }
+    if (canvas._geoRaf) cancelAnimationFrame(canvas._geoRaf);
+    draw();
+  });
+}
+
+function initSingleGeoWebCanvas(canvas) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const N = 80;
+  const pts = Array.from({length:N}, () => ({
+    x: Math.random()*W, y: Math.random()*H,
+    vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5
+  }));
+  const DIST = 120;
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = canvas._bgColor || '#060612';
+    ctx.fillRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+    });
+    const col = canvas._color || '#00e5ff';
+    for(let i=0;i<N;i++){
+      for(let j=i+1;j<N;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<DIST){
+          ctx.beginPath();
+          ctx.strokeStyle=col.replace(')',`,${1-d/DIST})`).replace('rgb(','rgba(');
+          ctx.lineWidth=0.7;
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    pts.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,2,0,Math.PI*2);
+      ctx.fillStyle=col;
+      ctx.fill();
+    });
+    canvas._geoRaf=requestAnimationFrame(draw);
+  }
+  if(canvas._geoRaf) cancelAnimationFrame(canvas._geoRaf);
+  draw();
 }
 
 // ══════════════════════════════════════

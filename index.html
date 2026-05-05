@@ -410,31 +410,29 @@
           <div class="bg-swatch" style="background:#1a1a1a" title="Dark Grey" onclick="swapScanBg(event,this,'bg-scan','#1a1a1a')"></div>
         </div>
       </div>
-      <div class="preview-card" data-category="Background" data-label="Noise Texture" onclick="toggleSelect(this)">
-        <div class="pw bg-noise"><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
-        <div class="card-foot"><span class="cl">Noise Texture</span><span class="ct">Static</span></div>
+      <div class="preview-card" data-category="Background" data-label="Bokeh Lights" onclick="toggleSelect(this)">
+        <div class="pw bg-bokeh"><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
+        <div class="card-foot"><span class="cl">Bokeh Lights</span><span class="ct">Dreamy</span></div>
         <div class="card-swatches">
-          <div class="cs-swatch active" style="background:#0c0c0c" onclick="swapNoiseBg(event,this,'bg-noise','#0c0c0c')"></div>
-          <div class="cs-swatch" style="background:#0c0508" onclick="swapNoiseBg(event,this,'bg-noise','#0c0508')"></div>
-          <div class="cs-swatch" style="background:#050c08" onclick="swapNoiseBg(event,this,'bg-noise','#050c08')"></div>
-          <div class="cs-swatch" style="background:#08050c" onclick="swapNoiseBg(event,this,'bg-noise','#08050c')"></div>
-          <div class="cs-swatch" style="background:#1a0a1a" onclick="swapNoiseBg(event,this,'bg-noise','#1a0a1a')"></div>
-          <div class="cs-swatch" style="background:#0a0a1a" onclick="swapNoiseBg(event,this,'bg-noise','#0a0a1a')"></div>
-          <div class="cs-swatch" style="background:#0a1a0a" onclick="swapNoiseBg(event,this,'bg-noise','#0a1a0a')"></div>
-          <div class="cs-swatch" style="background:#faf8f5;border:1px solid #ddd" onclick="swapNoiseBg(event,this,'bg-noise','#faf8f5')"></div>
+          <div class="cs-swatch active" style="background:linear-gradient(135deg,#00e5ff,#7c3aed)" onclick="swapBokeh(event,this,'0,229,255','124,58,237','16,185,129')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#ff3366,#f97316)" onclick="swapBokeh(event,this,'255,51,102','249,115,22','236,72,153')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#22c55e,#00e5ff)" onclick="swapBokeh(event,this,'34,197,94','0,229,255','16,185,129')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#a855f7,#ec4899)" onclick="swapBokeh(event,this,'168,85,247','236,72,153','100,0,200')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#f59e0b,#ef4444)" onclick="swapBokeh(event,this,'245,158,11','239,68,68','249,115,22')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#38bdf8,#818cf8)" onclick="swapBokeh(event,this,'56,189,248','129,140,248','0,150,255')"></div>
         </div>
         <div class="card-swatches" style="margin-top:4px;border-top:1px solid rgba(255,255,255,0.05);padding-top:4px;">
-          <div class="bg-swatch active" style="background:#0c0c0c" title="Near Black" onclick="swapNoiseBg(event,this,'bg-noise','#0c0c0c')"></div>
-          <div class="bg-swatch" style="background:#0c050a" title="Dark Wine" onclick="swapNoiseBg(event,this,'bg-noise','#0c050a')"></div>
-          <div class="bg-swatch" style="background:#050c08" title="Dark Green" onclick="swapNoiseBg(event,this,'bg-noise','#050c08')"></div>
-          <div class="bg-swatch" style="background:#08050c" title="Dark Purple" onclick="swapNoiseBg(event,this,'bg-noise','#08050c')"></div>
-          <div class="bg-swatch" style="background:#0c0c05" title="Dark Olive" onclick="swapNoiseBg(event,this,'bg-noise','#0c0c05')"></div>
-          <div class="bg-swatch" style="background:#f5f0eb;border:1px solid #ddd" title="Paper" onclick="swapNoiseBg(event,this,'bg-noise','#f5f0eb')"></div>
+          <div class="bg-swatch active" style="background:#080810" title="Deep Dark" onclick="swapBokehBg(event,this,'bg-bokeh','#080810')"></div>
+          <div class="bg-swatch" style="background:#080808" title="Near Black" onclick="swapBokehBg(event,this,'bg-bokeh','#080808')"></div>
+          <div class="bg-swatch" style="background:#100510" title="Deep Purple" onclick="swapBokehBg(event,this,'bg-bokeh','#100510')"></div>
+          <div class="bg-swatch" style="background:#051008" title="Deep Green" onclick="swapBokehBg(event,this,'bg-bokeh','#051008')"></div>
+          <div class="bg-swatch" style="background:#100508" title="Deep Red" onclick="swapBokehBg(event,this,'bg-bokeh','#100508')"></div>
+          <div class="bg-swatch" style="background:#000000" title="Pure Black" onclick="swapBokehBg(event,this,'bg-bokeh','#000000')"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Circuit Board" onclick="toggleSelect(this)">
         <div class="pw bg-circuit"><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
-        <div class="card-foot"><span class="cl">Circuit Board</span><span class="ct">Static</span></div>
+        <div class="card-foot"><span class="cl">Circuit Board</span><span class="ct">Tech</span></div>
         <div class="card-swatches">
           <div class="cs-swatch active" style="background:#22c55e" onclick="swapCircuit(event,this,'34,197,94')"></div>
           <div class="cs-swatch" style="background:#00e5ff" onclick="swapCircuit(event,this,'0,229,255')"></div>
@@ -456,26 +454,24 @@
           <div class="bg-swatch" style="background:#050a0a" title="Dark Teal" onclick="swapCircuitBg(event,this,'bg-circuit','#050a0a')"></div>
         </div>
       </div>
-      <div class="preview-card" data-category="Background" data-label="Floating Blobs" onclick="toggleSelect(this)">
-        <div class="pw bg-blobs" data-blobs="true"><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
-        <div class="card-foot"><span class="cl">Floating Blobs</span><span class="ct">Animated</span></div>
+      <div class="preview-card" data-category="Background" data-label="Liquid Blobs" onclick="toggleSelect(this)">
+        <div class="pw bg-liquid-blobs"><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
+        <div class="card-foot"><span class="cl">Liquid Blobs</span><span class="ct">Organic</span></div>
         <div class="card-swatches">
-          <div class="cs-swatch active" style="background:linear-gradient(135deg,#6400c8,#0050c8)"></div>
-          <div class="cs-swatch" style="background:linear-gradient(135deg,#ff3366,#e8943a)"></div>
-          <div class="cs-swatch" style="background:linear-gradient(135deg,#10b981,#00bcd4)"></div>
-          <div class="cs-swatch" style="background:linear-gradient(135deg,#d4a843,#ff3366)"></div>
-          <div class="cs-swatch" style="background:linear-gradient(135deg,#22c55e,#8b5cf6)"></div>
-          <div class="cs-swatch" style="background:linear-gradient(135deg,#f43f5e,#3b82f6)"></div>
-          <div class="cs-swatch" style="background:linear-gradient(135deg,#eab308,#ec4899)"></div>
-          <div class="cs-swatch" style="background:linear-gradient(135deg,#14b8a6,#f97316)" onclick="swapBlobColors(event,this,'20,184,166','249,115,22','0,100,150')"></div>
+          <div class="cs-swatch active" style="background:linear-gradient(135deg,#6400c8,#0050c8)" onclick="swapLiquidBlobs(event,this,'100,0,200','0,80,200','200,0,100')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#ff3366,#e8943a)" onclick="swapLiquidBlobs(event,this,'255,51,102','232,148,58','200,0,80')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#10b981,#00bcd4)" onclick="swapLiquidBlobs(event,this,'16,185,129','0,188,212','0,150,100')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#f43f5e,#3b82f6)" onclick="swapLiquidBlobs(event,this,'244,63,94','59,130,246','200,0,150')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#eab308,#ec4899)" onclick="swapLiquidBlobs(event,this,'234,179,8','236,72,153','200,100,0')"></div>
+          <div class="cs-swatch" style="background:linear-gradient(135deg,#22c55e,#8b5cf6)" onclick="swapLiquidBlobs(event,this,'34,197,94','139,92,246','0,180,100')"></div>
         </div>
         <div class="card-swatches" style="margin-top:4px;border-top:1px solid rgba(255,255,255,0.05);padding-top:4px;">
-          <div class="bg-swatch active" style="background:#08080f" title="Dark Blue-Black" onclick="swapBlobBg(event,this,'bg-blobs','#08080f')"></div>
-          <div class="bg-swatch" style="background:#080808" title="Near Black" onclick="swapBlobBg(event,this,'bg-blobs','#080808')"></div>
-          <div class="bg-swatch" style="background:#0a0515" title="Deep Purple" onclick="swapBlobBg(event,this,'bg-blobs','#0a0515')"></div>
-          <div class="bg-swatch" style="background:#05100a" title="Deep Green" onclick="swapBlobBg(event,this,'bg-blobs','#05100a')"></div>
-          <div class="bg-swatch" style="background:#100508" title="Deep Red" onclick="swapBlobBg(event,this,'bg-blobs','#100508')"></div>
-          <div class="bg-swatch" style="background:#000000" title="Pure Black" onclick="swapBlobBg(event,this,'bg-blobs','#000000')"></div>
+          <div class="bg-swatch active" style="background:#08080f" title="Dark Blue-Black" onclick="swapLiquidBlobBg(event,this,'bg-liquid-blobs','#08080f')"></div>
+          <div class="bg-swatch" style="background:#080808" title="Near Black" onclick="swapLiquidBlobBg(event,this,'bg-liquid-blobs','#080808')"></div>
+          <div class="bg-swatch" style="background:#0a0515" title="Deep Purple" onclick="swapLiquidBlobBg(event,this,'bg-liquid-blobs','#0a0515')"></div>
+          <div class="bg-swatch" style="background:#05100a" title="Deep Green" onclick="swapLiquidBlobBg(event,this,'bg-liquid-blobs','#05100a')"></div>
+          <div class="bg-swatch" style="background:#100508" title="Deep Red" onclick="swapLiquidBlobBg(event,this,'bg-liquid-blobs','#100508')"></div>
+          <div class="bg-swatch" style="background:#000000" title="Pure Black" onclick="swapLiquidBlobBg(event,this,'bg-liquid-blobs','#000000')"></div>
         </div>
       </div>
       <div class="preview-card" data-category="Background" data-label="Clean White" onclick="toggleSelect(this)">
@@ -514,16 +510,59 @@
           <div class="cs-swatch" style="background:linear-gradient(135deg,#0a0a1a,#1a0a2e)" onclick="swapLightGrad(event,this,'bg-light-grad','#0a0a1a','#1a0a2e')"></div>
         </div>
       </div>
-      <div class="preview-card" data-category="Background" data-label="Diagonal Lines" onclick="toggleSelect(this)">
-        <div class="pw bg-diagonal"><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
-        <div class="card-foot"><span class="cl">Diagonal Lines</span><span class="ct">Static</span></div>
+      <div class="preview-card" data-category="Background" data-label="Geometric Web" onclick="toggleSelect(this)">
+        <div class="pw bg-geo-web"><canvas class="c-geo-web"></canvas><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
+        <div class="card-foot"><span class="cl">Geometric Web</span><span class="ct">Animated</span></div>
         <div class="card-swatches">
-          <div class="cs-swatch active" style="background:#222" onclick="swapDiagonalBg(event,this,'bg-diagonal','#222')"></div>
-          <div class="cs-swatch" style="background:#0a0515" onclick="swapDiagonalBg(event,this,'bg-diagonal','#0a0515')"></div>
-          <div class="cs-swatch" style="background:#050a05" onclick="swapDiagonalBg(event,this,'bg-diagonal','#050a05')"></div>
-          <div class="cs-swatch" style="background:#0a0505" onclick="swapDiagonalBg(event,this,'bg-diagonal','#0a0505')"></div>
-          <div class="cs-swatch" style="background:#050a0a" onclick="swapDiagonalBg(event,this,'bg-diagonal','#050a0a')"></div>
-          <div class="cs-swatch" style="background:#f5f5f5;border:1px solid #ddd" onclick="swapDiagonalBg(event,this,'bg-diagonal','#f5f5f5')"></div>
+          <div class="cs-swatch active" style="background:#00e5ff" onclick="swapGeoWeb(event,this,'0,229,255')"></div>
+          <div class="cs-swatch" style="background:#a855f7" onclick="swapGeoWeb(event,this,'168,85,247')"></div>
+          <div class="cs-swatch" style="background:#22c55e" onclick="swapGeoWeb(event,this,'34,197,94')"></div>
+          <div class="cs-swatch" style="background:#f43f5e" onclick="swapGeoWeb(event,this,'244,63,94')"></div>
+          <div class="cs-swatch" style="background:#f59e0b" onclick="swapGeoWeb(event,this,'245,158,11')"></div>
+          <div class="cs-swatch" style="background:#ec4899" onclick="swapGeoWeb(event,this,'236,72,153')"></div>
+        </div>
+        <div class="card-swatches" style="margin-top:4px;border-top:1px solid rgba(255,255,255,0.05);padding-top:4px;">
+          <div class="bg-swatch active" style="background:#060612" title="Deep Dark" onclick="swapGeoWebBg(event,this,'c-geo-web','#060612')"></div>
+          <div class="bg-swatch" style="background:#060606" title="Near Black" onclick="swapGeoWebBg(event,this,'c-geo-web','#060606')"></div>
+          <div class="bg-swatch" style="background:#06060c" title="Dark Blue" onclick="swapGeoWebBg(event,this,'c-geo-web','#06060c')"></div>
+          <div class="bg-swatch" style="background:#060c06" title="Dark Green" onclick="swapGeoWebBg(event,this,'c-geo-web','#060c06')"></div>
+          <div class="bg-swatch" style="background:#0c0606" title="Dark Red" onclick="swapGeoWebBg(event,this,'c-geo-web','#0c0606')"></div>
+        </div>
+      </div>
+      <div class="preview-card" data-category="Background" data-label="Mountain Fog" onclick="toggleSelect(this)">
+        <div class="pw bg-img-mountain"><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
+        <div class="card-foot"><span class="cl">Mountain Fog</span><span class="ct">Cinematic</span></div>
+        <div class="card-swatches">
+          <div class="cs-swatch active" style="background:rgba(0,0,0,0.45)" onclick="swapImgOverlay(event,this,'bg-img-mountain','rgba(0,0,0,0.45)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,30,60,0.55)" onclick="swapImgOverlay(event,this,'bg-img-mountain','rgba(0,30,60,0.55)')"></div>
+          <div class="cs-swatch" style="background:rgba(60,0,80,0.5)" onclick="swapImgOverlay(event,this,'bg-img-mountain','rgba(60,0,80,0.5)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,60,30,0.5)" onclick="swapImgOverlay(event,this,'bg-img-mountain','rgba(0,60,30,0.5)')"></div>
+          <div class="cs-swatch" style="background:rgba(80,40,0,0.5)" onclick="swapImgOverlay(event,this,'bg-img-mountain','rgba(80,40,0,0.5)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,229,255,0.15)" onclick="swapImgOverlay(event,this,'bg-img-mountain','rgba(0,229,255,0.15)')"></div>
+        </div>
+      </div>
+      <div class="preview-card" data-category="Background" data-label="City Nights" onclick="toggleSelect(this)">
+        <div class="pw bg-img-city"><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
+        <div class="card-foot"><span class="cl">City Nights</span><span class="ct">Urban</span></div>
+        <div class="card-swatches">
+          <div class="cs-swatch active" style="background:rgba(0,0,0,0.5)" onclick="swapImgOverlay(event,this,'bg-img-city','rgba(0,0,0,0.5)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,20,50,0.55)" onclick="swapImgOverlay(event,this,'bg-img-city','rgba(0,20,50,0.55)')"></div>
+          <div class="cs-swatch" style="background:rgba(50,0,80,0.5)" onclick="swapImgOverlay(event,this,'bg-img-city','rgba(50,0,80,0.5)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,229,255,0.2)" onclick="swapImgOverlay(event,this,'bg-img-city','rgba(0,229,255,0.2)')"></div>
+          <div class="cs-swatch" style="background:rgba(255,100,0,0.2)" onclick="swapImgOverlay(event,this,'bg-img-city','rgba(255,100,0,0.2)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,80,30,0.45)" onclick="swapImgOverlay(event,this,'bg-img-city','rgba(0,80,30,0.45)')"></div>
+        </div>
+      </div>
+      <div class="preview-card" data-category="Background" data-label="Deep Ocean" onclick="toggleSelect(this)">
+        <div class="pw bg-img-ocean"><div class="preview-top-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))">Preview ↗</div></div>
+        <div class="card-foot"><span class="cl">Deep Ocean</span><span class="ct">Immersive</span></div>
+        <div class="card-swatches">
+          <div class="cs-swatch active" style="background:rgba(0,20,40,0.45)" onclick="swapImgOverlay(event,this,'bg-img-ocean','rgba(0,20,40,0.45)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,0,0,0.5)" onclick="swapImgOverlay(event,this,'bg-img-ocean','rgba(0,0,0,0.5)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,229,255,0.2)" onclick="swapImgOverlay(event,this,'bg-img-ocean','rgba(0,229,255,0.2)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,80,160,0.4)" onclick="swapImgOverlay(event,this,'bg-img-ocean','rgba(0,80,160,0.4)')"></div>
+          <div class="cs-swatch" style="background:rgba(60,0,80,0.45)" onclick="swapImgOverlay(event,this,'bg-img-ocean','rgba(60,0,80,0.45)')"></div>
+          <div class="cs-swatch" style="background:rgba(0,60,50,0.4)" onclick="swapImgOverlay(event,this,'bg-img-ocean','rgba(0,60,50,0.4)')"></div>
         </div>
       </div>
     </div>

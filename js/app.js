@@ -61,18 +61,6 @@ function injectStyles() {
   const s = document.createElement('style');
   s.id = 'v4-injected-styles';
   s.textContent = `
-    .card-preview-btn {
-      position:absolute;bottom:50px;right:8px;
-      background:rgba(0,0,0,0.8);color:rgba(255,255,255,0.85);
-      border:1px solid rgba(255,255,255,0.2);
-      font-family:'Syne',sans-serif;font-size:0.58rem;font-weight:700;
-      letter-spacing:0.08em;text-transform:uppercase;
-      padding:4px 10px;border-radius:20px;cursor:pointer;
-      opacity:0;transform:translateY(4px);
-      transition:opacity 0.2s,transform 0.2s;
-      z-index:6;white-space:nowrap;
-    }
-    .preview-card:hover .card-preview-btn { opacity:1;transform:translateY(0); }
     .scheme-applied-notice {
       position:fixed;top:80px;left:50%;
       transform:translateX(-50%) translateY(-10px);
@@ -100,23 +88,28 @@ function injectStyles() {
     @keyframes plax1{from{transform:translateY(-8px)}to{transform:translateY(8px)}}
     @keyframes plax2{from{transform:translateY(6px)}to{transform:translateY(-6px)}}
     @keyframes wipeReveal{0%{transform:translateX(0)}50%{transform:translateX(100%)}51%{transform:translateX(-100%)}100%{transform:translateX(0)}}
+    @keyframes lbFloat1{0%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,15px) scale(1.08)}100%{transform:translate(5px,25px) scale(0.95)}}
+    @keyframes lbFloat2{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-15px,-20px) scale(1.1)}100%{transform:translate(-25px,-5px) scale(0.92)}}
+    @keyframes bokehPulse{0%{opacity:0.7;transform:scale(1)}100%{opacity:1;transform:scale(1.06)}}
   `;
   document.head.appendChild(s);
 }
 
 // ══════════════════════════════════════
-// FIX 1: SINGLE-CLICK FULLSCREEN
+// PREVIEW BUTTONS (inserted inside .pw)
 // ══════════════════════════════════════
 function addCardPreviewButtons() {
   document.querySelectorAll('.preview-card').forEach(card => {
     if (card._previewBtnAdded) return;
-    if (card.querySelector('.preview-top-btn')) { card._previewBtnAdded = true; return; }
+    const pw = card.querySelector('.pw');
+    if (!pw) return;
+    if (pw.querySelector('.preview-top-btn')) { card._previewBtnAdded = true; return; }
     card._previewBtnAdded = true;
     const btn = document.createElement('div');
     btn.className = 'preview-top-btn';
     btn.innerHTML = 'Preview ↗';
     btn.addEventListener('click', e => { e.stopPropagation(); openModal(card); });
-    card.appendChild(btn);
+    pw.appendChild(btn);
   });
 }
 
@@ -459,18 +452,21 @@ function buildFullscreenBg(label, color, bgColor) {
     'CCTV Tracker':    ()=>{ const bg=bgColor||'#080808'; wrap.style.background=bg; const c=mkC(); c.dataset.color=color; c.dataset.bgColor=bg; c._currentBgColor=bg; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;initSingleCCTVCanvas(c);},80); },
     'Gradient Flow':   ()=>{ wrap.style.cssText+='background:linear-gradient(-45deg,#0a0015,#001a2e,#0d1f00,#1a0010);background-size:400% 400%;animation:gradFlow 6s ease infinite;'; },
     'Dark Grid':       ()=>{ wrap.style.cssText+='background-color:#060612;background-image:linear-gradient(rgba(0,229,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.06) 1px,transparent 1px);background-size:28px 28px;'; },
-    'Mesh Gradient':   ()=>{ wrap.style.cssText+='background:radial-gradient(ellipse at 20% 50%,rgba(100,30,200,0.28) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(0,80,200,0.28) 0%,transparent 50%),#080808;animation:meshPulse 8s ease-in-out infinite alternate;'; },
-    'Aurora':          ()=>{ wrap.style.background='#030310'; wrap.innerHTML='<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(0,200,150,0.2) 0%,transparent 55%),radial-gradient(ellipse at 70% 30%,rgba(100,0,200,0.2) 0%,transparent 55%);animation:auroraPulse 6s ease-in-out infinite alternate;"></div>'; },
-    'Scanlines':       ()=>{ wrap.style.background='#050505'; wrap.innerHTML='<div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,100,0.012) 2px,rgba(0,255,100,0.012) 4px);"></div>'; },
-    'Noise Texture':   ()=>{ wrap.style.background='#0c0c0c'; },
-    'Circuit Board':   ()=>{ wrap.style.cssText+='background:#050a05;background-image:linear-gradient(rgba(0,200,80,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,80,0.04) 1px,transparent 1px);background-size:20px 20px;'; },
-    'Floating Blobs':  ()=>{ wrap.style.background='#08080f'; wrap.dataset.blobs='true'; setTimeout(()=>initBlobs&&initBlobs(),50); },
+    'Mesh Gradient':   ()=>{ wrap.style.cssText+='background:radial-gradient(ellipse at 20% 50%,rgba(100,30,200,0.45) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(0,80,200,0.45) 0%,transparent 50%),radial-gradient(ellipse at 60% 80%,rgba(200,0,60,0.35) 0%,transparent 50%),#080808;animation:meshPulse 8s ease-in-out infinite alternate;'; },
+    'Aurora':          ()=>{ wrap.style.background='#030310'; wrap.innerHTML='<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(0,200,150,0.38) 0%,transparent 55%),radial-gradient(ellipse at 70% 30%,rgba(100,0,200,0.38) 0%,transparent 55%),radial-gradient(ellipse at 50% 80%,rgba(0,150,255,0.3) 0%,transparent 50%);animation:auroraPulse 6s ease-in-out infinite alternate;"></div>'; },
+    'Scanlines':       ()=>{ wrap.style.background='#050505'; wrap.innerHTML='<div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,100,0.08) 2px,rgba(0,255,100,0.08) 4px);"></div><div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(0,255,100,0.18) 0%,transparent 65%);"></div>'; },
+    'Bokeh Lights':    ()=>{ wrap.style.background='#080810'; wrap.innerHTML='<div style="position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(0,229,255,0.55) 0%,transparent 25%),radial-gradient(circle at 75% 60%,rgba(124,58,237,0.5) 0%,transparent 28%),radial-gradient(circle at 50% 85%,rgba(16,185,129,0.4) 0%,transparent 22%),radial-gradient(circle at 85% 15%,rgba(0,229,255,0.45) 0%,transparent 18%),radial-gradient(circle at 10% 75%,rgba(124,58,237,0.4) 0%,transparent 20%);filter:blur(28px);animation:bokehPulse 6s ease-in-out infinite alternate;"></div>'; },
+    'Circuit Board':   ()=>{ wrap.style.cssText+='background:#050a05;background-image:linear-gradient(rgba(0,200,80,0.18) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,80,0.18) 1px,transparent 1px);background-size:20px 20px;'; },
+    'Liquid Blobs':    ()=>{ wrap.style.cssText+='background:#08080f;overflow:hidden;'; wrap.innerHTML='<div style="position:absolute;width:60%;height:60%;border-radius:50%;top:-10%;left:-10%;background:rgba(100,0,200,0.55);filter:blur(50px);animation:lbFloat1 7s ease-in-out infinite alternate;"></div><div style="position:absolute;width:55%;height:55%;border-radius:50%;bottom:-10%;right:-10%;background:rgba(0,80,200,0.5);filter:blur(45px);animation:lbFloat2 9s ease-in-out infinite alternate;"></div>'; },
+    'Geometric Web':   ()=>{ wrap.style.background='#060612'; const c=mkC(); c.className='c-geo-web'; c._color=color||'#00e5ff'; c._bgColor=bgColor||'#060612'; setTimeout(()=>{c.width=wrap.offsetWidth;c.height=wrap.offsetHeight;if(typeof initSingleGeoWebCanvas==='function')initSingleGeoWebCanvas(c);},80); },
     'Clean White':     ()=>{ wrap.style.background='#ffffff'; },
     'Soft Paper':      ()=>{ wrap.style.background='#faf8f5'; },
     'Light Gradient':  ()=>{ wrap.style.cssText+='background:linear-gradient(135deg,#f0f4ff,#faf0ff,#f0fff4);animation:lightGrad 8s ease infinite alternate;'; },
-    'Diagonal Lines':  ()=>{ wrap.style.cssText+='background:#080808;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,0.02) 0px,rgba(255,255,255,0.02) 1px,transparent 1px,transparent 20px);'; },
     'Dot Grid':        ()=>{ wrap.style.cssText+='background:#06060c;background-image:radial-gradient(circle,rgba(0,229,255,0.2) 1px,transparent 1px);background-size:22px 22px;'; },
     'Topographic':     ()=>{ wrap.style.background='#060810'; wrap.innerHTML='<svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.12" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="#00e5ff" stroke-width="1"><path d="M0,300 Q200,200 400,300 T800,300"/><path d="M0,260 Q200,160 400,260 T800,260"/><path d="M0,340 Q200,240 400,340 T800,340"/><path d="M0,220 Q200,120 400,220 T800,220"/><path d="M0,380 Q200,280 400,380 T800,380"/><path d="M0,180 Q200,80 400,180 T800,180"/><path d="M0,420 Q200,320 400,420 T800,420"/></g></svg>'; },
+    'Mountain Fog':    ()=>{ const overlay=color||'rgba(0,0,0,0.45)'; wrap.style.cssText+='background-image:url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80&auto=format&fit=crop");background-size:cover;background-position:center;'; wrap.innerHTML=`<div style="position:absolute;inset:0;background:${overlay};"></div>`; },
+    'City Nights':     ()=>{ const overlay=color||'rgba(0,0,0,0.5)'; wrap.style.cssText+='background-image:url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80&auto=format&fit=crop");background-size:cover;background-position:center;'; wrap.innerHTML=`<div style="position:absolute;inset:0;background:${overlay};"></div>`; },
+    'Deep Ocean':      ()=>{ const overlay=color||'rgba(0,20,40,0.45)'; wrap.style.cssText+='background-image:url("https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=1600&q=80&auto=format&fit=crop");background-size:cover;background-position:center;'; wrap.innerHTML=`<div style="position:absolute;inset:0;background:${overlay};"></div>`; },
   };
   (map[label] || (()=>{ wrap.style.background='#080808'; }))();
   return wrap;

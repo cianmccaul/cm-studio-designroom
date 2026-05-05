@@ -363,17 +363,17 @@ main { padding: 2rem 2rem 6rem; max-width: 1440px; margin: 0 auto; }
   --m3: rgb(200,0,60);
   --mesh-bg: #080808;
   background:
-    radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--m1) 28%, transparent) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, color-mix(in srgb, var(--m2) 28%, transparent) 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 80%, color-mix(in srgb, var(--m3) 18%, transparent) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--m1) 45%, transparent) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, color-mix(in srgb, var(--m2) 45%, transparent) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, color-mix(in srgb, var(--m3) 35%, transparent) 0%, transparent 50%),
     var(--mesh-bg);
   animation: meshPulse 8s ease-in-out infinite alternate;
 }
 @keyframes meshPulse { 0%{filter:hue-rotate(0deg)} 100%{filter:hue-rotate(25deg)} }
 .bg-aurora {
-  --aurora-c1: rgba(0,200,150,0.2);
-  --aurora-c2: rgba(100,0,200,0.2);
-  --aurora-c3: rgba(0,150,255,0.15);
+  --aurora-c1: rgba(0,200,150,0.38);
+  --aurora-c2: rgba(100,0,200,0.38);
+  --aurora-c3: rgba(0,150,255,0.3);
   background: #030310; position: relative; overflow: hidden;
 }
 .bg-aurora::before {
@@ -388,11 +388,11 @@ main { padding: 2rem 2rem 6rem; max-width: 1440px; margin: 0 auto; }
 .bg-scan { --scan-color: rgb(0,255,100); background: #050505; position: relative; }
 .bg-scan::before {
   content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, color-mix(in srgb, var(--scan-color) 1.2%, transparent) 2px, color-mix(in srgb, var(--scan-color) 1.2%, transparent) 4px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, color-mix(in srgb, var(--scan-color) 8%, transparent) 2px, color-mix(in srgb, var(--scan-color) 8%, transparent) 4px);
 }
 .bg-scan::after {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--scan-color) 7%, transparent) 0%, transparent 65%);
+  background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--scan-color) 18%, transparent) 0%, transparent 65%);
 }
 .bg-noise { background: #0c0c0c; position: relative; }
 .bg-noise::before {
@@ -402,14 +402,82 @@ main { padding: 2rem 2rem 6rem; max-width: 1440px; margin: 0 auto; }
 .bg-circuit {
   --circuit-color: rgb(0,200,80);
   background: #050a05;
+  position: relative;
   background-image:
-    linear-gradient(color-mix(in srgb, var(--circuit-color) 4%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--circuit-color) 4%, transparent) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--circuit-color) 18%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--circuit-color) 18%, transparent) 1px, transparent 1px);
   background-size: 20px 20px;
 }
-.bg-blobs { background: #08080f; position: relative; overflow: hidden; }
-.blob { position: absolute; border-radius: 50%; filter: blur(40px); animation: blobFloat ease-in-out infinite alternate; }
-@keyframes blobFloat { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(15px,-15px) scale(1.1)} }
+.bg-circuit::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 40%, color-mix(in srgb, var(--circuit-color) 12%, transparent) 0%, transparent 40%),
+    radial-gradient(circle at 70% 70%, color-mix(in srgb, var(--circuit-color) 8%, transparent) 0%, transparent 35%);
+}
+.bg-liquid-blobs {
+  --lb1: rgba(100,0,200,0.55);
+  --lb2: rgba(0,80,200,0.5);
+  --lb3: rgba(200,0,100,0.45);
+  background: #08080f;
+  position: relative;
+  overflow: hidden;
+}
+.bg-liquid-blobs::before {
+  content: ''; position: absolute;
+  width: 60%; height: 60%; border-radius: 50%;
+  top: -10%; left: -10%;
+  background: var(--lb1);
+  filter: blur(50px);
+  animation: lbFloat1 7s ease-in-out infinite alternate;
+}
+.bg-liquid-blobs::after {
+  content: ''; position: absolute;
+  width: 55%; height: 55%; border-radius: 50%;
+  bottom: -10%; right: -10%;
+  background: var(--lb2);
+  filter: blur(45px);
+  animation: lbFloat2 9s ease-in-out infinite alternate;
+}
+@keyframes lbFloat1 { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(20px,15px) scale(1.08)} 100%{transform:translate(5px,25px) scale(0.95)} }
+@keyframes lbFloat2 { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(-15px,-20px) scale(1.1)} 100%{transform:translate(-25px,-5px) scale(0.92)} }
+.bg-bokeh {
+  --bk1: rgba(0,229,255,0.55);
+  --bk2: rgba(124,58,237,0.5);
+  --bk3: rgba(16,185,129,0.4);
+  --bk-bg: #080810;
+  background: var(--bk-bg);
+  position: relative;
+  overflow: hidden;
+}
+.bg-bokeh::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, var(--bk1) 0%, transparent 25%),
+    radial-gradient(circle at 75% 60%, var(--bk2) 0%, transparent 28%),
+    radial-gradient(circle at 50% 85%, var(--bk3) 0%, transparent 22%),
+    radial-gradient(circle at 85% 15%, var(--bk1) 0%, transparent 18%),
+    radial-gradient(circle at 10% 75%, var(--bk2) 0%, transparent 20%);
+  filter: blur(28px);
+  animation: bokehPulse 6s ease-in-out infinite alternate;
+}
+@keyframes bokehPulse { 0%{opacity:0.7;transform:scale(1)} 100%{opacity:1;transform:scale(1.06)} }
+.bg-geo-web { background: #060612; position: relative; overflow: hidden; }
+.bg-geo-web canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bg-img-mountain, .bg-img-city, .bg-img-ocean { position: relative; overflow: hidden; background-size: cover; background-position: center; }
+.bg-img-mountain::after, .bg-img-city::after, .bg-img-ocean::after {
+  content: ''; position: absolute; inset: 0;
+  background: var(--img-overlay, rgba(0,0,0,0.45));
+  transition: background 0.3s;
+}
+.bg-img-mountain {
+  background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&auto=format&fit=crop');
+}
+.bg-img-city {
+  background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80&auto=format&fit=crop');
+}
+.bg-img-ocean {
+  background-image: url('https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80&auto=format&fit=crop');
+}
 .bg-diagonal {
   background: #080808;
   background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 20px);
