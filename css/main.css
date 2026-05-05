@@ -192,6 +192,7 @@ body.light-mode header { background: rgba(240,240,240,0.97); }
 }
 .logo:hover { opacity: 0.75; }
 .logo span { color: var(--accent); }
+.hdr-logo-mark { height: 38px; width: auto; object-fit: contain; display: block; }
 .logo-sub {
   font-size: 0.58rem; color: var(--dim);
   letter-spacing: 0.2em; text-transform: uppercase;
