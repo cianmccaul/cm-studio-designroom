@@ -432,8 +432,12 @@ function buildModalContent(card) {
     wrap.style.overflow = 'hidden';
     wrap.appendChild(buildFullscreenBg(label, color, bgColor));
   } else if (cat === 'Scroll Animation') {
-    wrap.style.overflow = 'auto';
-    wrap.innerHTML = buildScrollAnimDemo(label);
+    wrap.style.overflow = 'hidden';
+    const demoWrap = document.createElement('div');
+    demoWrap.style.cssText = 'width:100%;height:100%;overflow-y:auto;';
+    demoWrap.innerHTML = buildScrollAnimDemo(label);
+    wrap.appendChild(demoWrap);
+    setTimeout(() => initScrollAnimDemo(demoWrap), 80);
   } else {
     const pw = card.querySelector('.pw');
     if (pw) { const c = pw.cloneNode(true); c.style.cssText='width:100%;height:100%;position:absolute;inset:0;'; wrap.style.overflow='hidden'; wrap.appendChild(c); }
@@ -466,55 +470,76 @@ function buildFullscreenBg(label, color, bgColor) {
     'Topographic':     ()=>{ wrap.style.background='#060810'; wrap.innerHTML='<svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.12" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="#00e5ff" stroke-width="1"><path d="M0,300 Q200,200 400,300 T800,300"/><path d="M0,260 Q200,160 400,260 T800,260"/><path d="M0,340 Q200,240 400,340 T800,340"/><path d="M0,220 Q200,120 400,220 T800,220"/><path d="M0,380 Q200,280 400,380 T800,380"/><path d="M0,180 Q200,80 400,180 T800,180"/><path d="M0,420 Q200,320 400,420 T800,420"/></g></svg>'; },
     'Mountain Fog':    ()=>{ const overlay=color||'rgba(0,0,0,0.45)'; wrap.style.cssText+='background-image:url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80&auto=format&fit=crop");background-size:cover;background-position:center;'; wrap.innerHTML=`<div style="position:absolute;inset:0;background:${overlay};"></div>`; },
     'City Nights':     ()=>{ const overlay=color||'rgba(0,0,0,0.5)'; wrap.style.cssText+='background-image:url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80&auto=format&fit=crop");background-size:cover;background-position:center;'; wrap.innerHTML=`<div style="position:absolute;inset:0;background:${overlay};"></div>`; },
-    'Deep Ocean':      ()=>{ const overlay=color||'rgba(0,20,40,0.45)'; wrap.style.cssText+='background-image:url("https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=1600&q=80&auto=format&fit=crop");background-size:cover;background-position:center;'; wrap.innerHTML=`<div style="position:absolute;inset:0;background:${overlay};"></div>`; },
+    'Deep Ocean':      ()=>{ const overlay=color||'rgba(0,20,40,0.45)'; wrap.style.cssText+='background-image:url("https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=1600&q=90&auto=format&fit=crop");background-size:cover;background-position:center;'; wrap.innerHTML=`<div style="position:absolute;inset:0;background:${overlay};"></div>`; },
+    'Playful Dog':      ()=>{ const overlay=color||'rgba(0,0,0,0.3)'; wrap.style.cssText+='background-image:url("https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=1600&q=90&auto=format&fit=crop");background-size:cover;background-position:center;'; wrap.innerHTML=`<div style="position:absolute;inset:0;background:${overlay};"></div>`; },
+    'Real Ocean':       ()=>{ const overlay=color||'rgba(0,10,30,0.4)'; wrap.style.cssText+='background-image:url("https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1600&q=90&auto=format&fit=crop");background-size:cover;background-position:center;'; wrap.innerHTML=`<div style="position:absolute;inset:0;background:${overlay};"></div>`; },
+    'Marble':           ()=>{ wrap.style.cssText+='background:#f0ece4;overflow:hidden;'; wrap.innerHTML='<div style="position:absolute;inset:-20%;background-image:url(\'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'800\'%3E%3Cfilter id=\'m\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.01 0.006\' numOctaves=\'7\' seed=\'3\'/%3E%3CfeColorMatrix type=\'saturate\' values=\'0\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23m)\' opacity=\'0.5\'/%3E%3C/svg%3E\');background-size:800px 800px;opacity:0.65;mix-blend-mode:multiply;"></div>'; },
+    'Custom Image':     ()=>{ const src=color&&color.startsWith('url')?color:''; wrap.style.cssText+=src?`background-image:${src};background-size:cover;background-position:center;`:'background:#0a0a0a;'; wrap.innerHTML='<div style="position:absolute;inset:0;background:rgba(0,0,0,0.3);"></div>'; },
   };
   (map[label] || (()=>{ wrap.style.background='#080808'; }))();
   return wrap;
 }
 
 function buildScrollAnimDemo(label) {
-  // Build card HTML safely without nested template literal conflicts
   function makeCards(cls, tr, count) {
     var out = '';
     for (var i = 1; i <= count; i++) {
-      out += '<div class="' + cls + '" style="background:#111;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;opacity:0;' + tr + ';transition:all 0.7s ease ' + (i * 0.1) + 's;">'
-           + '<h3 style="font-family:Syne,sans-serif;font-size:1rem;font-weight:700;margin-bottom:0.4rem;color:#00e5ff;">Service ' + i + '</h3>'
-           + '<p style="color:#666;font-size:0.85rem;line-height:1.6;">Animates in as the visitor scrolls down.</p></div>';
+      out += '<div class="sa-el ' + cls + '" data-sa="1" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;opacity:0;' + tr + ';transition:opacity 0.7s ease ' + (i * 0.12) + 's,transform 0.7s ease ' + (i * 0.12) + 's;">'
+           + '<div style="width:32px;height:3px;background:#00e5ff;border-radius:2px;margin-bottom:0.8rem;"></div>'
+           + '<h3 style="font-family:Syne,sans-serif;font-size:1rem;font-weight:700;margin-bottom:0.4rem;color:#fff;">Service ' + i + '</h3>'
+           + '<p style="color:rgba(255,255,255,0.4);font-size:0.85rem;line-height:1.6;">Scroll to animate this element into view.</p></div>';
     }
     return out;
   }
-
-  var wrap = 'style="background:#060608;min-height:100%;padding:3rem 4rem;font-family:DM Sans,sans-serif;color:#f0f0f0;overflow-y:auto;" id="anim-inner"';
-  var h = {
-    'Fade In Up':    '<div ' + wrap + '><h2 style="font-family:Bebas Neue,sans-serif;font-size:2.5rem;color:#00e5ff;margin-bottom:0.5rem;">Fade In Up</h2><p style="color:#666;margin-bottom:3rem;font-size:0.9rem;">Scroll down to see elements animate in</p>' + makeCards('anim-f', 'transform:translateY(30px)', 5) + '</div>',
-    'Slide In Left': '<div ' + wrap + '><h2 style="font-family:Bebas Neue,sans-serif;font-size:2.5rem;color:#00e5ff;margin-bottom:0.5rem;">Slide In Left</h2><p style="color:#666;margin-bottom:3rem;font-size:0.9rem;">Elements slide in from the left</p>' + makeCards('anim-s', 'transform:translateX(-40px)', 5) + '</div>',
-    'Scale In':      '<div ' + wrap + '><h2 style="font-family:Bebas Neue,sans-serif;font-size:2.5rem;color:#00e5ff;margin-bottom:0.5rem;">Scale In</h2><p style="color:#666;margin-bottom:3rem;font-size:0.9rem;">Elements scale up into view</p><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">' + (function(){ var o=''; for(var i=1;i<=6;i++){o+='<div class="anim-sc" style="background:#111;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.5rem;opacity:0;transform:scale(0.8);transition:all 0.6s ease '+(i*0.08)+'s;"><div style="width:32px;height:32px;border-radius:8px;background:rgba(0,229,255,0.15);margin-bottom:0.8rem;"></div><div style="font-family:Syne,sans-serif;font-size:0.85rem;font-weight:700;color:#00e5ff;">Card '+i+'</div></div>';} return o; })() + '</div></div>',
-    'Count Up Numbers': '<div ' + wrap + '><h2 style="font-family:Bebas Neue,sans-serif;font-size:2.5rem;color:#00e5ff;margin-bottom:3rem;">Count Up Numbers</h2><div style="display:flex;gap:3rem;justify-content:center;flex-wrap:wrap;"><div style="text-align:center;"><div class="anim-cu" data-target="500" data-suffix="+" style="font-family:Bebas Neue,sans-serif;font-size:4rem;color:#00e5ff;line-height:1;">0+</div><div style="font-size:0.7rem;color:#666;letter-spacing:0.12em;text-transform:uppercase;margin-top:0.3rem;">Clients</div></div><div style="text-align:center;"><div class="anim-cu" data-target="12" data-suffix="yr" style="font-family:Bebas Neue,sans-serif;font-size:4rem;color:#00e5ff;line-height:1;">0yr</div><div style="font-size:0.7rem;color:#666;text-transform:uppercase;margin-top:0.3rem;">Experience</div></div><div style="text-align:center;"><div class="anim-cu" data-target="99" data-suffix="%" style="font-family:Bebas Neue,sans-serif;font-size:4rem;color:#00e5ff;line-height:1;">0%</div><div style="font-size:0.7rem;color:#666;text-transform:uppercase;margin-top:0.3rem;">Satisfaction</div></div><div style="text-align:center;"><div class="anim-cu" data-target="247" data-suffix="+" style="font-family:Bebas Neue,sans-serif;font-size:4rem;color:#00e5ff;line-height:1;">0+</div><div style="font-size:0.7rem;color:#666;text-transform:uppercase;margin-top:0.3rem;">Projects</div></div></div></div>',
-    'Stagger Grid':  '<div ' + wrap + '><h2 style="font-family:Bebas Neue,sans-serif;font-size:2.5rem;color:#00e5ff;margin-bottom:0.5rem;">Stagger Grid</h2><p style="color:#666;margin-bottom:3rem;font-size:0.9rem;">Cards animate in one by one</p><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;">' + (function(){ var items=['CCTV','Alarms','Access','Support','Monitor','Fire','Intercoms','Gates'],o=''; items.forEach(function(s,i){o+='<div class="anim-st" style="background:#111;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.2rem;opacity:0;transform:translateY(20px);transition:all 0.5s ease '+(i*0.08)+'s;"><div style="width:28px;height:28px;border-radius:6px;background:rgba(0,229,255,0.15);margin-bottom:0.7rem;"></div><div style="font-family:Syne,sans-serif;font-size:0.82rem;font-weight:700;color:#00e5ff;">'+s+'</div></div>';}); return o; })() + '</div></div>',
-    'Text Reveal':   '<div ' + wrap + '><p style="color:#666;margin-bottom:4rem;font-size:0.9rem;">Scroll down — text reveals from below</p>' + (function(){ var lines=['WE PROTECT','WHAT MATTERS','TO YOU.'],o=''; lines.forEach(function(t,i){var col=i===1?'color:#00e5ff;':''; o+='<div style="overflow:hidden;margin-bottom:0.3rem;"><div class="anim-rv" style="font-family:Bebas Neue,sans-serif;font-size:4rem;letter-spacing:0.04em;line-height:0.95;transform:translateY(110%);transition:transform 0.8s cubic-bezier(0.16,1,0.3,1) '+(i*0.12)+'s;'+col+'">'+t+'</div></div>';}); return o; })() + '</div>',
-    'Parallax Layers':'<div ' + wrap + '><h2 style="font-family:Bebas Neue,sans-serif;font-size:2.5rem;color:#00e5ff;margin-bottom:0.5rem;">Parallax Layers</h2><p style="color:#666;margin-bottom:4rem;font-size:0.9rem;">Background layers move at different speeds as you scroll</p><div style="position:relative;min-height:400px;"><div class="plax" data-speed="0.2" style="position:absolute;inset:0;font-family:Bebas Neue,sans-serif;font-size:10rem;color:rgba(255,255,255,0.02);text-align:center;">BRAND</div><div class="plax" data-speed="0.5" style="position:absolute;top:30%;font-family:Bebas Neue,sans-serif;font-size:6rem;color:rgba(0,229,255,0.03);text-align:center;width:100%;">STUDIO</div></div></div>',
+  var S = 'background:#060608;min-height:100%;padding:3rem 4rem;font-family:DM Sans,sans-serif;color:#f0f0f0;';
+  var H = {
+    'Fade In Up': '<div style="' + S + '"><div style="margin-bottom:3rem;"><div style="font-family:Bebas Neue,sans-serif;font-size:3rem;color:#00e5ff;letter-spacing:0.06em;">Fade In Up</div><div style="color:rgba(255,255,255,0.35);font-size:0.9rem;margin-top:0.4rem;">Scroll down — each card fades and rises into view</div></div>' + makeCards('anim-f', 'transform:translateY(40px)', 6) + '</div>',
+    'Slide In Left': '<div style="' + S + '"><div style="margin-bottom:3rem;"><div style="font-family:Bebas Neue,sans-serif;font-size:3rem;color:#00e5ff;letter-spacing:0.06em;">Slide In Left</div><div style="color:rgba(255,255,255,0.35);font-size:0.9rem;margin-top:0.4rem;">Elements slide in from the left as you scroll</div></div>' + makeCards('anim-s', 'transform:translateX(-60px)', 6) + '</div>',
+    'Scale In': '<div style="' + S + '"><div style="margin-bottom:3rem;"><div style="font-family:Bebas Neue,sans-serif;font-size:3rem;color:#00e5ff;letter-spacing:0.06em;">Scale In</div><div style="color:rgba(255,255,255,0.35);font-size:0.9rem;margin-top:0.4rem;">Cards scale up into view on scroll</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">' + (function(){ var o=''; for(var i=1;i<=6;i++){o+='<div class="sa-el anim-sc" data-sa="1" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.5rem;opacity:0;transform:scale(0.75);transition:opacity 0.6s ease '+(i*0.1)+'s,transform 0.6s ease '+(i*0.1)+'s;"><div style="width:28px;height:28px;border-radius:6px;background:rgba(0,229,255,0.2);margin-bottom:0.8rem;"></div><div style="font-family:Syne,sans-serif;font-size:0.85rem;font-weight:700;color:#00e5ff;">Card '+i+'</div></div>';} return o; })() + '</div></div>',
+    'Count Up Numbers': '<div style="' + S + 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;"><div style="margin-bottom:3rem;text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:3rem;color:#00e5ff;letter-spacing:0.06em;">Count Up Numbers</div><div style="color:rgba(255,255,255,0.35);font-size:0.9rem;margin-top:0.4rem;">Numbers count up when scrolled into view</div></div><div style="display:flex;gap:4rem;justify-content:center;flex-wrap:wrap;">' + [['500','+','Clients'],['12','yr','Experience'],['99','%','Satisfaction'],['247','+','Projects']].map(function(d,i){ return '<div style="text-align:center;"><div class="sa-el anim-cu" data-sa="1" data-target="'+d[0]+'" data-suffix="'+d[1]+'" style="font-family:Bebas Neue,sans-serif;font-size:5rem;color:#00e5ff;line-height:1;opacity:0;transform:translateY(20px);transition:opacity 0.8s ease '+(i*0.15)+'s,transform 0.8s ease '+(i*0.15)+'s;">0'+d[1]+'</div><div style="font-size:0.75rem;color:rgba(255,255,255,0.4);letter-spacing:0.12em;text-transform:uppercase;margin-top:0.5rem;">'+d[2]+'</div></div>'; }).join('') + '</div></div>',
+    'Stagger Grid': '<div style="' + S + '"><div style="margin-bottom:3rem;"><div style="font-family:Bebas Neue,sans-serif;font-size:3rem;color:#00e5ff;letter-spacing:0.06em;">Stagger Grid</div><div style="color:rgba(255,255,255,0.35);font-size:0.9rem;margin-top:0.4rem;">Service cards animate in one by one</div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">' + ['CCTV Systems','Alarm Systems','Access Control','24/7 Monitoring','Fire Safety','Intercoms','Gate Systems','Remote View','Maintenance'].map(function(s,i){ return '<div class="sa-el anim-st" data-sa="1" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.2rem;opacity:0;transform:translateY(25px);transition:opacity 0.5s ease '+(i*0.07)+'s,transform 0.5s ease '+(i*0.07)+'s;"><div style="width:24px;height:24px;border-radius:6px;background:rgba(0,229,255,0.2);margin-bottom:0.7rem;"></div><div style="font-family:Syne,sans-serif;font-size:0.82rem;font-weight:700;color:#00e5ff;">'+s+'</div></div>'; }).join('') + '</div></div>',
+    'Text Reveal': '<div style="' + S + 'display:flex;flex-direction:column;justify-content:center;min-height:100%;"><div style="color:rgba(255,255,255,0.3);font-size:0.85rem;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:2.5rem;">Scroll to reveal</div>' + ['WE PROTECT','WHAT MATTERS','TO YOU.'].map(function(t,i){ return '<div style="overflow:hidden;margin-bottom:0.2rem;"><div class="sa-el anim-rv" data-sa="1" style="font-family:Bebas Neue,sans-serif;font-size:5rem;letter-spacing:0.04em;line-height:0.95;transform:translateY(110%);transition:transform 0.85s cubic-bezier(0.16,1,0.3,1) '+(i*0.14)+'s;'+(i===1?'color:#00e5ff;':'')+'opacity:1;">'+t+'</div></div>'; }).join('') + '</div>',
+    'Parallax Layers': '<div style="' + S + 'position:relative;"><div style="margin-bottom:2rem;"><div style="font-family:Bebas Neue,sans-serif;font-size:3rem;color:#00e5ff;letter-spacing:0.06em;">Parallax Layers</div><div style="color:rgba(255,255,255,0.35);font-size:0.9rem;margin-top:0.4rem;">Scroll slowly to see depth layers move at different speeds</div></div><div style="position:relative;min-height:600px;"><div class="plax" data-speed="0.15" style="position:absolute;top:0;left:0;right:0;text-align:center;font-family:Bebas Neue,sans-serif;font-size:12rem;color:rgba(255,255,255,0.015);line-height:1;user-select:none;">BRAND</div><div class="plax" data-speed="0.35" style="position:absolute;top:120px;left:0;right:0;text-align:center;font-family:Bebas Neue,sans-serif;font-size:7rem;color:rgba(0,229,255,0.04);user-select:none;">STUDIO</div><div class="plax" data-speed="0.55" style="position:absolute;top:220px;left:50%;transform:translateX(-50%);width:80%;border-top:1px solid rgba(255,255,255,0.06);"></div><div class="plax" data-speed="0.7" style="position:absolute;top:280px;left:0;right:0;text-align:center;"><p style="color:rgba(255,255,255,0.3);font-size:1rem;">Multiple layers scroll at different speeds</p></div></div></div>',
   };
+  var html = H[label] || '<div style="' + S + 'display:flex;align-items:center;justify-content:center;"><span style="color:rgba(255,255,255,0.3);font-family:Syne,sans-serif;">' + label + '</span></div>';
+  return html;
+}
 
-  var html = h[label] || '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-family:Syne,sans-serif;">' + label + '</div>';
-
-  return '<div id="anim-demo-wrap" style="height:100%;overflow-y:auto;">' + html + '</div>'
-    + '<script>(function(){'
-    + 'var w=document.getElementById("anim-demo-wrap");if(!w)return;'
-    + 'var o=new IntersectionObserver(function(entries){'
-    + 'entries.forEach(function(e){'
-    + 'if(!e.isIntersecting)return;'
-    + 'var el=e.target;'
-    + 'el.style.opacity="1";'
-    + 'el.style.transform="translateY(0) translateX(0) scale(1)";'
-    + 'if(el.classList.contains("anim-cu")){'
-    + 'var t=parseInt(el.dataset.target),s=el.dataset.suffix||"",c=0;'
-    + 'var ti=setInterval(function(){c=Math.min(c+t/60,t);el.textContent=Math.floor(c)+s;if(c>=t)clearInterval(ti);},20);}'
-    + 'o.unobserve(el);});},{threshold:0.15,root:w});'
-    + 'w.addEventListener("scroll",function(){'
-    + 'w.querySelectorAll(".plax").forEach(function(el){'
-    + 'el.style.transform="translateY("+(w.scrollTop*parseFloat(el.dataset.speed||0.3))+"px)";});});'
-    + 'setTimeout(function(){w.querySelectorAll(".anim-f,.anim-s,.anim-sc,.anim-st,.anim-cu,.anim-rv").forEach(function(el){o.observe(el);});},100);'
-    + '})();<\/script>';
+function initScrollAnimDemo(scrollContainer) {
+  var allEls = scrollContainer.querySelectorAll('[data-sa]');
+  if (!allEls.length) return;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      el.style.opacity = '1';
+      if (el.classList.contains('anim-rv')) {
+        el.style.transform = 'translateY(0)';
+      } else if (!el.classList.contains('anim-cu')) {
+        el.style.transform = 'translateY(0) translateX(0) scale(1)';
+      }
+      if (el.classList.contains('anim-cu')) {
+        el.style.transform = 'translateY(0)';
+        var target = parseInt(el.dataset.target) || 0;
+        var suffix = el.dataset.suffix || '';
+        var count = 0;
+        var steps = 60;
+        var inc = target / steps;
+        var timer = setInterval(function() {
+          count = Math.min(count + inc, target);
+          el.textContent = Math.floor(count) + suffix;
+          if (count >= target) clearInterval(timer);
+        }, 18);
+      }
+      observer.unobserve(el);
+    });
+  }, { threshold: 0.15, root: scrollContainer });
+  allEls.forEach(function(el) { observer.observe(el); });
+  scrollContainer.addEventListener('scroll', function() {
+    scrollContainer.querySelectorAll('.plax').forEach(function(el) {
+      el.style.transform = 'translateY(' + (scrollContainer.scrollTop * parseFloat(el.dataset.speed || 0.3)) + 'px)';
+    });
+  });
 }
 
 // ══════════════════════════════════════
@@ -523,7 +548,27 @@ function buildScrollAnimDemo(label) {
 function buildAllGrids() {
   buildNavbarsGrid(); buildHeroesGrid(); buildColorsGrid();
   buildCardsGrid(); buildFootersGrid(); buildFormsGrid(); buildAnimationsGrid();
+  buildIntrosGrid();
   setTimeout(addCardPreviewButtons, 150);
+}
+
+function buildIntrosGrid() {
+  const el = document.getElementById('intros-grid'); if (!el) return;
+  const sec = (title, desc) => `<div style="grid-column:1/-1;margin:1.5rem 0 0.5rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(255,255,255,0.06);"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.06em;color:#00e5ff;">${title}</div><div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:2px;">${desc}</div></div>`;
+  el.innerHTML = [
+    sec('Page Intro Loaders', 'Full-screen animations that play before your site content appears'),
+    card('Intro','Fade In','Classic',`<div style="background:#000;height:100%;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;"><div style="position:absolute;inset:0;background:#000;animation:introFade 2.5s ease-in-out infinite alternate;"></div><div style="position:relative;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.12em;color:rgba(255,255,255,0.6);">BRAND</div></div>`),
+    card('Intro','Wave Curtain','Dramatic',`<div style="background:#030308;height:100%;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;"><div style="position:absolute;top:0;left:0;right:0;height:50%;background:#00e5ff;transform-origin:top;animation:waveCurtainTop 2.5s ease-in-out infinite alternate;"></div><div style="position:absolute;bottom:0;left:0;right:0;height:50%;background:#00e5ff;transform-origin:bottom;animation:waveCurtainBot 2.5s ease-in-out infinite alternate;"></div><div style="position:relative;z-index:2;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.1em;">LOADING</div></div>`),
+    card('Intro','Logo Stamp','Impact',`<div style="background:#000;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;"><div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.04em;animation:logoStamp 2s ease-in-out infinite;color:#fff;">CM<span style="color:#00e5ff;">.</span></div></div>`),
+    card('Intro','Glitch Reveal','Technical',`<div style="background:#000;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.08em;color:#00e5ff;animation:glitchText 1.8s steps(3) infinite;">SECURE</div><div style="position:absolute;inset:0;background:rgba(0,229,255,0.04);animation:glitchScan 1.8s linear infinite;"></div></div>`),
+    card('Intro','Particle Burst','Energy',`<div style="background:#000;height:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"><div style="position:absolute;width:4px;height:4px;border-radius:50%;background:#00e5ff;animation:burst1 1.8s ease-in-out infinite;top:50%;left:50%;"></div><div style="position:absolute;width:3px;height:3px;border-radius:50%;background:#a855f7;animation:burst2 1.8s ease-in-out infinite 0.2s;top:50%;left:50%;"></div><div style="position:absolute;width:3px;height:3px;border-radius:50%;background:#22c55e;animation:burst3 1.8s ease-in-out infinite 0.4s;top:50%;left:50%;"></div><div style="position:absolute;width:3px;height:3px;border-radius:50%;background:#f43f5e;animation:burst4 1.8s ease-in-out infinite 0.1s;top:50%;left:50%;"></div><div style="position:relative;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:0.1em;color:rgba(255,255,255,0.4);">loading</div></div>`),
+    sec('Page Transitions', 'How your site moves between sections — smooth, cinematic, unforgettable'),
+    card('Transition','Diagonal Wipe','Sharp',`<div style="background:#030308;height:100%;position:relative;overflow:hidden;"><div style="position:absolute;inset:0;background:linear-gradient(135deg,#050510 50%,transparent 50%);"></div><div style="position:absolute;inset:0;background:#00e5ff;clip-path:polygon(0 0,0 0,0 100%,0 100%);animation:diagWipe 2s ease-in-out infinite alternate;opacity:0.9;"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:0.1em;color:rgba(255,255,255,0.35);">Page transition</div></div>`),
+    card('Transition','Morph Blob','Organic',`<div style="background:#030308;height:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"><div style="position:absolute;width:20px;height:20px;border-radius:50%;background:#00e5ff;animation:morphBlobGrow 2s ease-in-out infinite alternate;"></div><div style="position:relative;z-index:2;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:0.1em;color:rgba(255,255,255,0.3);">Next page</div></div>`),
+    card('Transition','Slide Left','Fluid',`<div style="background:#030308;height:100%;position:relative;overflow:hidden;display:flex;"><div style="position:absolute;inset:0;background:#0a0a1a;animation:slideTransLeft 2.5s ease-in-out infinite;display:flex;align-items:center;padding:1rem;"><div style="font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:0.06em;color:#00e5ff;">New Page →</div></div></div>`),
+    card('Transition','Circle Reveal','Geometric',`<div style="background:#030308;height:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;"><div style="position:absolute;width:10px;height:10px;border-radius:50%;background:#060618;animation:circleReveal 2.2s ease-in-out infinite alternate;"></div><div style="position:relative;z-index:2;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:0.1em;color:rgba(255,255,255,0.25);">Revealing</div></div>`),
+    card('Transition','Curtain Drop','Theatrical',`<div style="background:#030308;height:100%;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;"><div style="position:absolute;top:0;left:0;right:0;background:linear-gradient(180deg,#00e5ff,#7c3aed);animation:curtainDrop 2.5s ease-in-out infinite alternate;height:100%;transform-origin:top;"></div><div style="position:relative;z-index:2;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;letter-spacing:0.1em;color:rgba(255,255,255,0.4);">Scene change</div></div>`),
+  ].join('');
 }
 
 function card(cat, label, tag, pwHTML, swatches) {

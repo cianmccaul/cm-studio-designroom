@@ -255,6 +255,55 @@ function swapImgOverlay(e, swatch, cls, overlay) {
   if (pw) pw.style.setProperty('--img-overlay', overlay);
 }
 
+function swapDogOverlay(e, swatch, overlay) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.bg-img-custom');
+  if (pw) pw.style.setProperty('--img-overlay', overlay);
+}
+
+function swapMarble(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (pw) pw.style.setProperty('--marble-bg', bg);
+}
+
+function swapImgOverlayDirect(e, swatch, selector, overlay) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = document.querySelector(selector) || card.querySelector('[class*="bg-img"]');
+  if (pw) pw.style.setProperty('--img-overlay', overlay);
+}
+
+function handleCustomImageFile(e) {
+  const file = e.target.files && e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) { applyCustomImage(ev.target.result); };
+  reader.readAsDataURL(file);
+}
+
+function handleCustomImageUrl(url) {
+  if (!url || !url.trim()) return;
+  applyCustomImage(url.trim());
+}
+
+function applyCustomImage(src) {
+  const pw = document.getElementById('custom-img-pw');
+  if (!pw) return;
+  pw.style.backgroundImage = 'url("' + src + '")';
+  pw.style.backgroundSize = 'cover';
+  pw.style.backgroundPosition = 'center';
+  const card = pw.closest('.preview-card');
+  if (card) card.dataset.customSrc = src;
+}
+
 function swapGeoWeb(e, swatch, rgb) {
   e.stopPropagation();
   const card = swatch.closest('.preview-card');
@@ -303,54 +352,74 @@ function initAllCanvases() {
 // ══════════════════════════════════════
 function initGeoWeb() {
   document.querySelectorAll('.c-geo-web').forEach(canvas => {
-    const parent = canvas.parentElement;
-    canvas.width = parent.offsetWidth || 240;
-    canvas.height = parent.offsetHeight || 185;
-    canvas._color = '#00e5ff';
-    canvas._bgColor = '#060612';
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    const N = 28;
-    const pts = Array.from({length:N}, () => ({
-      x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4
-    }));
-    const DIST = 70;
-    function draw() {
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = canvas._bgColor;
-      ctx.fillRect(0, 0, W, H);
-      pts.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > W) p.vx *= -1;
-        if (p.y < 0 || p.y > H) p.vy *= -1;
-      });
-      const col = canvas._color || '#00e5ff';
-      for (let i = 0; i < N; i++) {
-        for (let j = i + 1; j < N; j++) {
-          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
-          const d = Math.sqrt(dx*dx + dy*dy);
-          if (d < DIST) {
-            ctx.beginPath();
-            ctx.strokeStyle = col.replace(')', `,${1 - d/DIST})`).replace('rgb(', 'rgba(');
-            ctx.lineWidth = 0.6;
-            ctx.moveTo(pts[i].x, pts[i].y);
-            ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.stroke();
+    if (canvas._geoRaf) cancelAnimationFrame(canvas._geoRaf);
+    canvas._color = canvas._color || '#00e5ff';
+    canvas._bgColor = canvas._bgColor || '#060612';
+    const startGeoWeb = () => {
+      const parent = canvas.parentElement;
+      const dpr = window.devicePixelRatio || 1;
+      const CW = parent.offsetWidth || 240;
+      const CH = parent.offsetHeight || 185;
+      canvas.width = CW * dpr;
+      canvas.height = CH * dpr;
+      canvas.style.width = CW + 'px';
+      canvas.style.height = CH + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      const W = CW, H = CH;
+      const N = 32;
+      const pts = Array.from({length:N}, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.45, vy: (Math.random() - 0.5) * 0.45
+      }));
+      const DIST = 75;
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = canvas._bgColor;
+        ctx.fillRect(0, 0, W, H);
+        pts.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > W) p.vx *= -1;
+          if (p.y < 0 || p.y > H) p.vy *= -1;
+        });
+        const col = canvas._color || '#00e5ff';
+        const rgba = col.startsWith('#') ? hexToRgba(col) : col.replace('rgb(','rgba(').replace(')',',');
+        for (let i = 0; i < N; i++) {
+          for (let j = i + 1; j < N; j++) {
+            const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+            const d = Math.sqrt(dx*dx + dy*dy);
+            if (d < DIST) {
+              ctx.beginPath();
+              ctx.strokeStyle = rgba + (1 - d/DIST) + ')';
+              ctx.lineWidth = 0.7;
+              ctx.moveTo(pts[i].x, pts[i].y);
+              ctx.lineTo(pts[j].x, pts[j].y);
+              ctx.stroke();
+            }
           }
         }
+        pts.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = canvas._color || '#00e5ff';
+          ctx.fill();
+        });
+        canvas._geoRaf = requestAnimationFrame(draw);
       }
-      pts.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = canvas._color || '#00e5ff';
-        ctx.fill();
-      });
-      canvas._geoRaf = requestAnimationFrame(draw);
+      draw();
+    };
+    const parent = canvas.parentElement;
+    if (parent.offsetWidth > 0) {
+      startGeoWeb();
+    } else {
+      setTimeout(startGeoWeb, 120);
     }
-    if (canvas._geoRaf) cancelAnimationFrame(canvas._geoRaf);
-    draw();
   });
+}
+
+function hexToRgba(hex) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',';
 }
 
 function initSingleGeoWebCanvas(canvas) {
