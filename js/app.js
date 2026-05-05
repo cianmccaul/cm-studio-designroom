@@ -91,6 +91,28 @@ function injectStyles() {
     @keyframes lbFloat1{0%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,15px) scale(1.08)}100%{transform:translate(5px,25px) scale(0.95)}}
     @keyframes lbFloat2{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-15px,-20px) scale(1.1)}100%{transform:translate(-25px,-5px) scale(0.92)}}
     @keyframes bokehPulse{0%{opacity:0.7;transform:scale(1)}100%{opacity:1;transform:scale(1.06)}}
+    @keyframes horizontalScroll{0%{transform:translateX(0)}50%{transform:translateX(-140px)}100%{transform:translateX(0)}}
+    @keyframes progressGrow{0%{width:0%}80%{width:95%}100%{width:95%}}
+    @keyframes stickyScroll{0%{transform:translateY(0)}60%{transform:translateY(-60px)}100%{transform:translateY(0)}}
+    @keyframes textScramble{0%,100%{opacity:1;letter-spacing:0.08em}50%{opacity:0.4;letter-spacing:0.25em}}
+    @keyframes morphRotate{0%{transform:rotate(0deg) scale(1)}50%{transform:rotate(180deg) scale(1.1)}100%{transform:rotate(360deg) scale(1)}}
+    @keyframes parallaxMove{0%{transform:translate(-5%,-5%)}50%{transform:translate(5%,5%)}100%{transform:translate(-5%,-5%)}}
+    @keyframes marbleShift{0%{transform:rotate(0deg) scale(1)}100%{transform:rotate(3deg) scale(1.05)}}
+    @keyframes introFade{0%{opacity:1}100%{opacity:0.05}}
+    @keyframes waveCurtainTop{0%{transform:scaleY(1)}100%{transform:scaleY(0)}}
+    @keyframes waveCurtainBot{0%{transform:scaleY(1)}100%{transform:scaleY(0)}}
+    @keyframes logoStamp{0%{transform:scale(3);opacity:0}30%{transform:scale(1);opacity:1}70%{transform:scale(1);opacity:1}100%{transform:scale(0.8);opacity:0}}
+    @keyframes glitchText{0%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-2px)}100%{transform:translateX(0)}}
+    @keyframes glitchScan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+    @keyframes burst1{0%{transform:translate(0,0);opacity:1}100%{transform:translate(-30px,-25px);opacity:0}}
+    @keyframes burst2{0%{transform:translate(0,0);opacity:1}100%{transform:translate(28px,-20px);opacity:0}}
+    @keyframes burst3{0%{transform:translate(0,0);opacity:1}100%{transform:translate(-20px,25px);opacity:0}}
+    @keyframes burst4{0%{transform:translate(0,0);opacity:1}100%{transform:translate(25px,20px);opacity:0}}
+    @keyframes diagWipe{0%{clip-path:polygon(0 0,0 0,0 100%,0 100%)}100%{clip-path:polygon(0 0,110% 0,110% 100%,0 100%)}}
+    @keyframes morphBlobGrow{0%{transform:scale(1);border-radius:50%}100%{transform:scale(18);border-radius:40%}}
+    @keyframes slideTransLeft{0%{transform:translateX(100%)}40%{transform:translateX(0)}70%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+    @keyframes circleReveal{0%{transform:scale(1)}100%{transform:scale(22)}}
+    @keyframes curtainDrop{0%{transform:scaleY(0);transform-origin:top}100%{transform:scaleY(1);transform-origin:top}}
   `;
   document.head.appendChild(s);
 }
@@ -107,7 +129,7 @@ function addCardPreviewButtons() {
     card._previewBtnAdded = true;
     const btn = document.createElement('div');
     btn.className = 'preview-top-btn';
-    btn.innerHTML = 'Preview ↗';
+    btn.innerHTML = '';
     btn.addEventListener('click', e => { e.stopPropagation(); openModal(card); });
     pw.appendChild(btn);
   });

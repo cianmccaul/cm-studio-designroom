@@ -270,7 +270,20 @@ function swapMarble(e, swatch, cls, bg) {
   card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
   swatch.classList.add('active');
   const pw = card.querySelector('.' + cls);
-  if (pw) pw.style.setProperty('--marble-bg', bg);
+  if (!pw) return;
+  pw.style.setProperty('--marble-bg', bg);
+  pw.classList.remove('marble-dark');
+}
+
+function swapMarbleDark(e, swatch, cls, bg) {
+  e.stopPropagation();
+  const card = swatch.closest('.preview-card');
+  card.querySelectorAll('.cs-swatch').forEach(s => s.classList.remove('active'));
+  swatch.classList.add('active');
+  const pw = card.querySelector('.' + cls);
+  if (!pw) return;
+  pw.style.setProperty('--marble-bg', bg);
+  pw.classList.add('marble-dark');
 }
 
 function swapImgOverlayDirect(e, swatch, selector, overlay) {
