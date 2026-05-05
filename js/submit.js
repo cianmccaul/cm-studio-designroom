@@ -13,13 +13,27 @@ const EMAILJS_TEMPLATE_CLIENT = 'template_skiyfln';
 const EMAILJS_PUBLIC_KEY = 'M9uCIf7tZKXTnZZ_a';
 
 // ── INIT ──
+// Deferred so CDN scripts (supabase, emailjs) have finished loading
 let db;
-try {
-  const { createClient } = supabase;
-  db = createClient(SUPABASE_URL, SUPABASE_KEY);
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-} catch (e) {
-  console.error('Init error:', e);
+
+function initSupabase() {
+  try {
+    if (typeof supabase !== 'undefined') {
+      const { createClient } = supabase;
+      db = createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+    if (typeof emailjs !== 'undefined') {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+    }
+  } catch (e) {
+    console.error('Init error:', e);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSupabase);
+} else {
+  initSupabase();
 }
 
 // ══════════════════════════════════════
