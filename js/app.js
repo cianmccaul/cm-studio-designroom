@@ -596,14 +596,14 @@ function buildFeaturesGrid() {
 
   const sec = (title, desc) => `<div class="feat-sec-hdr"><div class="feat-sec-title">${title}</div><div class="feat-sec-desc">${desc}</div></div>`;
 
-  const featCard = (label, tag, innerHTML, fullW) => `
+  const featCard = (label, tag, innerHTML, fullW, compact) => `
     <div class="preview-card feat-card${fullW ? ' feat-full' : ' feat-half'}" data-category="Feature" data-label="${label}" onclick="toggleSelect(this)">
       <div class="feat-card-top">
         <div class="feat-card-label">${label}</div>
         <div class="feat-card-tag">${tag}</div>
         <div class="preview-top-btn feat-fs-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))" title="Fullscreen"></div>
       </div>
-      <div class="feat-demo" id="feat-${label.replace(/\s+/g,'-').toLowerCase()}">${innerHTML}</div>
+      <div class="feat-demo${compact ? ' feat-demo-sm' : ''}" id="feat-${label.replace(/\s+/g,'-').toLowerCase()}">${innerHTML}</div>
     </div>`;
 
   el.innerHTML = [
@@ -644,26 +644,27 @@ function buildFeaturesGrid() {
             <button class="bk-back" onclick="bkReset()">Start Over</button>
           </div>
         </div>
-      </div>`, true),
+      </div>`, true, true),
 
     sec('Shop & E-commerce', 'Sell products, services or packages directly from your website.'),
 
     featCard('Product Shop', 'E-commerce', `
-      <div class="feat-shop">
+      <div class="feat-shop" id="shop-demo">
         <div class="shop-cart-bar">
           <span class="shop-cart-label">Cart</span>
           <span class="shop-cart-badge" id="shop-badge">0</span>
           <span class="shop-cart-total" id="shop-total">€0</span>
+          <button class="shop-view-cart" id="shop-view-btn" onclick="event.stopPropagation();shopViewBasket()">🛒 View Basket</button>
           <button class="shop-clear" onclick="event.stopPropagation();shopClear()">Clear</button>
         </div>
-        <div class="shop-grid">
+        <div class="shop-grid" id="shop-grid">
           <div class="shop-item">
             <div class="shop-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
               <span style="font-size:2rem;">📦</span>
             </div>
             <div class="shop-name">Starter Pack</div>
             <div class="shop-price">€29</div>
-            <button class="shop-add" onclick="event.stopPropagation();shopAdd(this,29)">Add to Cart</button>
+            <button class="shop-add" onclick="event.stopPropagation();shopAdd(this,'Starter Pack',29)">Add to Cart</button>
           </div>
           <div class="shop-item">
             <div class="shop-img" style="background:linear-gradient(135deg,#0d1b2a,#1b4332);">
@@ -671,7 +672,7 @@ function buildFeaturesGrid() {
             </div>
             <div class="shop-name">Pro Bundle</div>
             <div class="shop-price">€59</div>
-            <button class="shop-add" onclick="event.stopPropagation();shopAdd(this,59)">Add to Cart</button>
+            <button class="shop-add" onclick="event.stopPropagation();shopAdd(this,'Pro Bundle',59)">Add to Cart</button>
           </div>
           <div class="shop-item">
             <div class="shop-img" style="background:linear-gradient(135deg,#2d1b69,#11998e);">
@@ -679,8 +680,26 @@ function buildFeaturesGrid() {
             </div>
             <div class="shop-name">Premium Kit</div>
             <div class="shop-price">€99</div>
-            <button class="shop-add" onclick="event.stopPropagation();shopAdd(this,99)">Add to Cart</button>
+            <button class="shop-add" onclick="event.stopPropagation();shopAdd(this,'Premium Kit',99)">Add to Cart</button>
           </div>
+        </div>
+        <div class="shop-basket" id="shop-basket">
+          <div class="basket-items" id="basket-items"></div>
+          <div class="basket-total-row">
+            <span class="basket-total-label">Total</span>
+            <span class="basket-total-amount" id="basket-total-amount">€0</span>
+          </div>
+          <div class="basket-actions">
+            <button class="shop-back-btn" onclick="event.stopPropagation();shopBackToGrid()">← Shop</button>
+            <button class="shop-pay-btn" onclick="event.stopPropagation();shopPay()">Pay Now →</button>
+          </div>
+        </div>
+        <div class="shop-confirm" id="shop-confirm" style="display:none;">
+          <div class="shop-confirm-tick">✓</div>
+          <div class="shop-confirm-title">Order Confirmed!</div>
+          <div class="shop-confirm-order" id="shop-confirm-order"></div>
+          <div class="shop-confirm-items" id="shop-confirm-items"></div>
+          <button class="bk-back" onclick="event.stopPropagation();shopReset()">Continue Shopping</button>
         </div>
       </div>`, true),
 
@@ -695,6 +714,7 @@ function buildFeaturesGrid() {
         <div class="srch-results" id="srch-results">
           <div class="srch-hint">Search above to explore what your site can show visitors.</div>
         </div>
+        <div class="srch-detail" id="srch-detail" style="display:none;"></div>
       </div>`, true),
 
     sec('Social Proof', 'Turn happy customers into your best marketing tool.'),
@@ -752,6 +772,7 @@ function buildFeaturesGrid() {
 
     sec('Content & Info', 'Useful interactive components that keep visitors engaged.'),
 
+    `<div class="feat-half-row">` +
     featCard('FAQ Accordion', 'Self-Service', `
       <div class="feat-faq">
         <div class="faq-item">
@@ -770,12 +791,7 @@ function buildFeaturesGrid() {
           <div class="faq-q" onclick="event.stopPropagation();faqToggle(this)"><span>Can I update the site myself?</span><span class="faq-icon">+</span></div>
           <div class="faq-a">Absolutely. We build with easy content management in mind so you can update text, images and prices yourself.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="event.stopPropagation();faqToggle(this)"><span>What does it cost?</span><span class="faq-icon">+</span></div>
-          <div class="faq-a">Prices start from €499 for a clean, modern website. We'll give you a full quote after a free consultation.</div>
-        </div>
-      </div>`, false),
-
+      </div>`, false) +
     featCard('Live Chat Widget', 'Customer Support', `
       <div class="feat-chat">
         <div class="chat-preview-area" id="chat-area">
@@ -805,7 +821,32 @@ function buildFeaturesGrid() {
             <span class="chat-fab-dot"></span>
           </div>
         </div>
-      </div>`, false),
+      </div>`, false) +
+    `</div>`,
+
+    sec('Utilities', 'Extra tools that grow your audience and showcase your work.'),
+
+    featCard('Newsletter Signup', 'Email Marketing', `
+      <div class="feat-newsletter" id="nl-demo">
+        <div class="nl-headline">Stay in the loop</div>
+        <div class="nl-sub">Get tips, updates and exclusive offers straight to your inbox.</div>
+        <div class="nl-form" id="nl-form">
+          <input class="nl-input" id="nl-email-input" placeholder="your@email.com" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key==='Enter')nlSubscribe()">
+          <button class="nl-btn" onclick="event.stopPropagation();nlSubscribe()">Subscribe</button>
+        </div>
+      </div>`, true),
+
+    featCard('Image Gallery', 'Portfolio / Showcase', `
+      <div class="feat-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#1a1a2e,#16213e)" onclick="event.stopPropagation();galleryOpen(0)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#0d1b2a,#1b4332)" onclick="event.stopPropagation();galleryOpen(1)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#2d1b69,#11998e)" onclick="event.stopPropagation();galleryOpen(2)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#450a0a,#7f1d1d)" onclick="event.stopPropagation();galleryOpen(3)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#064e3b,#065f46)" onclick="event.stopPropagation();galleryOpen(4)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#1e1b4b,#312e81)" onclick="event.stopPropagation();galleryOpen(5)"></div>
+        </div>
+      </div>`, true),
 
   ].join('');
 
@@ -869,22 +910,68 @@ function bkReset() {
 }
 
 // ── SHOP DEMO ──
-let shopCount = 0, shopTotal = 0;
-function shopAdd(btn, price) {
-  shopCount++; shopTotal += price;
+let shopItems = [];
+function shopAdd(btn, name, price) {
+  const existing = shopItems.find(i => i.name === name);
+  if (existing) { existing.qty++; } else { shopItems.push({name, price, qty:1}); }
+  const total = shopItems.reduce((s,i) => s + i.price * i.qty, 0);
+  const count = shopItems.reduce((s,i) => s + i.qty, 0);
   const badge = document.getElementById('shop-badge');
-  const total = document.getElementById('shop-total');
-  if (badge) { badge.textContent = shopCount; badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop'); }
-  if (total) total.textContent = '€' + shopTotal;
-  btn.textContent = '✓ Added';
+  const totalEl = document.getElementById('shop-total');
+  const viewBtn = document.getElementById('shop-view-btn');
+  if (badge) { badge.textContent = count; badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop'); }
+  if (totalEl) totalEl.textContent = '\u20ac' + total;
+  if (viewBtn) viewBtn.classList.add('visible');
+  btn.textContent = '\u2713 Added';
   setTimeout(() => { btn.textContent = 'Add to Cart'; }, 1200);
 }
+function shopViewBasket() {
+  const grid = document.getElementById('shop-grid');
+  const basket = document.getElementById('shop-basket');
+  const itemsEl = document.getElementById('basket-items');
+  const totalEl = document.getElementById('basket-total-amount');
+  if (!basket || !grid) return;
+  grid.style.display = 'none';
+  basket.classList.add('visible');
+  const total = shopItems.reduce((s,i) => s + i.price * i.qty, 0);
+  if (itemsEl) itemsEl.innerHTML = shopItems.map(i => `<div class="basket-item"><span class="basket-item-name">${i.name}</span><span class="basket-item-qty">x${i.qty}</span><span class="basket-item-price">\u20ac${i.price * i.qty}</span></div>`).join('');
+  if (totalEl) totalEl.textContent = '\u20ac' + total;
+}
+function shopBackToGrid() {
+  const grid = document.getElementById('shop-grid');
+  const basket = document.getElementById('shop-basket');
+  if (grid) grid.style.display = '';
+  if (basket) basket.classList.remove('visible');
+}
+function shopPay() {
+  const basket = document.getElementById('shop-basket');
+  const confirm = document.getElementById('shop-confirm');
+  const orderEl = document.getElementById('shop-confirm-order');
+  const itemsEl = document.getElementById('shop-confirm-items');
+  const total = shopItems.reduce((s,i) => s + i.price * i.qty, 0);
+  const orderNum = '#CM-' + Math.floor(1000 + Math.random() * 9000);
+  if (basket) basket.classList.remove('visible');
+  if (confirm) confirm.style.display = 'flex';
+  if (orderEl) orderEl.textContent = orderNum;
+  if (itemsEl) itemsEl.innerHTML = shopItems.map(i => `${i.name} x${i.qty} \u2014 \u20ac${i.price * i.qty}`).join('<br>') + `<br><strong>Total: \u20ac${total}</strong>`;
+}
+function shopReset() {
+  shopItems = [];
+  const badge = document.getElementById('shop-badge'); if (badge) badge.textContent = '0';
+  const total = document.getElementById('shop-total'); if (total) total.textContent = '\u20ac0';
+  const viewBtn = document.getElementById('shop-view-btn'); if (viewBtn) viewBtn.classList.remove('visible');
+  const confirm = document.getElementById('shop-confirm'); if (confirm) confirm.style.display = 'none';
+  const grid = document.getElementById('shop-grid'); if (grid) grid.style.display = '';
+  const basket = document.getElementById('shop-basket'); if (basket) basket.classList.remove('visible');
+}
 function shopClear() {
-  shopCount = 0; shopTotal = 0;
-  const badge = document.getElementById('shop-badge');
-  const total = document.getElementById('shop-total');
-  if (badge) badge.textContent = '0';
-  if (total) total.textContent = '€0';
+  shopItems = [];
+  const badge = document.getElementById('shop-badge'); if (badge) badge.textContent = '0';
+  const total = document.getElementById('shop-total'); if (total) total.textContent = '\u20ac0';
+  const viewBtn = document.getElementById('shop-view-btn'); if (viewBtn) viewBtn.classList.remove('visible');
+  const basket = document.getElementById('shop-basket'); if (basket) basket.classList.remove('visible');
+  const grid = document.getElementById('shop-grid'); if (grid) grid.style.display = '';
+  const confirm = document.getElementById('shop-confirm'); if (confirm) confirm.style.display = 'none';
 }
 
 // ── SEARCH DEMO ──
@@ -911,13 +998,31 @@ const srchData = {
 };
 function srchQuery(val) {
   const el = document.getElementById('srch-results');
+  const det = document.getElementById('srch-detail');
   if (!el) return;
+  if (det) det.style.display = 'none';
+  el.style.display = '';
   const q = val.trim().toLowerCase();
   if (!q) { el.innerHTML = '<div class="srch-hint">Search above to explore what your site can show visitors.</div>'; return; }
   let match = null;
   for (const key of Object.keys(srchData)) { if (key.includes(q) || q.includes(key.slice(0,4))) { match = key; break; } }
   if (!match) { el.innerHTML = '<div class="srch-none">No results found — try Services, Pricing, Contact or About.</div>'; return; }
-  el.innerHTML = srchData[match].map((r,i) => `<div class="srch-result" style="animation-delay:${i*0.07}s"><span class="srch-result-icon">${r.icon}</span><div><div class="srch-result-title">${r.title}</div><div class="srch-result-desc">${r.desc}</div></div></div>`).join('');
+  el.innerHTML = srchData[match].map((r,i) => `<div class="srch-result" style="animation-delay:${i*0.07}s;cursor:pointer" onclick="event.stopPropagation();srchShowDetail('${match}',${i})"><span class="srch-result-icon">${r.icon}</span><div><div class="srch-result-title">${r.title}</div><div class="srch-result-desc">${r.desc}</div></div></div>`).join('');
+}
+function srchShowDetail(key, idx) {
+  const el = document.getElementById('srch-results');
+  const det = document.getElementById('srch-detail');
+  if (!det || !el) return;
+  const r = srchData[key][idx];
+  el.style.display = 'none';
+  det.style.display = 'flex';
+  det.innerHTML = `<button class="srch-back" onclick="event.stopPropagation();srchBackToResults()">← Back to results</button><div class="srch-detail-icon">${r.icon}</div><div class="srch-detail-title">${r.title}</div><div class="srch-detail-desc">${r.desc}</div>`;
+}
+function srchBackToResults() {
+  const el = document.getElementById('srch-results');
+  const det = document.getElementById('srch-detail');
+  if (el) el.style.display = '';
+  if (det) det.style.display = 'none';
 }
 
 // ── FAQ DEMO ──
@@ -992,6 +1097,62 @@ function chatSend() {
   }, 1800);
 }
 function chatType(e) { if (e.key === 'Enter') chatSend(); }
+
+// ── NEWSLETTER DEMO ──
+let nlCount = 1247;
+function nlSubscribe() {
+  const inp = document.getElementById('nl-email-input');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val || !val.includes('@')) { inp.style.borderColor = 'rgba(255,80,80,0.6)'; setTimeout(() => inp.style.borderColor = '', 1000); return; }
+  nlCount++;
+  const demo = document.getElementById('nl-demo');
+  if (!demo) return;
+  demo.innerHTML = `<div class="nl-success"><div class="nl-tick">✓</div><div class="nl-success-msg">You're subscribed!</div><div class="nl-counter">${nlCount.toLocaleString()} subscribers and counting</div><button class="nl-reset" onclick="event.stopPropagation();nlReset()">Subscribe another</button></div>`;
+}
+function nlReset() {
+  const demo = document.getElementById('nl-demo');
+  if (!demo) return;
+  demo.innerHTML = `<div class="nl-headline">Stay in the loop</div><div class="nl-sub">Get tips, updates and exclusive offers straight to your inbox.</div><div class="nl-form" id="nl-form"><input class="nl-input" id="nl-email-input" placeholder="your@email.com" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key==='Enter')nlSubscribe()"><button class="nl-btn" onclick="event.stopPropagation();nlSubscribe()">Subscribe</button></div>`;
+}
+function nlSubscribeFs() {
+  const inp = document.getElementById('nl-email-fs');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val || !val.includes('@')) { inp.style.borderColor = 'rgba(255,80,80,0.6)'; setTimeout(() => inp.style.borderColor = '', 1000); return; }
+  nlCount++;
+  const demo = document.getElementById('nl-demo-fs');
+  if (!demo) return;
+  demo.innerHTML = `<div class="nl-success"><div class="nl-tick">✓</div><div class="nl-success-msg">You're subscribed!</div><div class="nl-counter">${nlCount.toLocaleString()} subscribers and counting</div></div>`;
+}
+
+// ── GALLERY DEMO ──
+const galleryTiles = [
+  {bg:'linear-gradient(135deg,#1a1a2e,#16213e)', label:'Project 1'},
+  {bg:'linear-gradient(135deg,#0d1b2a,#1b4332)', label:'Project 2'},
+  {bg:'linear-gradient(135deg,#2d1b69,#11998e)', label:'Project 3'},
+  {bg:'linear-gradient(135deg,#450a0a,#7f1d1d)', label:'Project 4'},
+  {bg:'linear-gradient(135deg,#064e3b,#065f46)', label:'Project 5'},
+  {bg:'linear-gradient(135deg,#1e1b4b,#312e81)', label:'Project 6'},
+];
+let lbIdx = 0;
+function galleryOpen(idx) {
+  lbIdx = idx;
+  const existing = document.querySelector('.gallery-lightbox');
+  if (existing) existing.remove();
+  const lb = document.createElement('div');
+  lb.className = 'gallery-lightbox';
+  lb.innerHTML = `<div class="lb-img"><div class="lb-tile" style="background:${galleryTiles[lbIdx].bg}"></div><button class="lb-close" onclick="this.closest('.gallery-lightbox').remove()">✕</button><button class="lb-nav lb-prev" onclick="lbMove(-1)">‹</button><button class="lb-nav lb-next" onclick="lbMove(1)">›</button><div class="lb-counter">${lbIdx+1} / ${galleryTiles.length}</div></div>`;
+  lb.addEventListener('click', e => { if (e.target === lb) lb.remove(); });
+  document.body.appendChild(lb);
+}
+function lbMove(dir) {
+  lbIdx = (lbIdx + dir + galleryTiles.length) % galleryTiles.length;
+  const lb = document.querySelector('.gallery-lightbox');
+  if (!lb) return;
+  lb.querySelector('.lb-tile').style.background = galleryTiles[lbIdx].bg;
+  lb.querySelector('.lb-counter').textContent = `${lbIdx+1} / ${galleryTiles.length}`;
+}
 
 // ── FEATURE FULLSCREEN BUILDERS ──
 function buildFeatureFullscreen(label) {
@@ -1079,7 +1240,6 @@ function buildFeatureFullscreen(label) {
         <div class="faq-item"><div class="faq-q" onclick="event.stopPropagation();faqToggleFs(this)"><span>What do I need to get started?</span><span class="faq-icon">+</span></div><div class="faq-a">Just your business name, a rough idea of what you want, and a way to contact you. We handle the rest.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="event.stopPropagation();faqToggleFs(this)"><span>Do you offer ongoing support?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes — all sites come with 30 days of free support after launch, and affordable monthly plans after that.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="event.stopPropagation();faqToggleFs(this)"><span>Can I update the site myself?</span><span class="faq-icon">+</span></div><div class="faq-a">Absolutely. We build with easy content management in mind so you can update text, images and prices yourself.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="event.stopPropagation();faqToggleFs(this)"><span>What does it cost?</span><span class="faq-icon">+</span></div><div class="faq-a">Prices start from €499 for a clean, modern website. We'll give you a full quote after a free consultation.</div></div>
       </div>`,
     'Live Chat Widget': `
       <div class="fs-feat-title">Live Chat Widget</div>
@@ -1093,6 +1253,30 @@ function buildFeatureFullscreen(label) {
             <div class="chat-win-input"><input class="chat-input" id="chat-input-fs" placeholder="Type a message…" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key==='Enter')chatSendFs()"><button class="chat-send" onclick="event.stopPropagation();chatSendFs()">↑</button></div>
           </div>
           <div class="chat-fab" id="chat-fab-fs" onclick="event.stopPropagation();chatOpenFs()"><span class="chat-fab-icon">💬</span><span class="chat-fab-dot"></span></div>
+        </div>
+      </div>`,
+    'Newsletter Signup': `
+      <div class="fs-feat-title">Newsletter Signup</div>
+      <div class="fs-feat-desc">Grow your audience automatically. Every subscriber gets your latest offers straight to their inbox.</div>
+      <div class="feat-newsletter" id="nl-demo-fs">
+        <div class="nl-headline">Stay in the loop</div>
+        <div class="nl-sub">Get tips, updates and exclusive offers straight to your inbox.</div>
+        <div class="nl-form">
+          <input class="nl-input" id="nl-email-fs" placeholder="your@email.com" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key==='Enter')nlSubscribeFs()">
+          <button class="nl-btn" onclick="event.stopPropagation();nlSubscribeFs()">Subscribe</button>
+        </div>
+      </div>`,
+    'Image Gallery': `
+      <div class="fs-feat-title">Image Gallery</div>
+      <div class="fs-feat-desc">Showcase your portfolio or work. Click any image to open the lightbox with full navigation.</div>
+      <div class="feat-gallery">
+        <div class="gallery-grid">
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#1a1a2e,#16213e)" onclick="event.stopPropagation();galleryOpen(0)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#0d1b2a,#1b4332)" onclick="event.stopPropagation();galleryOpen(1)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#2d1b69,#11998e)" onclick="event.stopPropagation();galleryOpen(2)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#450a0a,#7f1d1d)" onclick="event.stopPropagation();galleryOpen(3)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#064e3b,#065f46)" onclick="event.stopPropagation();galleryOpen(4)"></div>
+          <div class="gallery-tile" style="background:linear-gradient(135deg,#1e1b4b,#312e81)" onclick="event.stopPropagation();galleryOpen(5)"></div>
         </div>
       </div>`,
   };
