@@ -155,6 +155,7 @@ function initTabs() {
       if (panel) panel.classList.add('active');
       if (btn.dataset.tab === 'generate') buildPreviewPanel();
       if (btn.dataset.tab === 'colors') buildColorsGrid();
+      if (btn.dataset.tab === 'features') buildFeaturesGrid();
       updateNudge();
       setTimeout(addCardPreviewButtons, 60);
     });
@@ -467,6 +468,13 @@ function buildModalContent(card) {
     demoWrap.innerHTML = buildScrollAnimDemo(label);
     wrap.appendChild(demoWrap);
     setTimeout(() => initScrollAnimDemo(demoWrap), 80);
+  } else if (cat === 'Feature') {
+    wrap.style.cssText = 'width:100%;height:100%;overflow-y:auto;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;padding:2rem 1.5rem;box-sizing:border-box;';
+    const inner = document.createElement('div');
+    inner.style.cssText = 'width:100%;max-width:680px;';
+    inner.innerHTML = buildFeatureFullscreen(label);
+    wrap.appendChild(inner);
+    setTimeout(() => initFeatureFullscreen(label, inner), 80);
   } else {
     const pw = card.querySelector('.pw');
     if (pw) { const c = pw.cloneNode(true); c.style.cssText='width:100%;height:100%;position:absolute;inset:0;'; wrap.style.overflow='hidden'; wrap.appendChild(c); }
@@ -577,8 +585,676 @@ function initScrollAnimDemo(scrollContainer) {
 function buildAllGrids() {
   buildNavbarsGrid(); buildHeroesGrid(); buildColorsGrid();
   buildCardsGrid(); buildFootersGrid(); buildFormsGrid(); buildAnimationsGrid();
-  buildIntrosGrid();
+  buildIntrosGrid(); buildFeaturesGrid();
   setTimeout(addCardPreviewButtons, 150);
+}
+
+function buildFeaturesGrid() {
+  const el = document.getElementById('features-grid');
+  if (!el || el._built) return;
+  el._built = true;
+
+  const sec = (title, desc) => `<div class="feat-sec-hdr"><div class="feat-sec-title">${title}</div><div class="feat-sec-desc">${desc}</div></div>`;
+
+  const featCard = (label, tag, innerHTML, fullW) => `
+    <div class="preview-card feat-card${fullW ? ' feat-full' : ' feat-half'}" data-category="Feature" data-label="${label}" onclick="toggleSelect(this)">
+      <div class="feat-card-top">
+        <div class="feat-card-label">${label}</div>
+        <div class="feat-card-tag">${tag}</div>
+        <div class="preview-top-btn feat-fs-btn" onclick="event.stopPropagation();openModal(this.closest('.preview-card'))" title="Fullscreen"></div>
+      </div>
+      <div class="feat-demo" id="feat-${label.replace(/\s+/g,'-').toLowerCase()}">${innerHTML}</div>
+    </div>`;
+
+  el.innerHTML = [
+    sec('Booking & Appointments', 'Show clients a live booking flow — calendar, time slots, and confirmation.'),
+
+    featCard('Online Booking', 'Appointments', `
+      <div class="feat-booking" id="booking-demo">
+        <div class="bk-step active" id="bk-step-1">
+          <div class="bk-month-hdr">
+            <span class="bk-month-name" id="bk-month-name"></span>
+          </div>
+          <div class="bk-weekdays"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          <div class="bk-days" id="bk-days"></div>
+          <div class="bk-hint">Select a date to continue</div>
+        </div>
+        <div class="bk-step" id="bk-step-2">
+          <div class="bk-step-title">Pick a time</div>
+          <div class="bk-times">
+            <div class="bk-time" onclick="bkPickTime(this,'9:00am')">9:00 AM</div>
+            <div class="bk-time" onclick="bkPickTime(this,'11:00am')">11:00 AM</div>
+            <div class="bk-time" onclick="bkPickTime(this,'2:00pm')">2:00 PM</div>
+            <div class="bk-time" onclick="bkPickTime(this,'4:00pm')">4:00 PM</div>
+          </div>
+          <button class="bk-back" onclick="bkGoStep(1)">← Back</button>
+        </div>
+        <div class="bk-step" id="bk-step-3">
+          <div class="bk-step-title">Your details</div>
+          <input class="bk-input" id="bk-name" placeholder="Your name" onclick="event.stopPropagation()">
+          <input class="bk-input" id="bk-email" placeholder="Email address" onclick="event.stopPropagation()">
+          <button class="bk-confirm-btn" onclick="event.stopPropagation();bkConfirm()">Confirm Booking</button>
+          <button class="bk-back" onclick="bkGoStep(2)">← Back</button>
+        </div>
+        <div class="bk-step" id="bk-step-4">
+          <div class="bk-success">
+            <div class="bk-tick">✓</div>
+            <div class="bk-success-title">You're booked in!</div>
+            <div class="bk-success-msg" id="bk-success-msg"></div>
+            <button class="bk-back" onclick="bkReset()">Start Over</button>
+          </div>
+        </div>
+      </div>`, true),
+
+    sec('Shop & E-commerce', 'Sell products, services or packages directly from your website.'),
+
+    featCard('Product Shop', 'E-commerce', `
+      <div class="feat-shop">
+        <div class="shop-cart-bar">
+          <span class="shop-cart-label">Cart</span>
+          <span class="shop-cart-badge" id="shop-badge">0</span>
+          <span class="shop-cart-total" id="shop-total">€0</span>
+          <button class="shop-clear" onclick="event.stopPropagation();shopClear()">Clear</button>
+        </div>
+        <div class="shop-grid">
+          <div class="shop-item">
+            <div class="shop-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
+              <span style="font-size:2rem;">📦</span>
+            </div>
+            <div class="shop-name">Starter Pack</div>
+            <div class="shop-price">€29</div>
+            <button class="shop-add" onclick="event.stopPropagation();shopAdd(this,29)">Add to Cart</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-img" style="background:linear-gradient(135deg,#0d1b2a,#1b4332);">
+              <span style="font-size:2rem;">⚡</span>
+            </div>
+            <div class="shop-name">Pro Bundle</div>
+            <div class="shop-price">€59</div>
+            <button class="shop-add" onclick="event.stopPropagation();shopAdd(this,59)">Add to Cart</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-img" style="background:linear-gradient(135deg,#2d1b69,#11998e);">
+              <span style="font-size:2rem;">👑</span>
+            </div>
+            <div class="shop-name">Premium Kit</div>
+            <div class="shop-price">€99</div>
+            <button class="shop-add" onclick="event.stopPropagation();shopAdd(this,99)">Add to Cart</button>
+          </div>
+        </div>
+      </div>`, true),
+
+    sec('Search & Discovery', 'Let visitors find what they need instantly with a smart search.'),
+
+    featCard('Search Lookup', 'Knowledge Base', `
+      <div class="feat-search">
+        <div class="srch-bar-wrap">
+          <input class="srch-input" id="srch-input" placeholder="Try: Services, Pricing, Contact, About…" onclick="event.stopPropagation()" oninput="srchQuery(this.value)" onkeydown="event.stopPropagation()">
+          <span class="srch-icon">⌕</span>
+        </div>
+        <div class="srch-results" id="srch-results">
+          <div class="srch-hint">Search above to explore what your site can show visitors.</div>
+        </div>
+      </div>`, true),
+
+    sec('Social Proof', 'Turn happy customers into your best marketing tool.'),
+
+    featCard('Reviews Widget', 'Testimonials', `
+      <div class="feat-reviews">
+        <div class="rev-carousel" id="rev-carousel">
+          <div class="rev-slide active">
+            <div class="rev-avatar" style="background:#00e5ff;color:#000;">SM</div>
+            <div class="rev-body">
+              <div class="rev-stars">★★★★★</div>
+              <div class="rev-quote">"Absolutely incredible work. My bookings doubled within the first month of launching the new site."</div>
+              <div class="rev-name">Sarah M. — Hair Studio</div>
+            </div>
+          </div>
+          <div class="rev-slide">
+            <div class="rev-avatar" style="background:#a855f7;color:#fff;">JD</div>
+            <div class="rev-body">
+              <div class="rev-stars">★★★★★</div>
+              <div class="rev-quote">"The design is stunning. Clients always comment on how professional the website looks. Worth every cent."</div>
+              <div class="rev-name">James D. — Barber Shop</div>
+            </div>
+          </div>
+          <div class="rev-slide">
+            <div class="rev-avatar" style="background:#10b981;color:#000;">LP</div>
+            <div class="rev-body">
+              <div class="rev-stars">★★★★★</div>
+              <div class="rev-quote">"Fast, modern, and exactly what I needed. The booking system alone saves me hours every week."</div>
+              <div class="rev-name">Lisa P. — Beauty Clinic</div>
+            </div>
+          </div>
+          <div class="rev-slide">
+            <div class="rev-avatar" style="background:#f59e0b;color:#000;">RC</div>
+            <div class="rev-body">
+              <div class="rev-stars">★★★★★</div>
+              <div class="rev-quote">"I was sceptical at first, but the results speak for themselves. Professional, fast, and great value."</div>
+              <div class="rev-name">Ryan C. — Fitness Coach</div>
+            </div>
+          </div>
+          <div class="rev-slide">
+            <div class="rev-avatar" style="background:#e63333;color:#fff;">AM</div>
+            <div class="rev-body">
+              <div class="rev-stars">★★★★★</div>
+              <div class="rev-quote">"My online shop went live in no time. The product pages look amazing and sales have been great since."</div>
+              <div class="rev-name">Amy M. — Boutique Owner</div>
+            </div>
+          </div>
+        </div>
+        <div class="rev-controls">
+          <button class="rev-arrow" onclick="event.stopPropagation();revMove(-1)">‹</button>
+          <div class="rev-dots" id="rev-dots"></div>
+          <button class="rev-arrow" onclick="event.stopPropagation();revMove(1)">›</button>
+        </div>
+      </div>`, true),
+
+    sec('Content & Info', 'Useful interactive components that keep visitors engaged.'),
+
+    featCard('FAQ Accordion', 'Self-Service', `
+      <div class="feat-faq">
+        <div class="faq-item">
+          <div class="faq-q" onclick="event.stopPropagation();faqToggle(this)"><span>How long does a website take?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Most websites are completed within 2–4 weeks depending on the size and complexity of the project.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="event.stopPropagation();faqToggle(this)"><span>What do I need to get started?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Just your business name, a rough idea of what you want, and a way to contact you. We handle the rest.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="event.stopPropagation();faqToggle(this)"><span>Do you offer ongoing support?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Yes — all sites come with 30 days of free support after launch, and affordable monthly plans after that.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="event.stopPropagation();faqToggle(this)"><span>Can I update the site myself?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Absolutely. We build with easy content management in mind so you can update text, images and prices yourself.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="event.stopPropagation();faqToggle(this)"><span>What does it cost?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Prices start from €499 for a clean, modern website. We'll give you a full quote after a free consultation.</div>
+        </div>
+      </div>`, false),
+
+    featCard('Live Chat Widget', 'Customer Support', `
+      <div class="feat-chat">
+        <div class="chat-preview-area" id="chat-area">
+          <div class="chat-closed-state" id="chat-closed">
+            <div class="chat-bubble-hint">Click the chat bubble to open →</div>
+          </div>
+          <div class="chat-window" id="chat-window" style="display:none;">
+            <div class="chat-win-hdr">
+              <div class="chat-win-avatar">CM</div>
+              <div>
+                <div class="chat-win-name">CM Studio</div>
+                <div class="chat-win-status">● Online</div>
+              </div>
+              <button class="chat-win-close" onclick="event.stopPropagation();chatClose()">✕</button>
+            </div>
+            <div class="chat-win-body">
+              <div class="chat-msg bot">👋 Hi there! How can we help you today?</div>
+              <div class="chat-typing" id="chat-typing" style="display:none;"><span></span><span></span><span></span></div>
+            </div>
+            <div class="chat-win-input">
+              <input class="chat-input" placeholder="Type a message…" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();chatType(event)">
+              <button class="chat-send" onclick="event.stopPropagation();chatSend()">↑</button>
+            </div>
+          </div>
+          <div class="chat-fab" id="chat-fab" onclick="event.stopPropagation();chatOpen()">
+            <span class="chat-fab-icon">💬</span>
+            <span class="chat-fab-dot"></span>
+          </div>
+        </div>
+      </div>`, false),
+
+  ].join('');
+
+  initBookingDemo();
+  initRevCarousel();
+}
+
+// ── BOOKING DEMO ──
+let bkSelectedDay = null, bkSelectedTime = null;
+function initBookingDemo() {
+  const now = new Date();
+  const yr = now.getFullYear(), mo = now.getMonth();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const el = document.getElementById('bk-month-name');
+  if (el) el.textContent = monthNames[mo] + ' ' + yr;
+  const daysEl = document.getElementById('bk-days');
+  if (!daysEl) return;
+  const firstDay = new Date(yr, mo, 1).getDay();
+  const offset = (firstDay + 6) % 7;
+  const daysInMonth = new Date(yr, mo + 1, 0).getDate();
+  const today = now.getDate();
+  let html = '';
+  for (let i = 0; i < offset; i++) html += '<div class="bk-day bk-empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const past = d < today;
+    html += `<div class="bk-day${past ? ' bk-past' : ''}" ${!past ? `onclick="event.stopPropagation();bkPickDay(this,${d})"` : ''}>${d}</div>`;
+  }
+  daysEl.innerHTML = html;
+}
+function bkPickDay(el, d) {
+  document.querySelectorAll('#bk-days .bk-day').forEach(x => x.classList.remove('bk-sel'));
+  el.classList.add('bk-sel');
+  bkSelectedDay = d;
+  setTimeout(() => bkGoStep(2), 300);
+}
+function bkPickTime(el, t) {
+  document.querySelectorAll('.bk-time').forEach(x => x.classList.remove('bk-sel'));
+  el.classList.add('bk-sel');
+  bkSelectedTime = t;
+  setTimeout(() => bkGoStep(3), 300);
+}
+function bkGoStep(n) {
+  document.querySelectorAll('.bk-step').forEach(s => s.classList.remove('active'));
+  const s = document.getElementById('bk-step-' + n);
+  if (s) s.classList.add('active');
+}
+function bkConfirm() {
+  const name = document.getElementById('bk-name')?.value || 'Guest';
+  const now = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const msg = document.getElementById('bk-success-msg');
+  if (msg) msg.textContent = `${name}, we'll see you on ${bkSelectedDay} ${months[now.getMonth()]} at ${bkSelectedTime}.`;
+  bkGoStep(4);
+}
+function bkReset() {
+  bkSelectedDay = null; bkSelectedTime = null;
+  document.querySelectorAll('.bk-time').forEach(x => x.classList.remove('bk-sel'));
+  const ni = document.getElementById('bk-name'); if (ni) ni.value = '';
+  const ei = document.getElementById('bk-email'); if (ei) ei.value = '';
+  bkGoStep(1);
+}
+
+// ── SHOP DEMO ──
+let shopCount = 0, shopTotal = 0;
+function shopAdd(btn, price) {
+  shopCount++; shopTotal += price;
+  const badge = document.getElementById('shop-badge');
+  const total = document.getElementById('shop-total');
+  if (badge) { badge.textContent = shopCount; badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop'); }
+  if (total) total.textContent = '€' + shopTotal;
+  btn.textContent = '✓ Added';
+  setTimeout(() => { btn.textContent = 'Add to Cart'; }, 1200);
+}
+function shopClear() {
+  shopCount = 0; shopTotal = 0;
+  const badge = document.getElementById('shop-badge');
+  const total = document.getElementById('shop-total');
+  if (badge) badge.textContent = '0';
+  if (total) total.textContent = '€0';
+}
+
+// ── SEARCH DEMO ──
+const srchData = {
+  services: [
+    { icon: '🌐', title: 'Web Design', desc: 'Custom responsive websites built to impress and convert visitors.' },
+    { icon: '📈', title: 'SEO', desc: 'Get found on Google. We optimise your site to rank for local searches.' },
+    { icon: '🔧', title: 'Maintenance', desc: 'Monthly updates, security patches and content changes handled for you.' },
+  ],
+  pricing: [
+    { icon: '🥉', title: 'Starter — €499', desc: '3-page site, contact form, mobile-friendly, 1 revision round.' },
+    { icon: '🥈', title: 'Pro — €999', desc: '6 pages, booking or shop, SEO setup, 2 revision rounds.' },
+    { icon: '🥇', title: 'Premium — €1,999', desc: 'Unlimited pages, e-commerce, priority support, lifetime updates.' },
+  ],
+  contact: [
+    { icon: '📍', title: 'Find Us', desc: '123 Studio Lane, Dublin, Ireland · Mon–Fri 9am–6pm' },
+    { icon: '📞', title: 'Call Us', desc: '+353 1 234 5678 — we answer within 1 business hour.' },
+    { icon: '✉️', title: 'Email Us', desc: 'hello@cmstudio.ie — expect a reply within 24 hours.' },
+  ],
+  about: [
+    { icon: '👋', title: 'About CM Studio', desc: 'We\'re a web design studio based in Dublin, building sites that people remember.' },
+    { icon: '🏆', title: 'Our Mission', desc: 'Every business deserves a website that works as hard as they do.' },
+  ],
+};
+function srchQuery(val) {
+  const el = document.getElementById('srch-results');
+  if (!el) return;
+  const q = val.trim().toLowerCase();
+  if (!q) { el.innerHTML = '<div class="srch-hint">Search above to explore what your site can show visitors.</div>'; return; }
+  let match = null;
+  for (const key of Object.keys(srchData)) { if (key.includes(q) || q.includes(key.slice(0,4))) { match = key; break; } }
+  if (!match) { el.innerHTML = '<div class="srch-none">No results found — try Services, Pricing, Contact or About.</div>'; return; }
+  el.innerHTML = srchData[match].map((r,i) => `<div class="srch-result" style="animation-delay:${i*0.07}s"><span class="srch-result-icon">${r.icon}</span><div><div class="srch-result-title">${r.title}</div><div class="srch-result-desc">${r.desc}</div></div></div>`).join('');
+}
+
+// ── FAQ DEMO ──
+function faqToggle(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── REVIEWS CAROUSEL ──
+let revIdx = 0, revTimer = null;
+function initRevCarousel() {
+  const slides = document.querySelectorAll('.rev-slide');
+  const dotsEl = document.getElementById('rev-dots');
+  if (!dotsEl || !slides.length) return;
+  dotsEl.innerHTML = Array.from(slides).map((_,i) => `<span class="rev-dot${i===0?' active':''}" onclick="event.stopPropagation();revGo(${i})"></span>`).join('');
+  revTimer = setInterval(() => revMove(1), 3500);
+  const carousel = document.getElementById('rev-carousel');
+  if (carousel) {
+    carousel.addEventListener('mouseenter', () => clearInterval(revTimer));
+    carousel.addEventListener('mouseleave', () => { revTimer = setInterval(() => revMove(1), 3500); });
+  }
+}
+function revMove(dir) {
+  const slides = document.querySelectorAll('.rev-slide');
+  if (!slides.length) return;
+  slides[revIdx].classList.remove('active');
+  revIdx = (revIdx + dir + slides.length) % slides.length;
+  slides[revIdx].classList.add('active');
+  document.querySelectorAll('.rev-dot').forEach((d,i) => d.classList.toggle('active', i === revIdx));
+}
+function revGo(i) {
+  const slides = document.querySelectorAll('.rev-slide');
+  if (!slides.length) return;
+  slides[revIdx].classList.remove('active');
+  revIdx = i;
+  slides[revIdx].classList.add('active');
+  document.querySelectorAll('.rev-dot').forEach((d,j) => d.classList.toggle('active', j === revIdx));
+}
+
+// ── CHAT DEMO ──
+function chatOpen() {
+  document.getElementById('chat-closed').style.display = 'none';
+  document.getElementById('chat-window').style.display = 'flex';
+  document.getElementById('chat-fab').style.display = 'none';
+}
+function chatClose() {
+  document.getElementById('chat-window').style.display = 'none';
+  document.getElementById('chat-fab').style.display = 'flex';
+  document.getElementById('chat-closed').style.display = 'flex';
+}
+function chatSend() {
+  const inp = document.querySelector('.chat-input');
+  if (!inp || !inp.value.trim()) return;
+  const body = document.querySelector('.chat-win-body');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg user';
+  msg.textContent = inp.value.trim();
+  body.appendChild(msg);
+  inp.value = '';
+  body.scrollTop = body.scrollHeight;
+  const typing = document.getElementById('chat-typing');
+  if (typing) typing.style.display = 'flex';
+  setTimeout(() => {
+    if (typing) typing.style.display = 'none';
+    const reply = document.createElement('div');
+    reply.className = 'chat-msg bot';
+    reply.textContent = "Thanks for your message! We'll get back to you shortly.";
+    body.appendChild(reply);
+    body.scrollTop = body.scrollHeight;
+  }, 1800);
+}
+function chatType(e) { if (e.key === 'Enter') chatSend(); }
+
+// ── FEATURE FULLSCREEN BUILDERS ──
+function buildFeatureFullscreen(label) {
+  const fs = {
+    'Online Booking': `
+      <div class="fs-feat-title">Online Booking System</div>
+      <div class="fs-feat-desc">A fully interactive booking flow — pick a date, choose a time, enter your details and get confirmed.</div>
+      <div class="feat-booking fs-booking">
+        <div class="bk-step active" id="bk-step-1">
+          <div class="bk-month-hdr"><span class="bk-month-name" id="bk-month-name-fs"></span></div>
+          <div class="bk-weekdays"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          <div class="bk-days" id="bk-days-fs"></div>
+          <div class="bk-hint">Select a date to continue</div>
+        </div>
+        <div class="bk-step" id="bk-step-2">
+          <div class="bk-step-title">Pick a time</div>
+          <div class="bk-times">
+            <div class="bk-time" onclick="event.stopPropagation();bkPickTimeFull(this,'9:00am')">9:00 AM</div>
+            <div class="bk-time" onclick="event.stopPropagation();bkPickTimeFull(this,'11:00am')">11:00 AM</div>
+            <div class="bk-time" onclick="event.stopPropagation();bkPickTimeFull(this,'2:00pm')">2:00 PM</div>
+            <div class="bk-time" onclick="event.stopPropagation();bkPickTimeFull(this,'4:00pm')">4:00 PM</div>
+          </div>
+          <button class="bk-back" onclick="event.stopPropagation();bkGoStepFull(1)">← Back</button>
+        </div>
+        <div class="bk-step" id="bk-step-3">
+          <div class="bk-step-title">Your details</div>
+          <input class="bk-input" id="bk-name-fs" placeholder="Your name" onclick="event.stopPropagation()">
+          <input class="bk-input" id="bk-email-fs" placeholder="Email address" onclick="event.stopPropagation()">
+          <button class="bk-confirm-btn" onclick="event.stopPropagation();bkConfirmFull()">Confirm Booking</button>
+          <button class="bk-back" onclick="event.stopPropagation();bkGoStepFull(2)">← Back</button>
+        </div>
+        <div class="bk-step" id="bk-step-4">
+          <div class="bk-success">
+            <div class="bk-tick">✓</div>
+            <div class="bk-success-title">You're booked in!</div>
+            <div class="bk-success-msg" id="bk-success-msg-fs"></div>
+            <button class="bk-back" onclick="event.stopPropagation();bkResetFull()">Start Over</button>
+          </div>
+        </div>
+      </div>`,
+    'Product Shop': `
+      <div class="fs-feat-title">Product Shop</div>
+      <div class="fs-feat-desc">Sell products, services or packages. Cart updates live as items are added.</div>
+      <div class="feat-shop fs-shop">
+        <div class="shop-cart-bar">
+          <span class="shop-cart-label">Cart</span>
+          <span class="shop-cart-badge" id="shop-badge-fs">0</span>
+          <span class="shop-cart-total" id="shop-total-fs">€0</span>
+          <button class="shop-clear" onclick="event.stopPropagation();shopClearFs()">Clear</button>
+        </div>
+        <div class="shop-grid fs-shop-grid">
+          <div class="shop-item"><div class="shop-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e);"><span style="font-size:2.5rem;">📦</span></div><div class="shop-name">Starter Pack</div><div class="shop-price">€29</div><button class="shop-add" onclick="event.stopPropagation();shopAddFs(this,29,'shop-badge-fs','shop-total-fs')">Add to Cart</button></div>
+          <div class="shop-item"><div class="shop-img" style="background:linear-gradient(135deg,#0d1b2a,#1b4332);"><span style="font-size:2.5rem;">⚡</span></div><div class="shop-name">Pro Bundle</div><div class="shop-price">€59</div><button class="shop-add" onclick="event.stopPropagation();shopAddFs(this,59,'shop-badge-fs','shop-total-fs')">Add to Cart</button></div>
+          <div class="shop-item"><div class="shop-img" style="background:linear-gradient(135deg,#2d1b69,#11998e);"><span style="font-size:2.5rem;">👑</span></div><div class="shop-name">Premium Kit</div><div class="shop-price">€99</div><button class="shop-add" onclick="event.stopPropagation();shopAddFs(this,99,'shop-badge-fs','shop-total-fs')">Add to Cart</button></div>
+        </div>
+      </div>`,
+    'Search Lookup': `
+      <div class="fs-feat-title">Search & Lookup</div>
+      <div class="fs-feat-desc">Instant search lets visitors find exactly what they need without scrolling.</div>
+      <div class="feat-search fs-search">
+        <div class="srch-bar-wrap">
+          <input class="srch-input" id="srch-input-fs" placeholder="Try: Services, Pricing, Contact, About…" onclick="event.stopPropagation()" oninput="srchQueryFs(this.value)" onkeydown="event.stopPropagation()">
+          <span class="srch-icon">⌕</span>
+        </div>
+        <div class="srch-results" id="srch-results-fs"><div class="srch-hint">Search above to explore what your site can show visitors.</div></div>
+      </div>`,
+    'Reviews Widget': `
+      <div class="fs-feat-title">Reviews & Testimonials</div>
+      <div class="fs-feat-desc">Auto-rotating social proof that builds trust with every new visitor.</div>
+      <div class="feat-reviews fs-reviews">
+        <div class="rev-carousel" id="rev-carousel-fs">
+          <div class="rev-slide active"><div class="rev-avatar" style="background:#00e5ff;color:#000;">SM</div><div class="rev-body"><div class="rev-stars">★★★★★</div><div class="rev-quote">"Absolutely incredible work. My bookings doubled within the first month."</div><div class="rev-name">Sarah M. — Hair Studio</div></div></div>
+          <div class="rev-slide"><div class="rev-avatar" style="background:#a855f7;color:#fff;">JD</div><div class="rev-body"><div class="rev-stars">★★★★★</div><div class="rev-quote">"The design is stunning. Clients always comment on how professional the website looks."</div><div class="rev-name">James D. — Barber Shop</div></div></div>
+          <div class="rev-slide"><div class="rev-avatar" style="background:#10b981;color:#000;">LP</div><div class="rev-body"><div class="rev-stars">★★★★★</div><div class="rev-quote">"Fast, modern, exactly what I needed. The booking system alone saves me hours every week."</div><div class="rev-name">Lisa P. — Beauty Clinic</div></div></div>
+          <div class="rev-slide"><div class="rev-avatar" style="background:#f59e0b;color:#000;">RC</div><div class="rev-body"><div class="rev-stars">★★★★★</div><div class="rev-quote">"Professional, fast, and great value. The results speak for themselves."</div><div class="rev-name">Ryan C. — Fitness Coach</div></div></div>
+          <div class="rev-slide"><div class="rev-avatar" style="background:#e63333;color:#fff;">AM</div><div class="rev-body"><div class="rev-stars">★★★★★</div><div class="rev-quote">"My online shop went live in no time. The product pages look amazing and sales have been great."</div><div class="rev-name">Amy M. — Boutique Owner</div></div></div>
+        </div>
+        <div class="rev-controls"><button class="rev-arrow" onclick="event.stopPropagation();revMoveFs(-1)">‹</button><div class="rev-dots" id="rev-dots-fs"></div><button class="rev-arrow" onclick="event.stopPropagation();revMoveFs(1)">›</button></div>
+      </div>`,
+    'FAQ Accordion': `
+      <div class="fs-feat-title">FAQ Accordion</div>
+      <div class="fs-feat-desc">Answers to your most common questions — clean, expandable, always accessible.</div>
+      <div class="feat-faq fs-faq">
+        <div class="faq-item"><div class="faq-q" onclick="event.stopPropagation();faqToggleFs(this)"><span>How long does a website take?</span><span class="faq-icon">+</span></div><div class="faq-a">Most websites are completed within 2–4 weeks depending on the size and complexity of the project.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="event.stopPropagation();faqToggleFs(this)"><span>What do I need to get started?</span><span class="faq-icon">+</span></div><div class="faq-a">Just your business name, a rough idea of what you want, and a way to contact you. We handle the rest.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="event.stopPropagation();faqToggleFs(this)"><span>Do you offer ongoing support?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes — all sites come with 30 days of free support after launch, and affordable monthly plans after that.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="event.stopPropagation();faqToggleFs(this)"><span>Can I update the site myself?</span><span class="faq-icon">+</span></div><div class="faq-a">Absolutely. We build with easy content management in mind so you can update text, images and prices yourself.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="event.stopPropagation();faqToggleFs(this)"><span>What does it cost?</span><span class="faq-icon">+</span></div><div class="faq-a">Prices start from €499 for a clean, modern website. We'll give you a full quote after a free consultation.</div></div>
+      </div>`,
+    'Live Chat Widget': `
+      <div class="fs-feat-title">Live Chat Widget</div>
+      <div class="fs-feat-desc">A floating chat bubble that lets visitors message you in real time — keeping them on your site.</div>
+      <div class="feat-chat fs-chat-wrap">
+        <div class="chat-preview-area fs-chat-area">
+          <div class="chat-closed-state" id="chat-closed-fs" style="display:flex;"><div class="chat-bubble-hint">Click the chat bubble below ↓</div></div>
+          <div class="chat-window" id="chat-window-fs" style="display:none;">
+            <div class="chat-win-hdr"><div class="chat-win-avatar">CM</div><div><div class="chat-win-name">CM Studio</div><div class="chat-win-status">● Online</div></div><button class="chat-win-close" onclick="event.stopPropagation();chatCloseFs()">✕</button></div>
+            <div class="chat-win-body" id="chat-body-fs"><div class="chat-msg bot">👋 Hi there! How can we help you today?</div><div class="chat-typing" id="chat-typing-fs" style="display:none;"><span></span><span></span><span></span></div></div>
+            <div class="chat-win-input"><input class="chat-input" id="chat-input-fs" placeholder="Type a message…" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key==='Enter')chatSendFs()"><button class="chat-send" onclick="event.stopPropagation();chatSendFs()">↑</button></div>
+          </div>
+          <div class="chat-fab" id="chat-fab-fs" onclick="event.stopPropagation();chatOpenFs()"><span class="chat-fab-icon">💬</span><span class="chat-fab-dot"></span></div>
+        </div>
+      </div>`,
+  };
+  return fs[label] || `<div class="fs-feat-title">${label}</div>`;
+}
+
+function initFeatureFullscreen(label, container) {
+  if (label === 'Online Booking') {
+    const now = new Date();
+    const yr = now.getFullYear(), mo = now.getMonth();
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const mn = container.querySelector('#bk-month-name-fs');
+    if (mn) mn.textContent = months[mo] + ' ' + yr;
+    const daysEl = container.querySelector('#bk-days-fs');
+    if (daysEl) {
+      const firstDay = new Date(yr, mo, 1).getDay();
+      const offset = (firstDay + 6) % 7;
+      const daysInMonth = new Date(yr, mo + 1, 0).getDate();
+      const today = now.getDate();
+      let html = '';
+      for (let i = 0; i < offset; i++) html += '<div class="bk-day bk-empty"></div>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        const past = d < today;
+        html += `<div class="bk-day${past?' bk-past':''}" ${!past?`onclick="event.stopPropagation();bkPickDayFull(this,${d})"`:''} >${d}</div>`;
+      }
+      daysEl.innerHTML = html;
+    }
+  } else if (label === 'Reviews Widget') {
+    let fsIdx = 0;
+    const slides = container.querySelectorAll('.rev-slide');
+    const dotsEl = container.querySelector('#rev-dots-fs');
+    if (dotsEl && slides.length) {
+      dotsEl.innerHTML = Array.from(slides).map((_,i) => `<span class="rev-dot${i===0?' active':''}" onclick="event.stopPropagation();revGoFs(${i})"></span>`).join('');
+    }
+    window._revFsTimer = setInterval(() => revMoveFs(1), 3500);
+    const car = container.querySelector('#rev-carousel-fs');
+    if (car) {
+      car.addEventListener('mouseenter', () => clearInterval(window._revFsTimer));
+      car.addEventListener('mouseleave', () => { window._revFsTimer = setInterval(() => revMoveFs(1), 3500); });
+    }
+  }
+}
+
+let bkFsDay = null, bkFsTime = null;
+function bkPickDayFull(el, d) {
+  document.querySelectorAll('#bk-days-fs .bk-day').forEach(x => x.classList.remove('bk-sel'));
+  el.classList.add('bk-sel'); bkFsDay = d;
+  setTimeout(() => bkGoStepFull(2), 300);
+}
+function bkPickTimeFull(el, t) {
+  el.closest('.bk-times').querySelectorAll('.bk-time').forEach(x => x.classList.remove('bk-sel'));
+  el.classList.add('bk-sel'); bkFsTime = t;
+  setTimeout(() => bkGoStepFull(3), 300);
+}
+function bkGoStepFull(n) {
+  const modal = document.querySelector('#modal-body .feat-booking');
+  if (!modal) return;
+  modal.querySelectorAll('.bk-step').forEach(s => s.classList.remove('active'));
+  const s = modal.querySelector('#bk-step-' + n);
+  if (s) s.classList.add('active');
+}
+function bkConfirmFull() {
+  const name = document.getElementById('bk-name-fs')?.value || 'Guest';
+  const now = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const msg = document.getElementById('bk-success-msg-fs');
+  if (msg) msg.textContent = `${name}, we'll see you on ${bkFsDay} ${months[now.getMonth()]} at ${bkFsTime}.`;
+  bkGoStepFull(4);
+}
+function bkResetFull() {
+  bkFsDay = null; bkFsTime = null;
+  const ni = document.getElementById('bk-name-fs'); if (ni) ni.value = '';
+  const ei = document.getElementById('bk-email-fs'); if (ei) ei.value = '';
+  bkGoStepFull(1);
+}
+
+let shopFsCount = 0, shopFsTotal = 0;
+function shopAddFs(btn, price, badgeId, totalId) {
+  shopFsCount++; shopFsTotal += price;
+  const badge = document.getElementById(badgeId);
+  const total = document.getElementById(totalId);
+  if (badge) { badge.textContent = shopFsCount; badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop'); }
+  if (total) total.textContent = '€' + shopFsTotal;
+  btn.textContent = '✓ Added';
+  setTimeout(() => { btn.textContent = 'Add to Cart'; }, 1200);
+}
+function shopClearFs() {
+  shopFsCount = 0; shopFsTotal = 0;
+  const b = document.getElementById('shop-badge-fs'); if (b) b.textContent = '0';
+  const t = document.getElementById('shop-total-fs'); if (t) t.textContent = '€0';
+}
+
+function srchQueryFs(val) {
+  const el = document.getElementById('srch-results-fs'); if (!el) return;
+  const q = val.trim().toLowerCase();
+  if (!q) { el.innerHTML = '<div class="srch-hint">Search above to explore what your site can show visitors.</div>'; return; }
+  let match = null;
+  for (const key of Object.keys(srchData)) { if (key.includes(q) || q.includes(key.slice(0,4))) { match = key; break; } }
+  if (!match) { el.innerHTML = '<div class="srch-none">No results found — try Services, Pricing, Contact or About.</div>'; return; }
+  el.innerHTML = srchData[match].map((r,i) => `<div class="srch-result" style="animation-delay:${i*0.07}s"><span class="srch-result-icon">${r.icon}</span><div><div class="srch-result-title">${r.title}</div><div class="srch-result-desc">${r.desc}</div></div></div>`).join('');
+}
+
+function faqToggleFs(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  item.closest('.feat-faq').querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+let revFsIdx = 0;
+function revMoveFs(dir) {
+  const slides = document.querySelectorAll('#rev-carousel-fs .rev-slide');
+  if (!slides.length) return;
+  slides[revFsIdx].classList.remove('active');
+  revFsIdx = (revFsIdx + dir + slides.length) % slides.length;
+  slides[revFsIdx].classList.add('active');
+  document.querySelectorAll('#rev-dots-fs .rev-dot').forEach((d,i) => d.classList.toggle('active', i === revFsIdx));
+}
+function revGoFs(i) {
+  const slides = document.querySelectorAll('#rev-carousel-fs .rev-slide');
+  if (!slides.length) return;
+  slides[revFsIdx].classList.remove('active');
+  revFsIdx = i;
+  slides[revFsIdx].classList.add('active');
+  document.querySelectorAll('#rev-dots-fs .rev-dot').forEach((d,j) => d.classList.toggle('active', j === revFsIdx));
+}
+
+function chatOpenFs() {
+  const cw = document.getElementById('chat-window-fs');
+  const cc = document.getElementById('chat-closed-fs');
+  const cf = document.getElementById('chat-fab-fs');
+  if (cw) cw.style.display = 'flex';
+  if (cc) cc.style.display = 'none';
+  if (cf) cf.style.display = 'none';
+}
+function chatCloseFs() {
+  const cw = document.getElementById('chat-window-fs');
+  const cc = document.getElementById('chat-closed-fs');
+  const cf = document.getElementById('chat-fab-fs');
+  if (cw) cw.style.display = 'none';
+  if (cc) cc.style.display = 'flex';
+  if (cf) cf.style.display = 'flex';
+}
+function chatSendFs() {
+  const inp = document.getElementById('chat-input-fs');
+  if (!inp || !inp.value.trim()) return;
+  const body = document.getElementById('chat-body-fs');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg user'; msg.textContent = inp.value.trim();
+  body.insertBefore(msg, body.querySelector('.chat-typing'));
+  inp.value = '';
+  body.scrollTop = body.scrollHeight;
+  const typing = document.getElementById('chat-typing-fs');
+  if (typing) typing.style.display = 'flex';
+  setTimeout(() => {
+    if (typing) typing.style.display = 'none';
+    const reply = document.createElement('div');
+    reply.className = 'chat-msg bot';
+    reply.textContent = "Thanks! We'll get back to you shortly.";
+    body.insertBefore(reply, body.querySelector('.chat-typing'));
+    body.scrollTop = body.scrollHeight;
+  }, 1800);
 }
 
 function buildIntrosGrid() {
