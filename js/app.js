@@ -162,6 +162,12 @@ function initTabs() {
   });
 }
 
+function showWelcome() {
+  const firstTab = document.querySelector('.tab-btn[data-tab="backgrounds"]');
+  if (firstTab) firstTab.click();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // ══════════════════════════════════════
 // THEME + SCHEME
 // ══════════════════════════════════════
@@ -1838,9 +1844,10 @@ function prevStep() { if(qStep>1){qStep--;showQStep(qStep);} }
 
 function nextStep() {
   if (qStep===1) {
-    const name=document.getElementById('q-name')?.value?.trim(), email=document.getElementById('q-email')?.value?.trim();
+    const name=document.getElementById('q-name')?.value?.trim(), email=document.getElementById('q-email')?.value?.trim(), biz=document.getElementById('q-biz')?.value?.trim();
     if(!name||!email){showToast('Please enter your name and email','error');return;}
     if(!email.includes('@')){showToast('Please enter a valid email address','error');return;}
+    if(!biz){showToast('Please enter your business name','error');return;}
   }
   if(qStep<Q_TOTAL){qStep++;showQStep(qStep);}else{submitBrief();}
 }

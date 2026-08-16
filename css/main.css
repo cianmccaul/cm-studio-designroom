@@ -949,7 +949,7 @@ body.light-mode .mac-url { background: rgba(0,0,0,0.08); color: rgba(0,0,0,0.4);
 @media (max-width: 768px) {
   main { padding: 1.5rem 1rem 6rem; }
   header { padding: 0 1rem; }
-  .hdr-top { padding: 0.75rem 0 0.4rem; }
+  .hdr-top { padding: 0.75rem 0 0.4rem; flex-wrap: wrap; row-gap: 0.5rem; }
   .logo { font-size: 1.3rem; }
   .hdr-btn { font-size: 0.6rem; padding: 6px 9px; }
   .preview-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.6rem; }
@@ -962,6 +962,8 @@ body.light-mode .mac-url { background: rgba(0,0,0,0.08); color: rgba(0,0,0,0.4);
   .w-step { max-width: 280px; width: 100%; }
   #preview-iframe { height: 420px; }
   .progress-nudge { padding: 0.4rem 1rem; }
+  .modal-hdr { flex-wrap: wrap; row-gap: 0.6rem; padding: 0.75rem 1rem; }
+  .modal-actions { flex-wrap: wrap; }
 }
 
 @media (max-width: 480px) {
