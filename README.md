@@ -1,6 +1,6 @@
-# CM Studio — DesignRoom
+# CM Studio DesignRoom
 
-**Live:** [uf-showroom.vercel.app](https://uf-showroom.vercel.app)
+**Live:** [cm-studio-designroom.vercel.app](https://cm-studio-designroom.vercel.app)
 
 A showroom for my web-design work. Instead of a long call about "what kind of website do you want?", a client clicks through real, working examples (backgrounds, navbars, heroes, colour schemes, cards, footers, forms, scroll animations and intros), picks the ones they like, and sends me a brief. I get the brief with ready-to-use code for every piece they chose.
 
@@ -26,11 +26,11 @@ Plain HTML, CSS and JavaScript with no build step, so it deploys anywhere as sta
 | Showroom and brief | `index.html`, `js/app.js`, `js/canvas.js` (animated backgrounds), `js/intro.js`, `js/cursor.js` |
 | Sending a brief | `js/submit.js`: uploads mood boards and saves the brief to Supabase, then emails both sides with EmailJS |
 | Admin | `admin.html`, `js/admin-generators.js` (the code and starter-site generators) |
-| Data | Supabase Postgres (`submissions` table) and Storage (`moodboards` bucket) |
+| Data | Supabase Postgres (`submissions` table) and Storage (`moodboards` bucket), set up by `supabase/schema.sql` |
 
 ### Security
 
-The page only holds Supabase's publishable key, which is meant to be public. What protects the data is the database itself (`supabase/policies.sql`):
+The page only holds Supabase's publishable key, which is meant to be public. What protects the data is the database itself (`supabase/schema.sql`, on its own Supabase project in Ireland):
 
 - **The public can only send a brief.** Row-level security allows anonymous inserts and nothing else, so briefs can't be read, changed or deleted from the site.
 - **Only the admin can read briefs.** The admin page signs in with Supabase Auth (email and password), and the policies check that the signed-in user is the admin. Public sign-ups are off.

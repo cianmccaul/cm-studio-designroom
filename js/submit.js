@@ -5,8 +5,8 @@
 ═══════════════════════════════════════ */
 
 // ── CREDENTIALS ──
-const SUPABASE_URL = 'https://keqizgtvunwdabwvgrik.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_omG3I_QFY_hpIhCcugVlmA_H2HqvTkm';
+const SUPABASE_URL = 'https://eqfijnuzspqrxpaankek.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_lXfkN0fNS0QH5vVmp_gZNw_39LKnljM';
 const EMAILJS_SERVICE = 'service_p4zuxps';
 const EMAILJS_TEMPLATE_CIAN = 'template_2dn06z6';
 const EMAILJS_TEMPLATE_CLIENT = 'template_skiyfln';

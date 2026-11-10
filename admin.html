@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CM Studio — Admin</title>
+<title>CM Studio DesignRoom — Admin</title>
 <link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -249,8 +249,8 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
 
 <script>
 // ── CREDENTIALS ──
-const SUPABASE_URL = 'https://keqizgtvunwdabwvgrik.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_omG3I_QFY_hpIhCcugVlmA_H2HqvTkm';
+const SUPABASE_URL = 'https://eqfijnuzspqrxpaankek.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_lXfkN0fNS0QH5vVmp_gZNw_39LKnljM';
 
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -264,7 +264,7 @@ let notesTimer = null;
 
 // ── AUTH ──
 // Signing in is done by Supabase Auth, and the database itself only lets a
-// signed-in admin read or change submissions (see supabase/policies.sql).
+// signed-in admin read or change submissions (see supabase/schema.sql).
 // Nothing secret lives in this page.
 function showAdmin() {
   document.getElementById('login-screen').style.display = 'none';
