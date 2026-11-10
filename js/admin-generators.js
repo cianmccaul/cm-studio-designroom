@@ -864,7 +864,7 @@ if (_cf) {
   const htmlId = 'bhtml_' + Math.random().toString(36).substr(2,6);
   const cssId  = 'bcss_'  + Math.random().toString(36).substr(2,6);
   const jsId   = 'bjs_'   + Math.random().toString(36).substr(2,6);
-  const safeBiz = biz.replace(/'/g, "\\'");
+
 
   return `<div class="bundle-section">
     <div class="bundle-hdr">
@@ -872,17 +872,17 @@ if (_cf) {
         <div class="bundle-title">✦ Complete Website — 3 Files</div>
         <div class="bundle-desc">index.html + style.css + script.js · pre-filled with client details</div>
       </div>
-      <button class="download-all-btn" onclick="downloadAll('${htmlId}','${cssId}','${jsId}','${safeBiz}')">⬇ Download All 3</button>
+      <button class="download-all-btn" onclick="downloadAll('${htmlId}','${cssId}','${jsId}')">⬇ Download All 3</button>
     </div>
     <div class="bundle-files">
-      ${codeBlock('index.html — Main HTML File', htmlFile)}
-      ${codeBlock('style.css — Styles', cssFile)}
-      ${codeBlock('script.js — JavaScript', jsFile)}
+      ${codeBlock('index.html — Main HTML File', htmlFile, htmlId)}
+      ${codeBlock('style.css — Styles', cssFile, cssId)}
+      ${codeBlock('script.js — JavaScript', jsFile, jsId)}
     </div>
   </div>`;
 }
 
-function downloadAll(htmlId, cssId, jsId, bizName) {
+function downloadAll(htmlId, cssId, jsId) {
   const files = [
     { id: htmlId, name: 'index.html', type: 'text/html' },
     { id: cssId,  name: 'style.css',  type: 'text/css' },

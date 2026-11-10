@@ -1,94 +1,54 @@
 # CM Studio — DesignRoom
 
-A web design showcase and brief submission system for CM Studio. Clients can browse web components (backgrounds, navbars, heroes, color schemes, cards, footers, forms, animations), select items they like, and submit a comprehensive design brief.
+**Live:** [uf-showroom.vercel.app](https://uf-showroom.vercel.app)
 
-## Features
+A showroom for my web-design work. Instead of a long call about "what kind of website do you want?", a client clicks through real, working examples (backgrounds, navbars, heroes, colour schemes, cards, footers, forms, scroll animations and intros), picks the ones they like, and sends me a brief. I get the brief with ready-to-use code for every piece they chose.
 
-- **Component Showcase**: Browse 8 categories of web components with live previews
-- **Color Schemes**: 10 curated color palettes with one-click apply to entire showroom
-- **Interactive Selection**: Click to select components, build your design brief visually
-- **Questionnaire Wizard**: 5-step form to capture project requirements
-- **Live Preview**: See your selections assembled into a working mockup
-- **Admin Panel**: Secure admin interface to view and manage client submissions
-- **File Uploads**: Mood board image uploads to Supabase storage
-- **Email Notifications**: Automatic confirmations via EmailJS
+## What it does
 
-## Tech Stack
+**For clients**
+- 8 categories of live components, plus extras like a booking widget, shop and live chat, all previewable full screen
+- 10 colour schemes that re-theme the whole showroom in one click, and a light mode
+- A live preview that assembles their picks into one page
+- A 5-step brief: business details, pages and features, content, branding and inspiration, with mood-board image uploads
+- Progress is saved in the browser, and a confirmation email goes out when they submit
 
-- **Frontend**: Vanilla HTML/CSS/JavaScript
-- **Backend**: Supabase (PostgreSQL + Storage)
-- **Email**: EmailJS
-- **Fonts**: Google Fonts (Bebas Neue, Syne, DM Sans, JetBrains Mono)
+**For me (admin page)**
+- Every brief with search, status (new, in progress, quoted, complete), priority and private notes
+- The code for each chosen component, and a complete starter site (index.html, style.css and script.js) pre-filled with the client's business name, tagline and contact details, ready to download
 
-## File Structure
+## How it's built
+
+Plain HTML, CSS and JavaScript with no build step, so it deploys anywhere as static files.
+
+| Part | Uses |
+|---|---|
+| Showroom and brief | `index.html`, `js/app.js`, `js/canvas.js` (animated backgrounds), `js/intro.js`, `js/cursor.js` |
+| Sending a brief | `js/submit.js`: uploads mood boards and saves the brief to Supabase, then emails both sides with EmailJS |
+| Admin | `admin.html`, `js/admin-generators.js` (the code and starter-site generators) |
+| Data | Supabase Postgres (`submissions` table) and Storage (`moodboards` bucket) |
+
+### Security
+
+The page only holds Supabase's publishable key, which is meant to be public. What protects the data is the database itself (`supabase/policies.sql`):
+
+- **The public can only send a brief.** Row-level security allows anonymous inserts and nothing else, so briefs can't be read, changed or deleted from the site.
+- **Only the admin can read briefs.** The admin page signs in with Supabase Auth (email and password), and the policies check that the signed-in user is the admin. Public sign-ups are off.
+- **Mood boards:** images only, up to 5 MB, saved under random names. The bucket can't be listed; each image opens only from its own link.
+- Everything a client typed is escaped before the admin page shows it.
+
+## Run it locally
 
 ```
-├── index.html          # Main showroom application
-├── admin.html          # Admin panel for viewing submissions
-├── css/
-│   ├── main.css        # Main styles and component previews
-│   ├── themes.css      # Color scheme definitions
-│   └── intro.css       # Intro screen styles
-├── js/
-│   ├── app.js          # Main application logic
-│   ├── canvas.js       # Animated background canvases
-│   ├── cursor.js       # Custom cursor effects
-│   ├── intro.js        # Intro sequence
-│   └── submit.js       # Form submission handling
-└── assets/
-    └── *.svg           # Logo assets
+python3 -m http.server 8000
 ```
 
-## Setup
+Then open http://localhost:8000. The admin page is at `/admin.html`.
 
-1. **Clone or download** the repository
-2. **Open `index.html`** in a browser to view the showroom
-3. **Open `admin.html`** to access the admin panel
+## Colour schemes
 
-### Admin Access
+Charcoal + Cyan (default), Navy + Gold, Black + White, Dark + Red, Slate + Emerald, Dark Forest, Deep Purple + Violet, Copper + Orange, Midnight + Pink and Ocean Dark + Teal.
 
-- **Password**: `designroom2025` (change this in production!)
-- The password is hashed using SHA-256 for security
-- Session expires after 8 hours
+---
 
-### Supabase Configuration
-
-The project uses Supabase for data storage. Credentials are pre-configured:
-- URL: `https://keqizgtvunwdabwvgrik.supabase.co`
-- Key: Publishable key (safe for client-side)
-
-**Note**: For production, consider moving sensitive operations to a backend server.
-
-## Color Schemes
-
-10 curated color schemes available:
-1. Charcoal + Cyan (default)
-2. Navy + Gold
-3. Black + White
-4. Dark + Red
-5. Slate + Emerald
-6. Dark Forest
-7. Deep Purple + Violet
-8. Copper + Orange
-9. Midnight + Pink
-10. Ocean Dark + Teal
-
-Select any color scheme card, then click **"◐ Apply Scheme"** to apply it across the entire showroom.
-
-## Security Notes
-
-- Admin password is SHA-256 hashed (not plaintext)
-- Session-based authentication with 8-hour expiry
-- Supabase Row Level Security (RLS) recommended for production
-- File uploads restricted to images (PNG, JPG, WEBP) up to 5MB
-
-## Browser Support
-
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-
-## License
-
-© CM Studio — Cian McCaul. All rights reserved.
-
+© CM Studio, Cian McCaul. All rights reserved.

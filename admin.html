@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CM Studio — Admin</title>
+<link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
@@ -182,12 +183,18 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
   <div class="login-box">
     <div class="login-logo">CM <span>STUDIO</span></div>
     <div class="login-tagline">Admin Panel</div>
-    <div class="login-field">
-      <label class="login-label">Password</label>
-      <input class="login-input" type="password" id="login-pw" placeholder="Enter admin password">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Login →</button>
-    <div class="login-err" id="login-err">Incorrect password. Try again.</div>
+    <form id="login-form" autocomplete="on">
+      <div class="login-field">
+        <label class="login-label" for="login-email">Email</label>
+        <input class="login-input" type="email" id="login-email" autocomplete="username" required>
+      </div>
+      <div class="login-field">
+        <label class="login-label" for="login-pw">Password</label>
+        <input class="login-input" type="password" id="login-pw" autocomplete="current-password" required>
+      </div>
+      <button class="login-btn" type="submit" id="login-btn">Login →</button>
+      <div class="login-err" id="login-err" role="alert">Wrong email or password.</div>
+    </form>
   </div>
 </div>
 
@@ -240,7 +247,6 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ── CREDENTIALS ──
 const SUPABASE_URL = 'https://keqizgtvunwdabwvgrik.supabase.co';
@@ -256,72 +262,51 @@ let activeFilter = 'all';
 let searchQuery = '';
 let notesTimer = null;
 
-// ── AUTH UTILS ──
-async function hashPassword(pw) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(pw);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function setSession() {
-  sessionStorage.setItem('cm_admin_auth', 'authenticated_' + Date.now());
-}
-
-function checkSession() {
-  const auth = sessionStorage.getItem('cm_admin_auth');
-  if (!auth) return false;
-  const timestamp = parseInt(auth.split('_')[1]);
-  // Session expires after 8 hours
-  if (Date.now() - timestamp > 8 * 60 * 60 * 1000) {
-    sessionStorage.removeItem('cm_admin_auth');
-    return false;
-  }
-  return true;
-}
-
-function clearSession() {
-  sessionStorage.removeItem('cm_admin_auth');
-}
-
-// ── LOGIN ──
-document.getElementById('login-pw').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
-
-async function doLogin() {
-  const pw = document.getElementById('login-pw').value;
-  const hashedInput = await hashPassword(pw);
-  // SHA-256 hash of 'designroom2025' - pre-computed for client-side comparison
-  const correctHash = '81311143b7e4bef4f7e9f0fb68af5caa2d680135db41ac3284e0d8818a8e5bd4';
-  
-  if (hashedInput === correctHash) {
-    setSession();
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin').classList.add('visible');
-    document.getElementById('login-pw').value = '';
-    document.getElementById('login-err').style.display = 'none';
-    loadSubmissions();
-  } else {
-    document.getElementById('login-err').style.display = 'block';
-  }
-}
-
-function logout() {
-  clearSession();
-  document.getElementById('admin').classList.remove('visible');
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('login-pw').value = '';
-  document.getElementById('login-err').style.display = 'none';
-}
-
-// Check for existing session on page load
-if (checkSession()) {
+// ── AUTH ──
+// Signing in is done by Supabase Auth, and the database itself only lets a
+// signed-in admin read or change submissions (see supabase/policies.sql).
+// Nothing secret lives in this page.
+function showAdmin() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('admin').classList.add('visible');
   loadSubmissions();
 }
+
+function showLogin() {
+  document.getElementById('admin').classList.remove('visible');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-pw').value = '';
+}
+
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+  btn.disabled = true;
+  const { error } = await db.auth.signInWithPassword({
+    email: document.getElementById('login-email').value.trim(),
+    password: document.getElementById('login-pw').value,
+  });
+  btn.disabled = false;
+  if (error) {
+    err.style.display = 'block';
+    return;
+  }
+  document.getElementById('login-pw').value = '';
+  showAdmin();
+});
+
+async function logout() {
+  await db.auth.signOut();
+  submissions = [];
+  filteredSubmissions = [];
+  showLogin();
+}
+
+db.auth.getSession().then(({ data }) => {
+  if (data.session) showAdmin();
+});
 
 // ── LOAD DATA ──
 async function loadSubmissions() {
@@ -398,10 +383,10 @@ function renderSidebar() {
       const priority = s.priority || 'normal';
       return `<div class="sub-item ${s.id === activeId ? 'active' : ''}" onclick="viewSubmission('${s.id}')">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
-          <div class="sub-name">${s.client_name || 'Unknown'}</div>
+          <div class="sub-name">${escHtml(s.client_name) || 'Unknown'}</div>
           <div style="width:7px;height:7px;border-radius:50%;background:${statusColors[status]||'#00e5ff'};flex-shrink:0;"></div>
         </div>
-        <div class="sub-meta">${s.client_email || ''}</div>
+        <div class="sub-meta">${escHtml(s.client_email)}</div>
         <div class="sub-meta">${d.toLocaleDateString('en-IE',{day:'numeric',month:'short',year:'numeric'})} · ${d.toLocaleTimeString('en-IE',{hour:'2-digit',minute:'2-digit'})}</div>
         <div class="sub-badges">
           <span class="sub-badge">${selCount} selection${selCount!==1?'s':''}</span>
@@ -420,7 +405,7 @@ function viewSubmission(id) {
 
   const d = new Date(s.created_at);
   document.getElementById('main-title').textContent = s.client_name || 'Submission';
-  document.getElementById('main-sub').textContent = `${s.client_email} · Submitted ${d.toLocaleString('en-IE')}`;
+  document.getElementById('main-sub').textContent = `${s.client_email || ''} · Submitted ${d.toLocaleString('en-IE')}`;
 
   const q = s.questionnaire || {};
   const sel = s.selections || {};
@@ -505,7 +490,7 @@ function viewSubmission(id) {
     ${q.services ? `<div class="detail-card" style="margin-bottom:1.4rem;"><div class="dc-title">Services Listed</div><div style="font-size:0.82rem;line-height:1.9;white-space:pre-line;margin-top:0.5rem;color:var(--text2);">${escHtml(q.services)}</div></div>` : ''}
     ${q.homepage_content ? `<div class="detail-card" style="margin-bottom:1.4rem;"><div class="dc-title">Homepage Content Notes</div><div style="font-size:0.82rem;line-height:1.7;white-space:pre-line;margin-top:0.5rem;color:var(--text2);">${escHtml(q.homepage_content)}</div></div>` : ''}
     ${q.social_links ? `<div class="detail-card" style="margin-bottom:1.4rem;"><div class="dc-title">Social Media Links</div><div style="font-size:0.82rem;line-height:1.9;white-space:pre-line;margin-top:0.5rem;color:var(--text2);">${escHtml(q.social_links)}</div></div>` : ''}
-    ${q.mood_board_urls && q.mood_board_urls.length ? `<div class="detail-card" style="margin-bottom:1.4rem;"><div class="dc-title">Mood Board Images (${q.mood_board_urls.length})</div><div class="mood-grid">${q.mood_board_urls.map(url => `<a href="${url}" target="_blank"><img class="mood-thumb" src="${url}" alt="Mood board"></a>`).join('')}</div></div>` : ''}
+    ${q.mood_board_urls && q.mood_board_urls.length ? `<div class="detail-card" style="margin-bottom:1.4rem;"><div class="dc-title">Mood Board Images (${q.mood_board_urls.length})</div><div class="mood-grid">${q.mood_board_urls.filter(url => String(url).startsWith(SUPABASE_URL + '/storage/')).map(url => `<a href="${escHtml(url)}" target="_blank" rel="noopener"><img class="mood-thumb" src="${escHtml(url)}" alt="Mood board"></a>`).join('')}</div></div>` : ''}
 
     <!-- SELECTIONS -->
     <div class="code-section-hdr">
@@ -513,7 +498,7 @@ function viewSubmission(id) {
       <div class="code-section-line"></div>
     </div>
     <div class="sel-grid">
-      ${Object.entries(sel).map(([k,v]) => `<div class="sel-chip"><div class="sc-cat">${k}</div><div class="sc-val">${v}</div></div>`).join('')}
+      ${Object.entries(sel).map(([k,v]) => `<div class="sel-chip"><div class="sc-cat">${escHtml(k)}</div><div class="sc-val">${escHtml(v)}</div></div>`).join('')}
     </div>
 
     <!-- ELEMENT CODE BLOCKS -->
@@ -543,7 +528,7 @@ function viewSubmission(id) {
 
 function field(label, val) {
   if (!val) return '';
-  return `<div class="dc-field"><span class="dfl">${label}</span><span class="dfv">${val}</span></div>`;
+  return `<div class="dc-field"><span class="dfl">${label}</span><span class="dfv">${escHtml(val)}</span></div>`;
 }
 
 // ── STATUS / PRIORITY / DELETE / NOTES ──
@@ -626,14 +611,14 @@ function showToast(msg, type = '') {
 // ══════════════════════════════════════
 function escHtml(s) {
   if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-function codeBlock(label, code) {
-  const id = 'cb_' + Math.random().toString(36).substr(2,9);
+function codeBlock(label, code, fixedId) {
+  const id = fixedId || 'cb_' + Math.random().toString(36).substr(2,9);
   return `<div class="code-block-wrap">
     <div class="code-block-hdr" onclick="toggleBlock('${id}')">
-      <span class="code-block-label">${label}</span>
+      <span class="code-block-label">${escHtml(label)}</span>
       <div class="code-block-actions">
         <button class="toggle-btn" id="tog_${id}">▾</button>
         <button class="copy-btn" id="${id}" onclick="event.stopPropagation();copyCode('${id}')">Copy</button>
