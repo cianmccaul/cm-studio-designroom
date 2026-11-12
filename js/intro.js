@@ -10,9 +10,12 @@
   let introCanvas, introCtx, introAnimId, morphing = false, started = false;
   const P_COUNT = 85, P_COLOR = '#00e5ff', P_CONNECT = 90, P_SPEED = 0.4;
 
+  let revealed = false;
+
   function boot() {
     buildIntroCanvas();
     buildStepCards();
+    buildSkipButton();
     initParticles();
     animateLoop();
     scheduleReveal();
@@ -60,6 +63,41 @@
 
     content.appendChild(stepsWrap);
     content.appendChild(btn);
+  }
+
+  // Skip straight to the showroom: a button on the intro, or the Escape key.
+  function buildSkipButton() {
+    const screen = document.getElementById('intro-screen'); if(!screen) return;
+    const skip = document.createElement('button');
+    skip.id = 'intro-skip-btn';
+    skip.type = 'button';
+    skip.textContent = 'Skip intro';
+    skip.addEventListener('click', skipIntro);
+    screen.appendChild(skip);
+    document.addEventListener('keydown', onEscape);
+  }
+
+  function onEscape(e) { if (e.key === 'Escape') skipIntro(); }
+
+  function skipIntro() {
+    if (revealed) return;
+    started = true; morphing = true; cancelAnimationFrame(introAnimId);
+    document.removeEventListener('keydown', onEscape);
+    const screen = document.getElementById('intro-screen');
+    const main   = document.getElementById('main-app');
+    if (screen) screen.style.display = 'none';
+    if (main) { main.style.transition = 'none'; main.style.display = 'block'; main.style.opacity = '1'; }
+    reveal();
+  }
+
+  // Runs once, whether the intro played out or was skipped.
+  function reveal() {
+    if (revealed) return;
+    revealed = true;
+    document.removeEventListener('keydown', onEscape);
+    if (typeof initCursorReactive === 'function') initCursorReactive();
+    if (typeof initAllCanvases    === 'function') initAllCanvases();
+    if (typeof initNudge          === 'function') initNudge();
   }
 
   function initParticles() {
@@ -135,6 +173,7 @@
   }
 
   function beginMorph() {
+    if (revealed) return;
     morphing = true; cancelAnimationFrame(introAnimId);
     const screen = document.getElementById('intro-screen');
     const main   = document.getElementById('main-app');
@@ -170,14 +209,13 @@
 
     // Finally reveal main app
     setTimeout(() => {
+      if (revealed) return; // skipped part-way through
       if (screen) screen.style.display = 'none';
       if (main) { 
         main.style.transition=`opacity ${MORPH_DURATION}ms cubic-bezier(0.4, 0, 0.2, 1)`; 
         main.style.opacity='1'; 
       }
-      if (typeof initCursorReactive === 'function') initCursorReactive();
-      if (typeof initAllCanvases    === 'function') initAllCanvases();
-      if (typeof initNudge          === 'function') initNudge();
+      reveal();
     }, MORPH_DURATION + 600);
   }
 

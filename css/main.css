@@ -1668,3 +1668,22 @@ body.light-mode .mac-url { background: rgba(0,0,0,0.08); color: rgba(0,0,0,0.4);
   .lb-prev { left: -36px; } .lb-next { right: -36px; }
   .gallery-grid { grid-template-columns: repeat(3, 1fr); }
 }
+/* ══════════════════════════════════════
+   DEMO MODE (?demo=1, see js/demo.js)
+══════════════════════════════════════ */
+#dr-demo-banner {
+  position: fixed; left: 1rem; bottom: 1rem; z-index: 10001;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(10,10,10,0.88); color: rgba(255,255,255,0.8);
+  border: 1px solid rgba(0,229,255,0.35); border-radius: 999px;
+  padding: 6px 14px 6px 6px;
+  font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em;
+  backdrop-filter: blur(8px); pointer-events: none;
+}
+#dr-demo-banner strong {
+  background: #00e5ff; color: #000; border-radius: 999px;
+  padding: 3px 9px; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+}
+@media (max-width: 600px) {
+  #dr-demo-banner { left: 50%; transform: translateX(-50%); bottom: 0.6rem; white-space: nowrap; }
+}
