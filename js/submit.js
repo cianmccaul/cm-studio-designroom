@@ -17,6 +17,8 @@ const EMAILJS_PUBLIC_KEY = 'M9uCIf7tZKXTnZZ_a';
 let db;
 
 function initSupabase() {
+  // Demo mode (?demo=1, js/demo.js): never create the clients, so nothing can be saved or sent.
+  if (window.DR_DEMO) return;
   try {
     if (typeof supabase !== 'undefined') {
       const { createClient } = supabase;
@@ -90,6 +92,21 @@ async function uploadMoodFiles(clientName) {
 }
 
 // ══════════════════════════════════════
+// SUCCESS SCREEN
+// ══════════════════════════════════════
+function showSuccess() {
+  document.querySelectorAll('.q-step').forEach(s => s.classList.remove('active'));
+  const success = document.getElementById('q-success');
+  if (success) success.classList.add('show');
+  const footer = document.getElementById('q-footer');
+  if (footer) footer.style.display = 'none';
+  const progress = document.getElementById('q-progress-fill');
+  if (progress) progress.style.width = '100%';
+  // Clear local storage progress
+  try { localStorage.removeItem('dr_progress'); } catch(e) {}
+}
+
+// ══════════════════════════════════════
 // MAIN SUBMIT
 // ══════════════════════════════════════
 async function submitBrief() {
@@ -126,6 +143,16 @@ async function submitBrief() {
     existing_url: getVal('q-existing-url'),
     extra_notes: getVal('q-notes'),
   };
+
+  // Demo mode: show the same success screen without uploading, saving or emailing anything.
+  if (window.DR_DEMO) {
+    await new Promise(r => setTimeout(r, 900));
+    const sub = document.querySelector('#q-success .q-success-sub');
+    if (sub) sub.innerHTML = 'This is the screen a client sees after sending a brief.<br><br><strong>Demo mode:</strong> nothing was saved and no email was sent.';
+    showSuccess();
+    showToast('Demo: brief not saved or sent ✦', 'success');
+    return;
+  }
 
   const selectionText = formatSelections(selections);
   const questionnaireText = formatQuestionnaire(questionnaire);
@@ -174,17 +201,8 @@ async function submitBrief() {
     }
 
     // 5. Show success
-    document.querySelectorAll('.q-step').forEach(s => s.classList.remove('active'));
-    const success = document.getElementById('q-success');
-    if (success) success.classList.add('show');
-    const footer = document.getElementById('q-footer');
-    if (footer) footer.style.display = 'none';
-    const progress = document.getElementById('q-progress-fill');
-    if (progress) progress.style.width = '100%';
+    showSuccess();
     showToast('Brief submitted — check your email ✦', 'success');
-
-    // 6. Clear local storage progress
-    try { localStorage.removeItem('dr_progress'); } catch(e) {}
 
   } catch (err) {
     console.error('Submission error:', err);
