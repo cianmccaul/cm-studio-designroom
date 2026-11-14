@@ -169,6 +169,20 @@ html, body {
 .welcome-btn:hover { opacity: 0.85; transform: translateY(-2px); }
 
 /* ══════════════════════════════════════
+   BACK TO PORTFOLIO
+   In normal flow above the sticky header, so it never covers content.
+══════════════════════════════════════ */
+.back-strip { padding: 0 2rem; }
+.back-link {
+  display: inline-flex; align-items: center; gap: 0.4rem; min-height: 36px;
+  font-family: 'Syne', sans-serif; font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--dim); text-decoration: none; transition: color 0.2s;
+}
+.back-link:hover { color: var(--text); }
+.back-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+/* ══════════════════════════════════════
    HEADER
 ══════════════════════════════════════ */
 header {
@@ -948,6 +962,7 @@ body.light-mode .mac-url { background: rgba(0,0,0,0.08); color: rgba(0,0,0,0.4);
 ══════════════════════════════════════ */
 @media (max-width: 768px) {
   main { padding: 1.5rem 1rem 6rem; }
+  .back-strip { padding: 0 1rem; }
   header { padding: 0 1rem; }
   .hdr-top { padding: 0.75rem 0 0.4rem; flex-wrap: wrap; row-gap: 0.5rem; }
   .logo { font-size: 1.3rem; }

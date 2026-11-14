@@ -10,6 +10,12 @@
 
 // ── STATE ──
 const selections = {};
+// Add-on features can be combined, so selections['Feature'] is an array of labels.
+// Every other category holds a single label.
+const MULTI_CATS = ['Feature'];
+const isMulti = cat => MULTI_CATS.includes(cat);
+// Flat [category, label] list with one entry per pick, so counts and lists treat each add-on separately.
+const selectionPairs = () => Object.entries(selections).flatMap(([cat, v]) => Array.isArray(v) ? v.map(l => [cat, l]) : [[cat, v]]);
 let cartOpen = false;
 let currentScheme = null;
 let schemeTransformActive = false;
@@ -207,6 +213,19 @@ function applySchemeTransform() {
 function toggleSelect(card) {
   const cat = card.dataset.category, label = card.dataset.label;
   if (!cat || !label) return;
+  if (isMulti(cat)) {
+    const list = selections[cat] || [];
+    if (list.includes(label)) {
+      card.classList.remove('selected');
+      const rest = list.filter(l => l !== label);
+      if (rest.length) selections[cat] = rest; else delete selections[cat];
+    } else {
+      card.classList.add('selected');
+      selections[cat] = [...list, label];
+    }
+    updateCart(); updateNudge(); updatePreviewLive();
+    return;
+  }
   if (card.classList.contains('selected')) {
     card.classList.remove('selected');
     if (selections[cat] === label) delete selections[cat];
@@ -227,7 +246,15 @@ function toggleSelect(card) {
   updateCart(); updateNudge(); updatePreviewLive();
 }
 
-function removeItem(cat) {
+function removeItem(cat, label) {
+  if (isMulti(cat) && label !== undefined) {
+    // Remove just this add-on, leave the others selected.
+    const rest = (selections[cat] || []).filter(l => l !== label);
+    if (rest.length) selections[cat] = rest; else delete selections[cat];
+    document.querySelectorAll(`.preview-card[data-category="${cat}"]`).forEach(c => { if (c.dataset.label === label) c.classList.remove('selected'); });
+    updateCart(); updateNudge(); updatePreviewLive();
+    return;
+  }
   delete selections[cat];
   document.querySelectorAll(`.preview-card[data-category="${cat}"]`).forEach(c => c.classList.remove('selected'));
   if (cat === 'Colour Scheme') {
@@ -257,11 +284,11 @@ function toggleCart() {
 }
 
 function updateCart() {
-  const keys = Object.keys(selections);
-  const cc = document.getElementById('cart-count'); if (cc) cc.textContent = keys.length;
+  const picks = selectionPairs();
+  const cc = document.getElementById('cart-count'); if (cc) cc.textContent = picks.length;
   const el = document.getElementById('cart-items'); if (!el) return;
-  if (!keys.length) { el.innerHTML = '<div class="cart-empty"><strong>Nothing selected yet</strong>Browse the tabs and click anything you like.</div>'; return; }
-  el.innerHTML = keys.map(k => `<div class="cart-item"><div><div class="ci-cat">${k}</div><div class="ci-label">${selections[k]}</div></div><button class="ci-remove" onclick="removeItem('${k}')">✕</button></div>`).join('');
+  if (!picks.length) { el.innerHTML = '<div class="cart-empty"><strong>Nothing selected yet</strong>Browse the tabs and click anything you like.</div>'; return; }
+  el.innerHTML = picks.map(([k, label]) => `<div class="cart-item"><div><div class="ci-cat">${k}</div><div class="ci-label">${label}</div></div><button class="ci-remove" data-cat="${k}" data-label="${label}" onclick="removeItem(this.dataset.cat, this.dataset.label)">✕</button></div>`).join('');
 }
 
 // ══════════════════════════════════════
@@ -278,7 +305,7 @@ function initNudge() {
 function updateNudge() {
   document.querySelectorAll('.nudge-dot').forEach((d, i) => d.classList.toggle('filled', !!selections[NUDGE_CATS[i]]));
   const msg = document.getElementById('nudge-msg'); if (!msg) return;
-  const n = Object.keys(selections).length;
+  const n = selectionPairs().length;
   const msgs = ['Start by picking a background',`${n} selection — keep going!`,`${n} selections — looking good`,`Halfway there — ${8-n} to go`,`${n} down, keep picking`,`Great taste — ${8-n} left`,'Almost complete — nearly there!',"One more and you're done ✦",'All done! Hit Submit when ready ✦'];
   msg.textContent = msgs[Math.min(n, 8)];
 }
@@ -304,8 +331,8 @@ function checkSavedProgress() {
   try {
     const saved = localStorage.getItem('dr_progress_'+id); if (!saved) return;
     const data = JSON.parse(saved);
-    Object.assign(selections, data.selections || {});
-    Object.entries(selections).forEach(([cat,label]) => {
+    Object.entries(data.selections || {}).forEach(([cat, v]) => { selections[cat] = isMulti(cat) ? [].concat(v) : v; });
+    selectionPairs().forEach(([cat,label]) => {
       const card = document.querySelector(`.preview-card[data-category="${cat}"][data-label="${label}"]`);
       if (card) card.classList.add('selected');
       if (cat === 'Colour Scheme') { currentScheme = label; const sb = document.getElementById('scheme-btn'); if(sb) sb.style.display=''; }
@@ -1681,13 +1708,13 @@ function updatePreviewLive() {
 
 function buildPreviewPanel() {
   const container = document.getElementById('preview-container'); if(!container) return;
-  const keys = Object.keys(selections);
-  const chips = keys.map(k => `<div class="gen-chip"><span class="gc">${k}:</span>${selections[k]}</div>`).join('');
-  if (!keys.length) {
+  const picks = selectionPairs();
+  const chips = picks.map(([k, label]) => `<div class="gen-chip"><span class="gc">${k}:</span>${label}</div>`).join('');
+  if (!picks.length) {
     container.innerHTML = `<div class="gen-empty"><div class="gen-icon">✦</div><div class="gen-title">Live Preview</div><div class="gen-sub">Make selections from the tabs above, then come back here to see your site assembled in real time.</div></div>`;
     return;
   }
-  container.innerHTML = `<div class="gen-empty" style="text-align:center;padding:1.5rem 0;"><div class="gen-chips">${chips}</div><button class="gen-btn" onclick="generatePreview()">Generate Live Preview</button><div class="gen-hint">${keys.length} selection${keys.length>1?'s':''} ready</div></div><div id="gen-preview-wrap" style="display:none;"></div>`;
+  container.innerHTML = `<div class="gen-empty" style="text-align:center;padding:1.5rem 0;"><div class="gen-chips">${chips}</div><button class="gen-btn" onclick="generatePreview()">Generate Live Preview</button><div class="gen-hint">${picks.length} selection${picks.length>1?'s':''} ready</div></div><div id="gen-preview-wrap" style="display:none;"></div>`;
 }
 
 // ══════════════════════════════════════

@@ -54,7 +54,7 @@ function getChecked(stepId) {
 
 function formatSelections(sel) {
   return Object.entries(sel)
-    .map(([k, v]) => `${k}: ${v}`)
+    .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
     .join('\n');
 }
 
